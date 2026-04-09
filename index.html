@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ankur Gupta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1e2a3a;
+  --navy-light: #2c3e57;
+  --white: #ffffff;
+  --offwhite: #f8f9fb;
+  --text: #1a1a1a;
+  --text-muted: #5a6577;
+  --accent: #2563eb;
+  --border: #e2e6ed;
+  --max-width: 860px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text);
+  background: var(--white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Navigation ── */
+nav {
+  background: var(--navy);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+.nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+.nav-name {
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.9rem 0;
+  letter-spacing: -0.01em;
+}
+.nav-links { display: flex; gap: 0; }
+.nav-links a {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.9rem 1rem;
+  transition: color 0.15s, background 0.15s;
+  text-decoration: none;
+}
+.nav-links a:hover {
+  color: var(--white);
+  background: rgba(255,255,255,0.08);
+  text-decoration: none;
+}
+
+/* ── Hero ── */
+.hero {
+  background: var(--offwhite);
+  border-bottom: 1px solid var(--border);
+  padding: 3.5rem 1.5rem;
+}
+.hero-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+.hero-photo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 15%;
+  border: 4px solid var(--white);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+.hero-text h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+  color: var(--navy);
+}
+.hero-text .title-line {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+.hero-text .bio {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+.hero-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.hero-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--navy);
+  background: var(--white);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-decoration: none;
+}
+.hero-links a:hover {
+  border-color: var(--accent);
+  box-shadow: 0 1px 4px rgba(37,99,235,0.12);
+  text-decoration: none;
+}
+.hero-links a svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* ── Sections ── */
+.section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+.section + .section {
+  border-top: 1px solid var(--border);
+}
+.section h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+  margin-bottom: 1.25rem;
+}
+.section-note {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  font-family: 'Source Serif 4', Georgia, serif;
+}
+
+/* ── Media cards ── */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+.media-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--text);
+}
+.media-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+  text-decoration: none;
+}
+.media-outlet {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.media-card h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.media-card p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  flex-grow: 1;
+}
+.media-card .read-more {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 0.75rem;
+}
+
+/* ── Blog cards ── */
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.blog-card {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  text-decoration: none;
+  color: var(--text);
+}
+.blog-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+  text-decoration: none;
+}
+.blog-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+.blog-card .blog-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+.blog-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.blog-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: #dbeafe;
+  color: var(--accent);
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+/* ── Footer ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .hero-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-links { justify-content: center; }
+  .hero-text h1 { font-size: 1.6rem; }
+  .nav-inner { flex-direction: column; gap: 0; }
+  .nav-name { padding: 0.7rem 0 0.3rem; }
+  .nav-links { padding-bottom: 0.4rem; }
+  .media-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-name">Ankur Gupta</div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#news">In the News</a>
+      <a href="#blog">Blog</a>
+      <a href="assets/cv.pdf">CV</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero" id="about">
+  <div class="hero-inner">
+    <img src="assets/photo.jpg" alt="Ankur Gupta" class="hero-photo">
+    <div class="hero-text">
+      <h1>Ankur Gupta</h1>
+      <div class="title-line">Assistant Professor, Chemical and Biological Engineering, University of Colorado Boulder</div>
+      <p class="bio">I utilize mathematical and numerical techniques to understand how ions, particles, and cells move and self-organize. This is a personal space where I share science and educational posts from my work. For official information, please see my <a href="https://www.colorado.edu/chbe/ankur-gupta">professional page</a> and my research group's page, <a href="https://www.colorado.edu/faculty/gupta/">LIFE</a> (Laboratory of Interfaces, Flow, and Electrokinetics).</p>
+      <div class="hero-links">
+        <a href="https://scholar.google.com/citations?user=oiMqxxoAAAAJ&hl=en">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/></svg>
+          Google Scholar
+        </a>
+        <a href="https://www.linkedin.com/in/ankurg90/">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://www.colorado.edu/faculty/gupta/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          LIFE Group
+        </a>
+        <a href="assets/cv.pdf">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          CV
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── In the News ── -->
+<section class="section" id="news">
+  <h2>In the News</h2>
+  <p class="section-note">Some of the broader implications of our group's work have been covered in the following outlets.</p>
+  <div class="media-grid">
+
+    <a class="media-card" href="https://www.nytimes.com/2025/11/06/science/alan-turing-patterns-boxfish.html?unlocked_article_code=1.zE8.orbh.nyZrXi7zVKtd&smid=url-share" target="_blank" rel="noopener">
+      <div class="media-outlet">The New York Times</div>
+      <h3>Alan Turing's Patterns and the Boxfish</h3>
+      <p>Coverage of our work on Turing patterns and biological self-organization.</p>
+      <div class="read-more">Read article &rarr;</div>
+    </a>
+
+    <a class="media-card" href="https://www.newyorker.com/science/elements/how-the-tiger-really-got-his-stripes" target="_blank" rel="noopener">
+      <div class="media-outlet">The New Yorker</div>
+      <h3>How the Tiger Really Got His Stripes</h3>
+      <p>On the mathematical principles behind pattern formation in nature.</p>
+      <div class="read-more">Read article &rarr;</div>
+    </a>
+
+    <a class="media-card" href="https://cen.acs.org/physical-chemistry/computational-chemistry/rules-road-ions/102/i17" target="_blank" rel="noopener">
+      <div class="media-outlet">Chemical &amp; Engineering News</div>
+      <h3>Rules of the Road for Ions</h3>
+      <p>On our work understanding how ions move and self-organize in solution.</p>
+      <div class="read-more">Read article &rarr;</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── Blog ── -->
+<section class="section" id="blog">
+  <h2>Blog</h2>
+  <p class="section-note">Interactive posts on science, research, and the tools we use. These are meant to share our work with a broader audience.</p>
+  <div class="blog-list">
+
+    <a class="blog-card" href="blog/electrophoresis-shape/">
+      <h3>How Claude Code Helped Us Solve a Fluids and Electrokinetics Problem <span class="blog-tag">Interactive</span></h3>
+      <div class="blog-meta">April 2026 &middot; Ankur Gupta and Arkava Ganguly</div>
+      <p>We used AI to solve a mathematical physics problem on how particle shape affects electrophoretic mobility. Includes interactive visualizations of the physics and an honest account of where AI helped and where it stumbled.</p>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <p>Ankur Gupta &middot; University of Colorado Boulder &middot; <a href="https://www.colorado.edu/chbe/ankur-gupta">Professional page</a> &middot; <a href="https://www.colorado.edu/faculty/gupta/">LIFE Group</a></p>
+</footer>
+
+</body>
+</html>

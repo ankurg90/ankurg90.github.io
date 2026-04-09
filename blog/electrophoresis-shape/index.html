@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Claude Code Helped Us Solve a Fluids and Electrokinetics Problem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+:root {
+  --bg: #fafaf8;
+  --text: #1a1a1a;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --card-bg: #ffffff;
+  --max-width: 740px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 18px;
+}
+.container { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; line-height: 1.2; margin-bottom: 0.5rem; font-weight: 700; }
+h2 { font-size: 1.5rem; margin-top: 3rem; margin-bottom: 1rem; color: var(--text); font-weight: 600; }
+h3 { font-size: 1.15rem; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+p { margin-bottom: 1.25rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.subtitle { color: var(--muted); font-size: 1.05rem; margin-bottom: 2rem; font-style: italic; }
+.authors { color: var(--muted); font-size: 0.95rem; margin-bottom: 0.5rem; }
+
+/* TLDR box */
+.tldr {
+  background: var(--accent-light);
+  border-left: 4px solid var(--accent);
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.5rem 0 2rem;
+  font-size: 0.95rem;
+}
+.tldr strong { font-family: 'Inter', sans-serif; font-weight: 600; }
+
+/* Animation canvases */
+.animation-container {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+.animation-container canvas {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+.animation-caption {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+/* Interactive widget */
+.interactive-widget {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+.widget-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.widget-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.widget-left, .widget-right {
+  flex: 1;
+  min-width: 280px;
+}
+.slider-group {
+  margin-bottom: 1rem;
+}
+.slider-group label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+.slider-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+/* Equation block */
+.equation-block {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  overflow-x: auto;
+}
+.equation-caption {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  text-align: left;
+}
+
+/* Bullet list */
+ul, ol { margin: 0 0 1.25rem 1.5rem; }
+li { margin-bottom: 0.4rem; }
+
+/* Highlight box for findings */
+.finding-box {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1rem 0;
+}
+.finding-box strong { font-family: 'Inter', sans-serif; }
+
+/* AI section */
+.ai-section {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1rem 0;
+}
+
+/* Footer */
+.footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  h1 { font-size: 1.7rem; }
+  .widget-layout { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ============ HEADER ============ -->
+<h1>How Claude Code Helped Us Solve a Fluids and Electrokinetics Problem</h1>
+<p class="authors">Ankur Gupta and Arkava Ganguly</p>
+<p class="subtitle">An account of using AI to solve a mathematical chemical physics problem, including where it stumbled.</p>
+
+<div class="tldr">
+  <strong>TL;DR:</strong> Claude Code helped us solve a problem in fluid mechanics and electrokinetics that we had been working on. We published a <a href="#">preprint</a> on this result that is being submitted for peer review. We are sharing this because it was a highly technical problem that Claude was very capable at solving, though it made mistakes. Details below.
+</div>
+
+<!-- ============ ABOUT US ============ -->
+<h2>About Us</h2>
+<p>I am an <a href="https://www.colorado.edu/chbe/ankur-gupta">Assistant Professor</a> in the Department of Chemical and Biological Engineering at the University of Colorado Boulder. My research group, <a href="https://www.colorado.edu/faculty/gupta/">LIFE</a> (Laboratory of Interfaces, Flow, and Electrokinetics), focuses on understanding how particles and ions move and self-organize for a broad range of applications. My group utilizes a range of mathematical techniques that we used to solve this problem.</p>
+<p>My student, Arkava Ganguly (now a postdoc at NYU), and I were always intrigued about how shape impacts the motion of particles when they are driven by fields, or when they themselves create fields through the so-called self-propelling mechanism. For instance, one of Arkava's PhD papers focused on how <a href="https://link.aps.org/doi/10.1103/PhysRevFluids.8.014103">self-propelling bent rods go around in circles</a>. This blog post is about a new result on shape and particle motion, specifically a phenomenon called <em>electrophoresis</em>.</p>
+
+<!-- ============ WHAT IS ELECTROPHORESIS ============ -->
+<h2>What Is Electrophoresis?</h2>
+<p>If you aren't familiar with electrophoresis, the basic idea is to understand how fast a charged particle would move in response to an electric field when it is suspended in an electrolyte solution (think table salt in water). Imagine a tiny charged particle, say a protein, a nanoparticle, or a colloid, suspended in salty water. You switch on an electric field. The particle starts to move. <em>How fast</em> it moves relative to the field strength defines a quantity called the <strong>mobility</strong>. One of my colleagues calls mobility the "bang for your buck": it tells us how much we can drive the motion of the particles.</p>
+
+<p>This is an important topic because electrophoresis is helpful for a range of problems. It is used in gel electrophoresis to separate DNA and proteins, in measuring the surface charge of nanoparticles (the "zeta potential"), in microfluidic devices for sorting cells, and in characterizing colloids for drug delivery and environmental remediation.</p>
+
+<div class="animation-container">
+  <canvas id="anim-electrophoresis" width="660" height="320"></canvas>
+  <div class="animation-caption">A charged particle in an electrolyte. When an electric field is applied, the particle drifts while the surrounding ion cloud exerts a drag. Only nearby ions are shown for simplicity.</div>
+</div>
+
+<p>The mathematical description is elegant. The velocity $U$ of the particle is:</p>
+
+<div class="equation-block">
+  $$U = M \times E_\infty, \qquad M = \frac{\varepsilon_f \zeta}{\mu}\, f_H(\kappa a)$$
+  <div class="equation-caption">
+    The mobility $M$ depends on: the fluid permittivity $\varepsilon_f$, the particle's surface potential $\zeta$ (zeta potential), the fluid viscosity $\mu$, and a function $f_H$ that captures how thick the ion cloud is ($\kappa^{-1}$, the Debye length) relative to the particle size ($a$).
+  </div>
+</div>
+
+<p>The function $f_H(\kappa a)$, known as <strong>Henry's function</strong>, smoothly connects two classical limits. When the ion cloud is very thick compared to the particle ($\kappa a \to 0$, the "H&uuml;ckel limit"), $f_H = 2/3$. When the ion cloud is very thin ($\kappa a \to \infty$, the "Smoluchowski limit"), $f_H = 1$.</p>
+
+<!-- ============ SMOLUCHOWSKI ============ -->
+<h2>The Smoluchowski Surprise: Shape Doesn't Matter?</h2>
+<p>One of the key results in electrophoresis is that the <strong>mobility is shape-independent</strong>. It basically argues that you can have any shape of the particle, and it would always have the same mobility value. A sphere, a cube, a rod, a crumpled piece of paper: they all move at the same speed, as long as they carry the same surface charge.</p>
+
+<div class="animation-container">
+  <canvas id="anim-shape-independence" width="660" height="300"></canvas>
+  <div class="animation-caption">In the Smoluchowski limit, particles of any shape move at the same speed, but only when the ion cloud is much thinner than the particle.</div>
+</div>
+
+<p>This is a well-known result and there was even debate about it when it was first proposed. H&uuml;ckel (1924) calculated a mobility that was only 2/3 of Smoluchowski's value. It turned out both were correct, just in different limits. H&uuml;ckel's result applies when the ion cloud is very thick; Smoluchowski's when it is very thin. Henry (1931) later bridged them with the interpolation function $f_H(\kappa a)$.</p>
+
+<p>However, the shape-independence only works in the so-called thin double-layer limit. The double layer is the length scale at which oppositely charged ions get electrostatically attracted. For many real systems (nanoparticles, proteins, particles in low-salt solutions), the ion cloud can be comparable in size to the particle itself. In that regime, shape <em>should</em> matter.</p>
+
+<!-- ============ OUR QUESTION ============ -->
+<h2>Our Question: What If Shape <em>Does</em> Matter?</h2>
+<p>How would shape matter in electrophoresis?</p>
+
+<p>We realized that to answer this, we need to relax the thin double-layer assumption. However, relaxing it presents challenges since most of the ways to calculate mobility only work with the thin double-layer assumption. We, therefore, leaned on a framework from our prior work (Ganguly &amp; Gupta, 2024) that allowed us to circumvent this assumption by keeping the full volume of the ion cloud in the calculation.</p>
+
+<p>We focused on <strong>slightly deformed spheres</strong> because that is analytically tractable. Think of a slight deformation of a sphere. In this limit, you can create a range of shapes but still preserve them under the same mathematical construct. The particle surface is described by:</p>
+
+<div class="equation-block">
+  $$r_s(\theta) = a\bigl[1 + \varepsilon\, f(\theta)\bigr], \quad f(\theta) = \sum_n c_n P_n(\cos\theta)$$
+  <div class="equation-caption">
+    The shape is a sphere of radius $a$ plus a small deformation $\varepsilon f(\theta)$, where $P_n$ are Legendre polynomials, which are mathematical building blocks for describing shape variations. The coefficient $c_2$ controls elongation/flattening, $c_3$ controls pear-like asymmetry, and so on.
+  </div>
+</div>
+
+<div class="animation-container">
+  <canvas id="anim-deformation" width="660" height="320"></canvas>
+  <div class="animation-caption">A sphere smoothly deforming through different shapes: prolate (football), oblate (M&amp;M), and pear-shaped. Each is built from a different combination of Legendre modes.</div>
+</div>
+
+<!-- ============ RESULTS ============ -->
+<h2>What We Found</h2>
+
+<p>We quantified the impact of shape on mobility. Our main result is a compact formula for how shape modifies the mobility:</p>
+
+<div class="equation-block">
+  $$C_\parallel = f_H(\kappa a)\bigl[1 + \varepsilon\, c_2\, \sigma_2(\kappa a)\bigr]$$
+  <div class="equation-caption">
+    The mobility of a deformed sphere is Henry's function for a sphere, multiplied by a correction that depends on the shape ($\varepsilon\, c_2$) and a new "shape correction factor" $\sigma_2(\kappa a)$ that we computed.
+  </div>
+</div>
+
+<p>Three key findings emerged:</p>
+
+<div class="finding-box">
+  <strong>1. Shape correction is smooth and predictable.</strong><br>
+  The correction factor $\sigma_2$ starts at $+1/5$ when the ion cloud is thick (where the only effect of shape is to change the drag on the particle) and smoothly goes to zero when the cloud is thin (recovering Smoluchowski's shape-independence). A prolate (football-shaped) particle can move up to ~6% faster than a sphere in thick ion clouds.
+</div>
+
+<div class="finding-box">
+  <strong>2. Only one type of deformation matters.</strong><br>
+  Of all the ways you can deform a sphere, only the "elongation vs. flattening" mode (the $P_2$ or quadrupolar mode) affects the mobility. Pear shapes, bumpy shapes, wavy shapes: they are all <em>electrophoretically silent</em>. The electric field simply cannot "see" them. This is a consequence of angular selection rules: the dipolar electric field can only couple to the quadrupolar shape mode.
+</div>
+
+<div class="finding-box">
+  <strong>3. Our results match known exact solutions.</strong><br>
+  For the special case of spheroids (ellipsoids of revolution), exact solutions were computed by Yoon &amp; Kim in 1989. Our perturbation theory agrees with their results quantitatively, including a subtle non-monotonic behavior for oblate particles.
+</div>
+
+<!-- ============ INTERACTIVE WIDGET ============ -->
+<div class="interactive-widget">
+  <div class="widget-title">Shape Your Own Particle</div>
+  <div class="widget-layout">
+    <div class="widget-left">
+      <canvas id="shape-canvas" width="300" height="300"></canvas>
+      <div class="slider-group">
+        <label>Elongation / Flattening ($c_2$) <span id="c2-val">0.00</span></label>
+        <input type="range" id="slider-c2" min="-0.4" max="0.4" step="0.01" value="0">
+      </div>
+      <div class="slider-group">
+        <label>Pear-ness ($c_3$) <span id="c3-val">0.00</span></label>
+        <input type="range" id="slider-c3" min="-0.3" max="0.3" step="0.01" value="0">
+      </div>
+      <div class="slider-group">
+        <label>Waviness ($c_4$) <span id="c4-val">0.00</span></label>
+        <input type="range" id="slider-c4" min="-0.25" max="0.25" step="0.01" value="0">
+      </div>
+    </div>
+    <div class="widget-right">
+      <canvas id="mobility-canvas" width="360" height="300"></canvas>
+      <div class="animation-caption" style="text-align:center; margin-top:0.5rem;">
+        Move the <strong>elongation</strong> slider and watch the mobility curve shift. Now try the other sliders. The curve doesn't budge. The electric field is blind to those shape details.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ YOON & KIM ============ -->
+<h2>Checking Our Work</h2>
+<p>We validated our results against the exact spheroid solutions of Yoon &amp; Kim (1989). A spheroid is a special case of our deformed-sphere framework: an ellipsoid of revolution maps onto a pure $P_2$ deformation. The comparison is shown below for the closest-to-spherical case they computed ($c/a = 0.8$).</p>
+
+<div class="animation-container">
+  <canvas id="yk-canvas" width="660" height="340"></canvas>
+  <div class="animation-caption">Our perturbation theory (solid lines) vs. the exact spheroid solutions of Yoon &amp; Kim 1989 (circles). Left: prolate (football). Right: oblate (M&amp;M). Grey line: sphere (Henry's function).</div>
+</div>
+
+<!-- ============ SILENCING DEMO ============ -->
+<h2>Electrophoretic Silencing</h2>
+<p>To drive home the point that only the $P_2$ mode matters, consider four particles that look very different but are grouped into two pairs sharing the same elongation ($c_2$). Within each pair, the particles have different higher-order features ($c_3$), yet produce <em>identical</em> mobility curves.</p>
+
+<div class="animation-container">
+  <canvas id="silencing-canvas" width="660" height="360"></canvas>
+  <div class="animation-caption">Four particles grouped by their $c_2$ value. Despite looking very different, particles with the same elongation have identical mobility curves. Higher-order shape details are "electrophoretically silent."</div>
+</div>
+
+<!-- ============ HOW WE USED CLAUDE ============ -->
+<h2>How We Used Claude</h2>
+<p>This is a relatively complex problem that requires a lot of careful analytical work.</p>
+
+<div class="ai-section">
+<h3>First attempt: Claude Sonnet 4.6 (extended thinking)</h3>
+<p>We initially used the Claude chat option and used the Sonnet 4.6 extended model to try to get the solution. It arrived at a solution, but that was incorrect. The key portion that it struggled with was that we gave it a prompt of trying to solve for the first correction to the thin double layer limit, but it kept using the Stone and Samuel formula, which is only valid for the limit where Smoluchowski exists. This made it go in a loop, and after much digging, we figured that the solver went in that loop. It could have been that our prompt was not sufficiently clear.</p>
+</div>
+
+<div class="ai-section">
+<h3>Second attempt: Claude Opus 4.6</h3>
+<p>By getting inspired by <a href="https://www.anthropic.com/research/vibe-physics">the blog of Prof. Schwartz</a>, we decided to upgrade to Opus 4.6. Here, we first gave it a much clearer prompt, and we asked it to repeat the analysis in our prior work for an arbitrary Debye length, but for deformed spheres. The results were immediately improved. Then we switched to <strong>Claude Code on VSCode</strong> and investigated everything step by step. We also provided guidance on how to do consistency checks. It initially understood the assignment but made mistakes. The key mistake was that it assumed an incorrect coefficient from the Brenner 1964 paper. This was fixed after some prodding. We also used Claude Code to create all the figures, refine the figures, write the paper, and refine everything.</p>
+</div>
+
+<!-- ============ THOUGHTS ============ -->
+<h2>Our Thoughts on AI in Research</h2>
+<ul>
+  <li><strong>It is very powerful.</strong></li>
+  <li><strong>It needs to be used with caution</strong> as it can confuse even the experts.</li>
+  <li><strong>Guardrails are needed on its use.</strong> Undergraduate and graduate training needs to be thoughtful so as to not offload thinking.</li>
+</ul>
+
+<!-- ============ FOOTER ============ -->
+<div class="footer">
+  <p><strong>Preprint:</strong> <a href="#">Ganguly &amp; Gupta, "Shape-dependence of electrophoretic mobility" (2025)</a></p>
+  <p><strong>Acknowledgments:</strong> A.G. thanks the U.S. National Science Foundation (CBET-2238412, CAREER award) and the Air Force Office of Scientific Research (FA9550-25-1-0176, Young Investigator Program award). We are grateful to Professor Howard A. Stone for suggesting the deformed-sphere approach.</p>
+</div>
+
+</div><!-- end container -->
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT: PHYSICS DATA + ANIMATIONS                        -->
+<!-- ============================================================ -->
+<script>
+// ============ PRECOMPUTED PHYSICS DATA ============
+// [ka, fH, sigma2]
+const physicsData = [
+  [0.010000, 0.66667077, 0.20559017],
+  [0.011994, 0.66667255, 0.20662785],
+  [0.014384, 0.66667509, 0.20784292],
+  [0.017252, 0.66667874, 0.20926193],
+  [0.020691, 0.66668394, 0.21091045],
+  [0.024816, 0.66669136, 0.21281620],
+  [0.029764, 0.66670194, 0.21500577],
+  [0.035697, 0.66671698, 0.21750215],
+  [0.042813, 0.66673833, 0.22032443],
+  [0.051348, 0.66676857, 0.22348206],
+  [0.061585, 0.66681128, 0.22697056],
+  [0.073862, 0.66687142, 0.23076511],
+  [0.088587, 0.66695582, 0.23481445],
+  [0.106247, 0.66707380, 0.23903118],
+  [0.127427, 0.66723799, 0.24328393],
+  [0.152831, 0.66746535, 0.24738895],
+  [0.183298, 0.66777839, 0.25110243],
+  [0.219839, 0.66820668, 0.25411911],
+  [0.263665, 0.66878852, 0.25607475],
+  [0.316228, 0.66957275, 0.25655827],
+  [0.342360, 0.66999392, 0.25619673],
+  [0.370651, 0.67047111, 0.25543490],
+  [0.401281, 0.67101081, 0.25423739],
+  [0.434441, 0.67162000, 0.25257071],
+  [0.470342, 0.67230628, 0.25040376],
+  [0.509210, 0.67307779, 0.24770895],
+  [0.551289, 0.67394323, 0.24446306],
+  [0.596846, 0.67491191, 0.24064776],
+  [0.646167, 0.67599359, 0.23625092],
+  [0.699564, 0.67719860, 0.23126692],
+  [0.757374, 0.67853768, 0.22569750],
+  [0.819961, 0.68002195, 0.21955236],
+  [0.887720, 0.68166283, 0.21284926],
+  [0.961078, 0.68347192, 0.20561434],
+  [1.040498, 0.68546092, 0.19788193],
+  [1.126482, 0.68764149, 0.18969416],
+  [1.219570, 0.69002500, 0.18110089],
+  [1.320352, 0.69262258, 0.17215805],
+  [1.429461, 0.69544466, 0.16292770],
+  [1.547587, 0.69850103, 0.15347590],
+  [1.675475, 0.70180050, 0.14387199],
+  [1.813931, 0.70535068, 0.13418705],
+  [1.963828, 0.70915786, 0.12449236],
+  [2.126112, 0.71322679, 0.11485793],
+  [2.301807, 0.71756047, 0.10535122],
+  [2.492021, 0.72215994, 0.09603590],
+  [2.697954, 0.72702423, 0.08697066],
+  [2.920904, 0.73215011, 0.07820841],
+  [3.162278, 0.73753211, 0.06979544],
+  [3.423598, 0.74316241, 0.06177106],
+  [3.706513, 0.74903084, 0.05416728],
+  [4.012807, 0.75512491, 0.04700882],
+  [4.344412, 0.76142985, 0.04031320],
+  [4.703420, 0.76792881, 0.03409108],
+  [5.092096, 0.77460292, 0.02834668],
+  [5.512890, 0.78143154, 0.02307840],
+  [5.968457, 0.78839252, 0.01827931],
+  [6.461671, 0.79546243, 0.01393795],
+  [6.995642, 0.80261687, 0.01003893],
+  [7.573739, 0.80983077, 0.00656366],
+  [8.199608, 0.81707872, 0.00349100],
+  [8.877197, 0.82433529, 0.00079786],
+  [9.610780, 0.83157535, -0.00154018],
+  [10.404983, 0.83877434, -0.00354837],
+  [11.264817, 0.84590861, -0.00525233],
+  [12.195705, 0.85295562, -0.00667764],
+  [13.203518, 0.85989421, -0.00784948],
+  [14.294613, 0.86670477, -0.00879235],
+  [15.475874, 0.87336939, -0.00952984],
+  [16.754749, 0.87987198, -0.01008446],
+  [18.139307, 0.88619838, -0.01047745],
+  [19.638280, 0.89233634, -0.01072875],
+  [21.261123, 0.89827560, -0.01085689],
+  [23.018073, 0.90400780, -0.01087895],
+  [24.920212, 0.90952649, -0.01081063],
+  [26.979536, 0.91482697, -0.01066618],
+  [29.209037, 0.91990630, -0.01045849],
+  [31.622777, 0.92476310, -0.01019914],
+  [35.696988, 0.93174764, -0.00972668],
+  [40.296113, 0.93822039, -0.00918902],
+  [45.487779, 0.94419351, -0.00861180],
+  [51.348329, 0.94968407, -0.00801559],
+  [57.963940, 0.95471294, -0.00741652],
+  [65.431891, 0.95930378, -0.00682692],
+  [73.861998, 0.96348214, -0.00625597],
+  [83.378222, 0.96727463, -0.00571022],
+  [94.120497, 0.97070832, -0.00519405],
+  [106.246783, 0.97381011, -0.00471016],
+  [119.935395, 0.97660634, -0.00425988],
+  [135.387618, 0.97912245, -0.00384352],
+  [152.830673, 0.98138274, -0.00346058],
+  [172.521055, 0.98341016, -0.00311003],
+  [194.748304, 0.98522626, -0.00279040],
+  [219.839265, 0.98685110, -0.00249998],
+  [248.162892, 0.98830325, -0.00223691],
+  [280.135676, 0.98959979, -0.00199925],
+  [316.227766, 0.99075641, -0.00178503],
+];
+
+// Interpolate sigma2 and fH from precomputed data
+function interpPhysics(ka) {
+  if (ka <= physicsData[0][0]) return { fH: physicsData[0][1], sigma2: physicsData[0][2] };
+  if (ka >= physicsData[physicsData.length-1][0]) {
+    const last = physicsData[physicsData.length-1];
+    return { fH: last[1], sigma2: last[2] };
+  }
+  for (let i = 0; i < physicsData.length - 1; i++) {
+    if (ka >= physicsData[i][0] && ka <= physicsData[i+1][0]) {
+      const logKa = Math.log(ka);
+      const logKa0 = Math.log(physicsData[i][0]);
+      const logKa1 = Math.log(physicsData[i+1][0]);
+      const t = (logKa - logKa0) / (logKa1 - logKa0);
+      return {
+        fH: physicsData[i][1] + t * (physicsData[i+1][1] - physicsData[i][1]),
+        sigma2: physicsData[i][2] + t * (physicsData[i+1][2] - physicsData[i][2]),
+      };
+    }
+  }
+}
+
+// Legendre polynomials
+function P2(x) { return (3*x*x - 1) / 2; }
+function P3(x) { return (5*x*x*x - 3*x) / 2; }
+function P4(x) { return (35*x*x*x*x - 30*x*x + 3) / 8; }
+
+// Draw a deformed sphere cross-section on a canvas
+function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
+  const eps = 1;
+  const color = opts.color || '#2563eb';
+  const fill = opts.fill || 'rgba(37,99,235,0.12)';
+  const lineWidth = opts.lineWidth || 2;
+  ctx.beginPath();
+  for (let i = 0; i <= 200; i++) {
+    const theta = Math.PI * i / 200;
+    const cosT = Math.cos(theta);
+    const r = radius * (1 + eps * (c2 * P2(cosT) + c3 * P3(cosT) + c4 * P4(cosT)));
+    const x = cx + r * Math.sin(theta);
+    const y = cy - r * Math.cos(theta);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  // Mirror for full shape (negative theta = reflect x)
+  for (let i = 200; i >= 0; i--) {
+    const theta = Math.PI * i / 200;
+    const cosT = Math.cos(theta);
+    const r = radius * (1 + eps * (c2 * P2(cosT) + c3 * P3(cosT) + c4 * P4(cosT)));
+    const x = cx - r * Math.sin(theta);
+    const y = cy - r * Math.cos(theta);
+    ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+}
+
+// ============ ANIMATION 1: ELECTROPHORESIS EXPLAINER ============
+(function() {
+  const canvas = document.getElementById('anim-electrophoresis');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let t = 0;
+  const ions = [];
+  // Generate random ions
+  for (let i = 0; i < 60; i++) {
+    ions.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      charge: Math.random() > 0.5 ? 1 : -1,
+      r: 3 + Math.random() * 2,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+    });
+  }
+  let particleX = W * 0.6;
+  const particleY = H / 2;
+  const particleR = 40;
+  let fieldOn = false;
+  let phase = 0; // 0: no field, 1: field on
+
+  function draw() {
+    t += 1;
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = '#f0f7ff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Phase management
+    const cycle = t % 400;
+    fieldOn = cycle > 80;
+
+    // Electric field arrows
+    if (fieldOn) {
+      ctx.globalAlpha = Math.min(1, (cycle - 80) / 40);
+      ctx.strokeStyle = '#dc2626';
+      ctx.lineWidth = 2;
+      ctx.fillStyle = '#dc2626';
+      for (let row = 0; row < 3; row++) {
+        const yy = 80 + row * 80;
+        const ax = 20, bx = 80;
+        ctx.beginPath();
+        ctx.moveTo(ax, yy);
+        ctx.lineTo(bx, yy);
+        ctx.stroke();
+        // Arrowhead
+        ctx.beginPath();
+        ctx.moveTo(bx, yy);
+        ctx.lineTo(bx - 8, yy - 5);
+        ctx.lineTo(bx - 8, yy + 5);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // Label
+      ctx.font = '600 16px Inter, sans-serif';
+      ctx.fillStyle = '#dc2626';
+      ctx.textAlign = 'center';
+      ctx.fillText('E', 50, 55);
+
+      // Move particle
+      particleX -= 0.3;
+      if (particleX < -60) particleX = W + 60;
+    }
+
+    // Velocity label when field is on
+    if (fieldOn) {
+      ctx.font = '600 14px Inter, sans-serif';
+      ctx.fillStyle = '#2563eb';
+      ctx.textAlign = 'center';
+      const arrX = particleX - particleR - 40;
+      ctx.beginPath();
+      ctx.moveTo(particleX - particleR - 10, particleY);
+      ctx.lineTo(particleX - particleR - 55, particleY);
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(particleX - particleR - 55, particleY);
+      ctx.lineTo(particleX - particleR - 47, particleY - 5);
+      ctx.lineTo(particleX - particleR - 47, particleY + 5);
+      ctx.fillStyle = '#2563eb';
+      ctx.fill();
+      ctx.fillText('U', particleX - particleR - 35, particleY - 12);
+    }
+
+    // Draw Debye layer (cloud)
+    const grad = ctx.createRadialGradient(particleX, particleY, particleR, particleX, particleY, particleR + 35);
+    grad.addColorStop(0, 'rgba(251,191,36,0.35)');
+    grad.addColorStop(1, 'rgba(251,191,36,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(particleX, particleY, particleR + 35, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Label for double layer
+    ctx.font = '12px Inter, sans-serif';
+    ctx.fillStyle = '#92400e';
+    ctx.textAlign = 'left';
+    ctx.fillText('Ion cloud', particleX + particleR + 20, particleY - 40);
+    ctx.fillText('(double layer)', particleX + particleR + 20, particleY - 25);
+
+    // Draw ions
+    for (const ion of ions) {
+      const dx = ion.x - particleX;
+      const dy = ion.y - particleY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      // Random Brownian motion
+      ion.x += ion.vx + (Math.random() - 0.5) * 1.0;
+      ion.y += ion.vy + (Math.random() - 0.5) * 1.0;
+
+      // Keep near particle
+      if (ion.charge === -1 && dist < particleR + 50) {
+        // Counterions attracted
+      } else if (dist > 200) {
+        ion.x = particleX + (Math.random() - 0.5) * 300;
+        ion.y = particleY + (Math.random() - 0.5) * 250;
+      }
+
+      // Bounce off particle
+      if (dist < particleR + 5) {
+        ion.x += dx / dist * 3;
+        ion.y += dy / dist * 3;
+      }
+
+      // Wrap
+      if (ion.x < 0) ion.x = W;
+      if (ion.x > W) ion.x = 0;
+      if (ion.y < 0) ion.y = H;
+      if (ion.y > H) ion.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(ion.x, ion.y, ion.r, 0, Math.PI * 2);
+      ctx.fillStyle = ion.charge > 0 ? 'rgba(220,38,38,0.6)' : 'rgba(37,99,235,0.6)';
+      ctx.fill();
+      ctx.font = 'bold 8px Inter';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ion.charge > 0 ? '+' : '-', ion.x, ion.y);
+    }
+
+    // Draw particle
+    ctx.beginPath();
+    ctx.arc(particleX, particleY, particleR, 0, Math.PI * 2);
+    ctx.fillStyle = '#2563eb';
+    ctx.fill();
+    ctx.strokeStyle = '#1d4ed8';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Charge label on particle
+    ctx.font = 'bold 22px Inter';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('-', particleX, particleY);
+
+    // Equation label
+    ctx.font = '15px "Source Serif 4", serif';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.textAlign = 'center';
+    ctx.fillText('U = M \u00D7 E', W / 2, H - 20);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ ANIMATION 2: SHAPE INDEPENDENCE ============
+(function() {
+  const canvas = document.getElementById('anim-shape-independence');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let t = 0;
+
+  const shapes = [
+    { name: 'Sphere', c2: 0, c3: 0, c4: 0, color: '#2563eb' },
+    { name: 'Prolate', c2: 0.25, c3: 0, c4: 0, color: '#dc2626' },
+    { name: 'Oblate', c2: -0.2, c3: 0, c4: 0, color: '#059669' },
+    { name: 'Pear', c2: 0.1, c3: 0.2, c4: 0, color: '#7c3aed' },
+  ];
+
+  function draw() {
+    t += 1;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#f0f7ff';
+    ctx.fillRect(0, 0, W, H);
+
+    // E-field arrows
+    ctx.strokeStyle = '#dc262688';
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 4; i++) {
+      const xx = 15;
+      const yy = 50 + i * 65;
+      ctx.beginPath();
+      ctx.moveTo(xx, yy);
+      ctx.lineTo(xx + 40, yy);
+      ctx.stroke();
+      ctx.fillStyle = '#dc262688';
+      ctx.beginPath();
+      ctx.moveTo(xx + 40, yy);
+      ctx.lineTo(xx + 33, yy - 4);
+      ctx.lineTo(xx + 33, yy + 4);
+      ctx.fill();
+    }
+    ctx.font = '600 14px Inter';
+    ctx.fillStyle = '#dc2626';
+    ctx.textAlign = 'center';
+    ctx.fillText('E', 35, 35);
+
+    // All move at same speed in Smoluchowski limit
+    const speed = 0.4;
+    const xOffset = ((t * speed) % (W + 100)) - 80;
+
+    for (let i = 0; i < shapes.length; i++) {
+      const s = shapes[i];
+      const cy = 50 + i * 65;
+      const cx = xOffset + 80;
+      drawShape(ctx, cx, cy, 22, s.c2, s.c3, s.c4, {
+        color: s.color,
+        fill: s.color + '22',
+        lineWidth: 2,
+      });
+
+      // Label
+      ctx.font = '13px Inter';
+      ctx.fillStyle = s.color;
+      ctx.textAlign = 'left';
+      ctx.fillText(s.name, W - 100, cy + 5);
+    }
+
+    // Vertical dashed line showing they're at same position
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = '#6b728088';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(xOffset + 80, 20);
+    ctx.lineTo(xOffset + 80, H - 20);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.font = '13px "Source Serif 4", serif';
+    ctx.fillStyle = '#6b7280';
+    ctx.textAlign = 'center';
+    ctx.fillText('Same speed in the Smoluchowski (thin ion cloud) limit', W / 2, H - 12);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ ANIMATION 3: SPHERE DEFORMATIONS ============
+(function() {
+  const canvas = document.getElementById('anim-deformation');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let t = 0;
+
+  const modes = [
+    { name: 'Sphere', c2: 0, c3: 0, c4: 0 },
+    { name: 'Prolate (football)', c2: 0.3, c3: 0, c4: 0 },
+    { name: 'Oblate (M&M)', c2: -0.25, c3: 0, c4: 0 },
+    { name: 'Pear', c2: 0.1, c3: 0.25, c4: 0 },
+    { name: 'Mushroom', c2: -0.15, c3: 0.2, c4: 0.1 },
+  ];
+
+  function draw() {
+    t += 0.008;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#fafaf8';
+    ctx.fillRect(0, 0, W, H);
+
+    const cycleLen = modes.length;
+    const modeIdx = Math.floor(t % cycleLen);
+    const blend = (t % 1);
+    const nextIdx = (modeIdx + 1) % cycleLen;
+
+    // Smooth interpolation
+    const ease = blend < 0.3 ? 0 : blend > 0.7 ? 1 : (blend - 0.3) / 0.4;
+    const smoothEase = ease * ease * (3 - 2 * ease); // smoothstep
+
+    const c2 = modes[modeIdx].c2 + smoothEase * (modes[nextIdx].c2 - modes[modeIdx].c2);
+    const c3 = modes[modeIdx].c3 + smoothEase * (modes[nextIdx].c3 - modes[modeIdx].c3);
+    const c4 = modes[modeIdx].c4 + smoothEase * (modes[nextIdx].c4 - modes[modeIdx].c4);
+
+    const currentName = ease < 0.5 ? modes[modeIdx].name : modes[nextIdx].name;
+
+    // Draw reference sphere (dashed)
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = '#d1d5db';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(W/2, H/2 - 10, 100, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw deformed shape
+    drawShape(ctx, W/2, H/2 - 10, 100, c2, c3, c4, {
+      color: '#2563eb',
+      fill: 'rgba(37,99,235,0.15)',
+      lineWidth: 2.5,
+    });
+
+    // Label
+    ctx.font = '600 18px Inter';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.textAlign = 'center';
+    ctx.fillText(currentName, W/2, H - 20);
+
+    // Reference label
+    ctx.font = '12px Inter';
+    ctx.fillStyle = '#9ca3af';
+    ctx.fillText('(dashed: reference sphere)', W/2, H - 2);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+
+// ============ INTERACTIVE WIDGET: SHAPE + MOBILITY ============
+(function() {
+  const shapeCanvas = document.getElementById('shape-canvas');
+  const mobCanvas = document.getElementById('mobility-canvas');
+  const sCtx = shapeCanvas.getContext('2d');
+  const mCtx = mobCanvas.getContext('2d');
+  const sW = shapeCanvas.width, sH = shapeCanvas.height;
+  const mW = mobCanvas.width, mH = mobCanvas.height;
+
+  const sliderC2 = document.getElementById('slider-c2');
+  const sliderC3 = document.getElementById('slider-c3');
+  const sliderC4 = document.getElementById('slider-c4');
+  const valC2 = document.getElementById('c2-val');
+  const valC3 = document.getElementById('c3-val');
+  const valC4 = document.getElementById('c4-val');
+
+  function mobilityAtKa(ka, epsC2) {
+    const d = interpPhysics(ka);
+    return d.fH * (1 + epsC2 * d.sigma2);
+  }
+
+  function drawAll() {
+    const c2 = parseFloat(sliderC2.value);
+    const c3 = parseFloat(sliderC3.value);
+    const c4 = parseFloat(sliderC4.value);
+    valC2.textContent = c2.toFixed(2);
+    valC3.textContent = c3.toFixed(2);
+    valC4.textContent = c4.toFixed(2);
+
+    // --- Shape panel ---
+    sCtx.clearRect(0, 0, sW, sH);
+    sCtx.fillStyle = '#fafaf8';
+    sCtx.fillRect(0, 0, sW, sH);
+
+    // Reference sphere
+    sCtx.setLineDash([4, 4]);
+    sCtx.strokeStyle = '#d1d5db';
+    sCtx.lineWidth = 1;
+    sCtx.beginPath();
+    sCtx.arc(sW/2, sH/2, 100, 0, Math.PI * 2);
+    sCtx.stroke();
+    sCtx.setLineDash([]);
+
+    // Deformed shape
+    drawShape(sCtx, sW/2, sH/2, 100, c2, c3, c4);
+
+    // Axis indicator
+    sCtx.strokeStyle = '#9ca3af';
+    sCtx.lineWidth = 1;
+    sCtx.setLineDash([3, 3]);
+    sCtx.beginPath();
+    sCtx.moveTo(sW/2, 20);
+    sCtx.lineTo(sW/2, sH - 20);
+    sCtx.stroke();
+    sCtx.setLineDash([]);
+    sCtx.font = '11px Inter';
+    sCtx.fillStyle = '#9ca3af';
+    sCtx.textAlign = 'center';
+    sCtx.fillText('E field direction', sW/2, 15);
+
+    // --- Mobility panel ---
+    mCtx.clearRect(0, 0, mW, mH);
+    mCtx.fillStyle = '#fafaf8';
+    mCtx.fillRect(0, 0, mW, mH);
+
+    // Plot area
+    const pad = { left: 55, right: 20, top: 25, bottom: 45 };
+    const pw = mW - pad.left - pad.right;
+    const ph = mH - pad.top - pad.bottom;
+
+    // Axes
+    mCtx.strokeStyle = '#1a1a1a';
+    mCtx.lineWidth = 1.5;
+    mCtx.beginPath();
+    mCtx.moveTo(pad.left, pad.top);
+    mCtx.lineTo(pad.left, pad.top + ph);
+    mCtx.lineTo(pad.left + pw, pad.top + ph);
+    mCtx.stroke();
+
+    // Log scale for x: ka from 0.01 to 300
+    const logMin = Math.log10(0.01), logMax = Math.log10(300);
+    const yMin = 0.55, yMax = 1.05;
+
+    function toX(ka) { return pad.left + (Math.log10(ka) - logMin) / (logMax - logMin) * pw; }
+    function toY(v) { return pad.top + ph - (v - yMin) / (yMax - yMin) * ph; }
+
+    // Grid lines
+    mCtx.strokeStyle = '#e5e7eb';
+    mCtx.lineWidth = 0.5;
+    for (const tick of [0.01, 0.1, 1, 10, 100]) {
+      const xx = toX(tick);
+      mCtx.beginPath();
+      mCtx.moveTo(xx, pad.top);
+      mCtx.lineTo(xx, pad.top + ph);
+      mCtx.stroke();
+      mCtx.font = '11px Inter';
+      mCtx.fillStyle = '#6b7280';
+      mCtx.textAlign = 'center';
+      mCtx.fillText(tick < 1 ? tick.toString() : tick.toString(), xx, pad.top + ph + 16);
+    }
+    for (const tick of [0.6, 0.7, 0.8, 0.9, 1.0]) {
+      const yy = toY(tick);
+      mCtx.beginPath();
+      mCtx.moveTo(pad.left, yy);
+      mCtx.lineTo(pad.left + pw, yy);
+      mCtx.stroke();
+      mCtx.font = '11px Inter';
+      mCtx.fillStyle = '#6b7280';
+      mCtx.textAlign = 'right';
+      mCtx.fillText(tick.toFixed(1), pad.left - 8, yy + 4);
+    }
+
+    // Axis labels
+    mCtx.font = '12px Inter';
+    mCtx.fillStyle = '#1a1a1a';
+    mCtx.textAlign = 'center';
+    mCtx.fillText('Ion cloud thickness (\u03BAa)', pad.left + pw/2, mH - 5);
+    mCtx.save();
+    mCtx.translate(14, pad.top + ph/2);
+    mCtx.rotate(-Math.PI/2);
+    mCtx.fillText('Mobility', 0, 0);
+    mCtx.restore();
+
+    // Sphere curve (Henry's function) - grey
+    mCtx.beginPath();
+    mCtx.strokeStyle = '#9ca3af';
+    mCtx.lineWidth = 2;
+    mCtx.setLineDash([6, 4]);
+    for (let i = 0; i < physicsData.length; i++) {
+      const ka = physicsData[i][0];
+      const fH = physicsData[i][1];
+      const xx = toX(ka), yy = toY(fH);
+      if (i === 0) mCtx.moveTo(xx, yy); else mCtx.lineTo(xx, yy);
+    }
+    mCtx.stroke();
+    mCtx.setLineDash([]);
+
+    // Deformed particle curve
+    const epsC2 = c2; // eps*c2 combined
+    mCtx.beginPath();
+    mCtx.strokeStyle = '#2563eb';
+    mCtx.lineWidth = 2.5;
+    for (let i = 0; i < physicsData.length; i++) {
+      const ka = physicsData[i][0];
+      const mob = mobilityAtKa(ka, epsC2);
+      const xx = toX(ka), yy = toY(mob);
+      if (i === 0) mCtx.moveTo(xx, yy); else mCtx.lineTo(xx, yy);
+    }
+    mCtx.stroke();
+
+    // Legend
+    mCtx.setLineDash([6, 4]);
+    mCtx.strokeStyle = '#9ca3af';
+    mCtx.lineWidth = 2;
+    mCtx.beginPath();
+    mCtx.moveTo(pad.left + 10, pad.top + 10);
+    mCtx.lineTo(pad.left + 35, pad.top + 10);
+    mCtx.stroke();
+    mCtx.setLineDash([]);
+    mCtx.font = '11px Inter';
+    mCtx.fillStyle = '#9ca3af';
+    mCtx.textAlign = 'left';
+    mCtx.fillText('Sphere', pad.left + 40, pad.top + 14);
+
+    mCtx.strokeStyle = '#2563eb';
+    mCtx.lineWidth = 2.5;
+    mCtx.beginPath();
+    mCtx.moveTo(pad.left + 10, pad.top + 28);
+    mCtx.lineTo(pad.left + 35, pad.top + 28);
+    mCtx.stroke();
+    mCtx.fillStyle = '#2563eb';
+    mCtx.fillText('Your shape', pad.left + 40, pad.top + 32);
+  }
+
+  sliderC2.addEventListener('input', drawAll);
+  sliderC3.addEventListener('input', drawAll);
+  sliderC4.addEventListener('input', drawAll);
+  drawAll();
+})();
+
+// ============ YOON & KIM COMPARISON ============
+(function() {
+  const canvas = document.getElementById('yk-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // Y&K digitized data
+  const ykProlateKc = [0.003,0.01,0.03,0.1,0.3,0.5,1,2,3,5,10,20,50,100];
+  const ykProlateC = [0.687,0.687,0.689,0.695,0.707,0.715,0.725,0.745,0.775,0.825,0.885,0.940,0.978,0.995];
+  const ykOblateKc = [0.003,0.01,0.03,0.1,0.3,0.5,1,2,3,5,10,20,50,100];
+  const ykOblateC = [0.647,0.647,0.646,0.644,0.643,0.648,0.672,0.705,0.745,0.805,0.870,0.935,0.977,0.995];
+
+  // Mapping: c/a = 0.8
+  // Prolate: eps*c2 = (2/3)*(1/0.8 - 1) = 1/6, a_vol/c = (1/0.8)^(1/3)
+  // Oblate: eps*c2 = (2/3)*(0.8 - 1) = -2/15, a_vol/c = (1/0.8)^(2/3)
+  const epsC2Pro = 1/6;
+  const avolCPro = Math.pow(1/0.8, 1/3);
+  const epsC2Obl = -2/15;
+  const avolCObl = Math.pow(1/0.8, 2/3);
+
+  const halfW = W / 2 - 10;
+  const pad = { left: 55, right: 15, top: 30, bottom: 50 };
+  const pw = halfW - pad.left - pad.right;
+  const ph = H - pad.top - pad.bottom;
+  const logMin = Math.log10(0.003), logMax = Math.log10(200);
+  const yMin = 0.60, yMax = 1.05;
+
+  function toX(ka, ox) { return ox + pad.left + (Math.log10(ka) - logMin) / (logMax - logMin) * pw; }
+  function toY(v) { return pad.top + ph - (v - yMin) / (yMax - yMin) * ph; }
+
+  function drawPanel(ox, title, ykKc, ykC, epsC2, avolC, panelColor) {
+    // Axes
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(ox + pad.left, pad.top);
+    ctx.lineTo(ox + pad.left, pad.top + ph);
+    ctx.lineTo(ox + pad.left + pw, pad.top + ph);
+    ctx.stroke();
+
+    // Grid
+    ctx.strokeStyle = '#e5e7eb';
+    ctx.lineWidth = 0.5;
+    for (const tick of [0.01, 0.1, 1, 10, 100]) {
+      const xx = toX(tick, ox);
+      if (xx < ox + pad.left || xx > ox + pad.left + pw) continue;
+      ctx.beginPath();
+      ctx.moveTo(xx, pad.top);
+      ctx.lineTo(xx, pad.top + ph);
+      ctx.stroke();
+      ctx.font = '10px Inter';
+      ctx.fillStyle = '#6b7280';
+      ctx.textAlign = 'center';
+      ctx.fillText(tick.toString(), xx, pad.top + ph + 14);
+    }
+    for (const tick of [0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]) {
+      const yy = toY(tick);
+      ctx.beginPath();
+      ctx.moveTo(ox + pad.left, yy);
+      ctx.lineTo(ox + pad.left + pw, yy);
+      ctx.stroke();
+      if (ox === 0) {
+        ctx.font = '10px Inter';
+        ctx.fillStyle = '#6b7280';
+        ctx.textAlign = 'right';
+        ctx.fillText(tick.toFixed(2), ox + pad.left - 6, yy + 3);
+      }
+    }
+
+    // Title
+    ctx.font = '600 13px Inter';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, ox + pad.left + pw/2, pad.top - 10);
+
+    // x-axis label
+    ctx.font = '11px Inter';
+    ctx.fillStyle = '#6b7280';
+    ctx.fillText('\u03BAc', ox + pad.left + pw/2, H - 10);
+
+    // Henry (sphere) - grey dashed
+    ctx.beginPath();
+    ctx.strokeStyle = '#9ca3af';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 3]);
+    for (let i = 0; i < physicsData.length; i++) {
+      const kaVol = physicsData[i][0];
+      const kc = kaVol / avolC;
+      const fH = physicsData[i][1];
+      const xx = toX(kc, ox), yy = toY(fH);
+      if (xx < ox + pad.left || xx > ox + pad.left + pw) continue;
+      if (i === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Our prediction - solid
+    ctx.beginPath();
+    ctx.strokeStyle = panelColor;
+    ctx.lineWidth = 2.5;
+    for (let i = 0; i < physicsData.length; i++) {
+      const kaVol = physicsData[i][0];
+      const kc = kaVol / avolC;
+      const fH = physicsData[i][1];
+      const sig2 = physicsData[i][2];
+      const C = fH * (1 + epsC2 * sig2);
+      const xx = toX(kc, ox), yy = toY(C);
+      if (xx < ox + pad.left || xx > ox + pad.left + pw) continue;
+      if (i === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+    }
+    ctx.stroke();
+
+    // Y&K data points
+    ctx.fillStyle = panelColor;
+    for (let i = 0; i < ykKc.length; i++) {
+      const xx = toX(ykKc[i], ox), yy = toY(ykC[i]);
+      if (xx < ox + pad.left || xx > ox + pad.left + pw) continue;
+      ctx.beginPath();
+      ctx.arc(xx, yy, 5, 0, Math.PI * 2);
+      ctx.strokeStyle = panelColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fafaf8';
+  ctx.fillRect(0, 0, W, H);
+
+  // Y-axis label
+  ctx.save();
+  ctx.font = '12px Inter';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'center';
+  ctx.translate(12, pad.top + ph/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Mobility (C\u2225)', 0, 0);
+  ctx.restore();
+
+  drawPanel(0, 'Prolate (football)', ykProlateKc, ykProlateC, epsC2Pro, avolCPro, '#2563eb');
+  drawPanel(halfW + 20, 'Oblate (M&M)', ykOblateKc, ykOblateC, epsC2Obl, avolCObl, '#dc2626');
+
+  // Legend
+  const lx = W/2 - 120;
+  const ly = H - 30;
+  ctx.strokeStyle = '#9ca3af';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([5, 3]);
+  ctx.beginPath();
+  ctx.moveTo(lx, ly);
+  ctx.lineTo(lx + 25, ly);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = '11px Inter';
+  ctx.fillStyle = '#9ca3af';
+  ctx.textAlign = 'left';
+  ctx.fillText('Sphere', lx + 30, ly + 4);
+
+  ctx.strokeStyle = '#2563eb';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(lx + 90, ly);
+  ctx.lineTo(lx + 115, ly);
+  ctx.stroke();
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillText('Our theory', lx + 120, ly + 4);
+
+  ctx.beginPath();
+  ctx.arc(lx + 205, ly, 4, 0, Math.PI * 2);
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillText('Yoon & Kim 1989', lx + 215, ly + 4);
+})();
+
+// ============ SILENCING DEMO ============
+(function() {
+  const canvas = document.getElementById('silencing-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const pairs = [
+    { name: 'Prolate', c2: 0.2, c3: 0, color: '#2563eb', dash: false },
+    { name: 'Pear', c2: 0.2, c3: 0.25, color: '#2563eb', dash: true },
+    { name: 'Oblate', c2: -0.2, c3: 0, color: '#dc2626', dash: false },
+    { name: 'Mushroom', c2: -0.2, c3: 0.25, color: '#dc2626', dash: true },
+  ];
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fafaf8';
+  ctx.fillRect(0, 0, W, H);
+
+  // Shapes on the left
+  const shapeW = 200;
+  for (let i = 0; i < pairs.length; i++) {
+    const p = pairs[i];
+    const cx = 55 + (i % 2) * 85;
+    const cy = 80 + Math.floor(i / 2) * 160;
+    drawShape(ctx, cx, cy, 35, p.c2, p.c3, 0, {
+      color: p.color,
+      fill: p.color + '18',
+      lineWidth: p.dash ? 1.5 : 2,
+    });
+    if (p.dash) {
+      // Indicate dashed with pattern
+      ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      // Draw a small extra outline
+      ctx.setLineDash([]);
+    }
+    ctx.font = '11px Inter';
+    ctx.fillStyle = p.color;
+    ctx.textAlign = 'center';
+    ctx.fillText(p.name, cx, cy + 50);
+  }
+
+  // Bracket labels
+  ctx.font = '11px Inter';
+  ctx.fillStyle = '#2563eb';
+  ctx.textAlign = 'center';
+  ctx.fillText('Same c\u2082 = +0.2', 97, 20);
+  ctx.fillStyle = '#dc2626';
+  ctx.fillText('Same c\u2082 = \u22120.2', 97, 180);
+
+  // Plot on the right
+  const plotOx = shapeW;
+  const pad = { left: 55, right: 20, top: 30, bottom: 45 };
+  const pw = W - plotOx - pad.left - pad.right;
+  const ph = H - pad.top - pad.bottom;
+  const logMin = Math.log10(0.01), logMax = Math.log10(300);
+  const yMin = 0.58, yMax = 1.05;
+
+  function toX(ka) { return plotOx + pad.left + (Math.log10(ka) - logMin) / (logMax - logMin) * pw; }
+  function toY(v) { return pad.top + ph - (v - yMin) / (yMax - yMin) * ph; }
+
+  // Axes
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(plotOx + pad.left, pad.top);
+  ctx.lineTo(plotOx + pad.left, pad.top + ph);
+  ctx.lineTo(plotOx + pad.left + pw, pad.top + ph);
+  ctx.stroke();
+
+  // Grid
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.lineWidth = 0.5;
+  for (const tick of [0.01, 0.1, 1, 10, 100]) {
+    const xx = toX(tick);
+    ctx.beginPath();
+    ctx.moveTo(xx, pad.top);
+    ctx.lineTo(xx, pad.top + ph);
+    ctx.stroke();
+    ctx.font = '10px Inter';
+    ctx.fillStyle = '#6b7280';
+    ctx.textAlign = 'center';
+    ctx.fillText(tick.toString(), xx, pad.top + ph + 14);
+  }
+  for (const tick of [0.6, 0.7, 0.8, 0.9, 1.0]) {
+    const yy = toY(tick);
+    ctx.beginPath();
+    ctx.moveTo(plotOx + pad.left, yy);
+    ctx.lineTo(plotOx + pad.left + pw, yy);
+    ctx.stroke();
+    ctx.font = '10px Inter';
+    ctx.fillStyle = '#6b7280';
+    ctx.textAlign = 'right';
+    ctx.fillText(tick.toFixed(1), plotOx + pad.left - 6, yy + 3);
+  }
+
+  // Axis labels
+  ctx.font = '11px Inter';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.textAlign = 'center';
+  ctx.fillText('Ion cloud thickness (\u03BAa)', plotOx + pad.left + pw/2, H - 8);
+  ctx.save();
+  ctx.translate(plotOx + pad.left - 38, pad.top + ph/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Mobility', 0, 0);
+  ctx.restore();
+
+  // Sphere (grey dashed)
+  ctx.beginPath();
+  ctx.strokeStyle = '#9ca3af';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([5, 3]);
+  for (let i = 0; i < physicsData.length; i++) {
+    const xx = toX(physicsData[i][0]), yy = toY(physicsData[i][1]);
+    if (i === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw curves for each pair
+  for (const p of pairs) {
+    ctx.beginPath();
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = p.dash ? 2 : 2.5;
+    if (p.dash) ctx.setLineDash([8, 4]);
+    else ctx.setLineDash([]);
+    for (let i = 0; i < physicsData.length; i++) {
+      const ka = physicsData[i][0];
+      const fH = physicsData[i][1];
+      const sig2 = physicsData[i][2];
+      const C = fH * (1 + p.c2 * sig2);
+      const xx = toX(ka), yy = toY(C);
+      if (i === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+    }
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Legend
+  const lx = plotOx + pad.left + 10;
+  const ly = pad.top + 12;
+  const items = [
+    { name: 'Prolate (solid)', color: '#2563eb', dash: false },
+    { name: 'Pear (dashed)', color: '#2563eb', dash: true },
+    { name: 'Oblate (solid)', color: '#dc2626', dash: false },
+    { name: 'Mushroom (dashed)', color: '#dc2626', dash: true },
+  ];
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    const yy = ly + i * 16;
+    ctx.beginPath();
+    ctx.strokeStyle = it.color;
+    ctx.lineWidth = 2;
+    if (it.dash) ctx.setLineDash([5, 3]);
+    else ctx.setLineDash([]);
+    ctx.moveTo(lx, yy);
+    ctx.lineTo(lx + 20, yy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font = '10px Inter';
+    ctx.fillStyle = it.color;
+    ctx.textAlign = 'left';
+    ctx.fillText(it.name, lx + 25, yy + 3);
+  }
+})();
+</script>
+
+</body>
+</html>
