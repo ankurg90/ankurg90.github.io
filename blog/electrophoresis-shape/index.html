@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How Claude Code Helped Us Solve a Fluids and Electrokinetics Problem</title>
+<title>How Claude Code Helped Us Solve a Fluid Mechanics and Electrokinetics Problem</title>
 
 <!-- Social sharing thumbnail -->
-<meta property="og:title" content="How Claude Code Helped Us Solve a Fluids and Electrokinetics Problem">
+<meta property="og:title" content="How Claude Code Helped Us Solve a Fluid Mechanics and Electrokinetics Problem">
 <meta property="og:description" content="We used AI to solve a mathematical physics problem on how particle shape affects electrophoretic mobility. Includes interactive visualizations.">
 <meta property="og:image" content="https://ankurg90.github.io/assets/og-blog.png">
 <meta property="og:url" content="https://ankurg90.github.io/blog/electrophoresis-shape/">
 <meta property="og:type" content="article">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="How Claude Code Helped Us Solve a Fluids and Electrokinetics Problem">
+<meta name="twitter:title" content="How Claude Code Helped Us Solve a Fluid Mechanics and Electrokinetics Problem">
 <meta name="twitter:description" content="We used AI to solve a mathematical physics problem on how particle shape affects electrophoretic mobility.">
 <meta name="twitter:image" content="https://ankurg90.github.io/assets/og-blog.png">
 
@@ -173,7 +173,47 @@ li { margin-bottom: 0.4rem; }
   color: var(--muted);
 }
 
+/* Sidebar TOC */
+.toc {
+  position: fixed;
+  top: 70px;
+  left: max(10px, calc((100vw - 740px) / 2 - 220px));
+  width: 190px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  z-index: 50;
+}
+.toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 2px solid var(--border);
+}
+.toc li { margin: 0; padding: 0; }
+.toc a {
+  display: block;
+  padding: 0.3rem 0 0.3rem 0.75rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+  border-left: 2px solid transparent;
+  margin-left: -2px;
+}
+.toc a:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+.toc a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
 /* Responsive */
+@media (max-width: 1100px) {
+  .toc { display: none; }
+}
 @media (max-width: 600px) {
   body { font-size: 16px; }
   h1 { font-size: 1.7rem; }
@@ -193,21 +233,38 @@ li { margin-bottom: 0.4rem; }
 <div class="container">
 
 <!-- ============ HEADER ============ -->
-<h1>How Claude Code Helped Us Solve a Fluids and Electrokinetics Problem</h1>
+<h1>How Claude Code Helped Us Solve a Fluid Mechanics and Electrokinetics Problem</h1>
 <p class="authors">Ankur Gupta and Arkava Ganguly</p>
-<p class="subtitle">An account of using AI to solve a mathematical chemical physics problem, including where it stumbled.</p>
+
+<!-- Sidebar Table of Contents -->
+<nav class="toc" id="toc">
+  <ul>
+    <li><a href="#about-us">About Us</a></li>
+    <li><a href="#electrophoresis">What Is Electrophoresis?</a></li>
+    <li><a href="#smoluchowski">Shape Doesn't Matter?</a></li>
+    <li><a href="#our-question">Our Question</a></li>
+    <li><a href="#why-claude">Why We Thought Claude Could Help</a></li>
+    <li><a href="#results">What We Found</a></li>
+    <li><a href="#interactive">Shape Your Own Particle</a></li>
+    <li><a href="#validation">Checking Our Work</a></li>
+    <li><a href="#silencing">Electrophoretic Silencing</a></li>
+    <li><a href="#speed-demo">Shape and Speed</a></li>
+    <li><a href="#how-claude">How We Used Claude</a></li>
+    <li><a href="#thoughts">Our Thoughts on AI</a></li>
+  </ul>
+</nav>
 
 <div class="tldr">
   <strong>TL;DR:</strong> Claude Code helped us solve a problem in fluid mechanics and electrokinetics that we had been working on. We published a <a href="#">preprint</a> on this result that is being submitted for peer review. We are sharing this because it was a highly technical problem that Claude was very capable at solving, though it made mistakes. Details below.
 </div>
 
 <!-- ============ ABOUT US ============ -->
-<h2>About Us</h2>
+<h2 id="about-us">About Us</h2>
 <p>I am an <a href="https://www.colorado.edu/chbe/ankur-gupta">Assistant Professor</a> in the Department of Chemical and Biological Engineering at the University of Colorado Boulder. My research group, <a href="https://www.colorado.edu/faculty/gupta/">LIFE</a> (Laboratory of Interfaces, Flow, and Electrokinetics), focuses on understanding how particles and ions move and self-organize for a broad range of applications. My group utilizes a range of mathematical techniques that we used to solve this problem.</p>
 <p>My student, Arkava Ganguly (now a postdoc at NYU), and I were always intrigued about how shape impacts the motion of particles when they are driven by fields, or when they themselves create fields through the so-called self-propelling mechanism. For instance, one of Arkava's PhD papers focused on how <a href="https://link.aps.org/doi/10.1103/PhysRevFluids.8.014103">self-propelling bent rods go around in circles</a>. This blog post is about a new result on shape and particle motion, specifically a phenomenon called <em>electrophoresis</em>.</p>
 
 <!-- ============ WHAT IS ELECTROPHORESIS ============ -->
-<h2>What Is Electrophoresis?</h2>
+<h2 id="electrophoresis">What Is Electrophoresis?</h2>
 <p>If you aren't familiar with electrophoresis, the basic idea is to understand how fast a charged particle would move in response to an electric field when it is suspended in an electrolyte solution (think table salt in water). Imagine a tiny charged particle, say a protein, a nanoparticle, or a colloid, suspended in salty water. You switch on an electric field. The particle starts to move. <em>How fast</em> it moves relative to the field strength defines a quantity called the <strong>mobility</strong>. One of my colleagues calls mobility the "bang for your buck": it tells us how much we can drive the motion of the particles.</p>
 
 <p>This is an important topic because electrophoresis is helpful for a range of problems. It is used in gel electrophoresis to separate DNA and proteins, in measuring the surface charge of nanoparticles (the "zeta potential"), in microfluidic devices for sorting cells, and in characterizing colloids for drug delivery and environmental remediation.</p>
@@ -229,7 +286,7 @@ li { margin-bottom: 0.4rem; }
 <p>The function $f_H(\kappa a)$, known as <strong>Henry's function</strong>, smoothly connects two classical limits. When the ion cloud is very thick compared to the particle ($\kappa a \to 0$, the "H&uuml;ckel limit"), $f_H = 2/3$. When the ion cloud is very thin ($\kappa a \to \infty$, the "Smoluchowski limit"), $f_H = 1$.</p>
 
 <!-- ============ SMOLUCHOWSKI ============ -->
-<h2>The Smoluchowski Surprise: Shape Doesn't Matter?</h2>
+<h2 id="smoluchowski">The Smoluchowski Surprise: Shape Doesn't Matter?</h2>
 <p>One of the key results in electrophoresis is that the <strong>mobility is shape-independent</strong>. It basically argues that you can have any shape of the particle, and it would always have the same mobility value. A sphere, a cube, a rod, a crumpled piece of paper: they all move at the same speed, as long as they carry the same surface charge.</p>
 
 <div class="animation-container">
@@ -242,7 +299,7 @@ li { margin-bottom: 0.4rem; }
 <p>However, the shape-independence only works in the so-called thin double-layer limit. The double layer is the length scale at which oppositely charged ions get electrostatically attracted. For many real systems (nanoparticles, proteins, particles in low-salt solutions), the ion cloud can be comparable in size to the particle itself. In that regime, shape <em>should</em> matter.</p>
 
 <!-- ============ OUR QUESTION ============ -->
-<h2>Our Question: What If Shape <em>Does</em> Matter?</h2>
+<h2 id="our-question">Our Question: What If Shape <em>Does</em> Matter?</h2>
 <p>How would shape matter in electrophoresis?</p>
 
 <p>We realized that to answer this, we need to relax the thin double-layer assumption. However, relaxing it presents challenges since most of the ways to calculate mobility only work with the thin double-layer assumption. We, therefore, leaned on a framework from our prior work (Ganguly &amp; Gupta, 2024) that allowed us to circumvent this assumption by keeping the full volume of the ion cloud in the calculation.</p>
@@ -261,8 +318,17 @@ li { margin-bottom: 0.4rem; }
   <div class="animation-caption">A sphere smoothly deforming through different shapes: prolate (football), oblate (M&amp;M), and pear-shaped. Each is built from a different combination of Legendre modes.</div>
 </div>
 
+<!-- ============ WHY CLAUDE ============ -->
+<h2 id="why-claude">Why We Thought Claude Could Help</h2>
+
+<p>Our approach to this problem relies on a mathematical technique called <strong>perturbation theory</strong>. The idea is to start from a known solution (a sphere) and systematically compute corrections for small changes (the shape deformation). Think of it as asking: if I know exactly how a sphere behaves, can I figure out how a slightly squished sphere behaves by computing a small correction?</p>
+
+<p>Initially, we were thinking of using a mixture of regular and singular perturbation methods to get the first correction to the thin ion cloud assumption with small surface charge. In such analyses, you end up juggling many variables, length scales, and intermediate expressions. Keeping track of all of this is time-consuming and error-prone, especially when one sign error can invalidate the entire calculation. This is where we thought Claude could help significantly.</p>
+
+<p>In addition, we knew that some of the mathematical solutions needed for slow viscous flow (the so-called low Reynolds number regime) may need cumbersome calculations. However, the governing equations in this regime are <em>linear</em>, meaning they follow the principle of superposition: you can break a complex problem into simpler pieces, solve each one, and add the results. We believed that Claude, trained on a broad mathematical corpus, would be well-suited to handle these types of structured, step-by-step analytical calculations.</p>
+
 <!-- ============ RESULTS ============ -->
-<h2>What We Found</h2>
+<h2 id="results">What We Found</h2>
 
 <p>We quantified the impact of shape on mobility. Our main result is a compact formula for how shape modifies the mobility:</p>
 
@@ -292,7 +358,7 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ INTERACTIVE WIDGET ============ -->
 <div class="interactive-widget">
-  <div class="widget-title">Shape Your Own Particle</div>
+  <div class="widget-title" id="interactive">Shape Your Own Particle</div>
   <div class="widget-layout">
     <div class="widget-left">
       <canvas id="shape-canvas" width="300" height="300"></canvas>
@@ -319,7 +385,7 @@ li { margin-bottom: 0.4rem; }
 </div>
 
 <!-- ============ YOON & KIM ============ -->
-<h2>Checking Our Work</h2>
+<h2 id="validation">Checking Our Work</h2>
 <p>We validated our results against the exact spheroid solutions of Yoon &amp; Kim (1989). A spheroid is a special case of our deformed-sphere framework: an ellipsoid of revolution maps onto a pure $P_2$ deformation. The comparison is shown below for the closest-to-spherical case they computed ($c/a = 0.8$).</p>
 
 <div class="animation-container">
@@ -328,7 +394,7 @@ li { margin-bottom: 0.4rem; }
 </div>
 
 <!-- ============ SILENCING DEMO ============ -->
-<h2>Electrophoretic Silencing</h2>
+<h2 id="silencing">Electrophoretic Silencing</h2>
 <p>To drive home the point that only the $P_2$ mode matters, consider four particles that look very different but are grouped into two pairs sharing the same elongation ($c_2$). Within each pair, the particles have different higher-order features ($c_3$), yet produce <em>identical</em> mobility curves.</p>
 
 <div class="animation-container">
@@ -336,8 +402,26 @@ li { margin-bottom: 0.4rem; }
   <div class="animation-caption">Four particles grouped by their $c_2$ value. Despite looking very different, particles with the same elongation have identical mobility curves. Higher-order shape details are "electrophoretically silent."</div>
 </div>
 
+<!-- ============ SHAPE & SPEED INTERACTIVE ============ -->
+<h2 id="speed-demo">Shape and Speed: An Interactive Comparison</h2>
+<p>Earlier, we saw that in the Smoluchowski limit all shapes move at the same speed. But what happens as we change the ion cloud thickness? Use the slider below to adjust $\kappa a$ and watch how different shapes start moving at different speeds as the ion cloud gets thicker.</p>
+
+<div class="interactive-widget">
+  <div class="widget-title">How Ion Cloud Thickness Changes Shape Effects</div>
+  <div style="text-align:center; margin-bottom:0.75rem;">
+    <canvas id="speed-demo-canvas" width="660" height="280"></canvas>
+  </div>
+  <div class="slider-group" style="max-width:500px; margin:0 auto;">
+    <label>Ion cloud thickness ($\kappa a$) <span id="ka-val">100</span></label>
+    <input type="range" id="slider-ka" min="0" max="100" step="1" value="100">
+  </div>
+  <div class="animation-caption" style="text-align:center; margin-top:0.5rem;">
+    At high $\kappa a$ (thin cloud), all shapes move together. Drag the slider to lower values (thicker cloud) and watch the shapes separate: the prolate particle pulls ahead while the oblate one falls behind.
+  </div>
+</div>
+
 <!-- ============ HOW WE USED CLAUDE ============ -->
-<h2>How We Used Claude</h2>
+<h2 id="how-claude">How We Used Claude</h2>
 <p>This is a relatively complex problem that requires a lot of careful analytical work.</p>
 
 <div class="ai-section">
@@ -347,11 +431,11 @@ li { margin-bottom: 0.4rem; }
 
 <div class="ai-section">
 <h3>Second attempt: Claude Opus 4.6</h3>
-<p>By getting inspired by <a href="https://www.anthropic.com/research/vibe-physics">the blog of Prof. Schwartz</a>, we decided to upgrade to Opus 4.6. Here, we first gave it a much clearer prompt, and we asked it to repeat the analysis in our prior work for an arbitrary Debye length, but for deformed spheres. The results were immediately improved. Then we switched to <strong>Claude Code on VSCode</strong> and investigated everything step by step. We also provided guidance on how to do consistency checks. It initially understood the assignment but made mistakes. The key mistake was that it assumed an incorrect coefficient from the Brenner 1964 paper. This was fixed after some prodding. We also used Claude Code to create all the figures, refine the figures, write the paper, and refine everything.</p>
+<p>By getting inspired by <a href="https://www.anthropic.com/research/vibe-physics">the blog of Prof. Schwartz</a>, we decided to upgrade to Opus 4.6. Here, we first gave it a much clearer prompt, and we asked it to repeat the analysis in our prior work for an arbitrary Debye length, but for deformed spheres. The results were immediately improved. Then we switched to <strong>Claude Code on VSCode</strong> and investigated everything step by step. We also provided guidance on how to do consistency checks. It initially understood the assignment but made mistakes. The key mistake was that it assumed an incorrect coefficient from the Brenner 1964 paper. This was fixed after some prodding. We also used Claude Code to create all the figures, refine the figures, write the paper, and refine everything. If you are interested in some of the prompts we used, please read the <a href="#">preprint</a> where we have provided some of the prompts in the Appendix.</p>
 </div>
 
 <!-- ============ THOUGHTS ============ -->
-<h2>Our Thoughts on AI in Research</h2>
+<h2 id="thoughts">Our Thoughts on AI in Research</h2>
 <ul>
   <li><strong>It is very powerful.</strong></li>
   <li><strong>It needs to be used with caution</strong> as it can confuse even the experts.</li>
@@ -1377,6 +1461,134 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
     ctx.textAlign = 'left';
     ctx.fillText(it.name, lx + 25, yy + 3);
   }
+})();
+
+// ============ SPEED DEMO: SHAPE RACE WITH ADJUSTABLE KA ============
+(function() {
+  const canvas = document.getElementById('speed-demo-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const slider = document.getElementById('slider-ka');
+  const valDisplay = document.getElementById('ka-val');
+
+  const shapes = [
+    { name: 'Sphere', c2: 0, c3: 0, c4: 0, color: '#6b7280' },
+    { name: 'Prolate', c2: 0.25, c3: 0, c4: 0, color: '#2563eb' },
+    { name: 'Oblate', c2: -0.2, c3: 0, c4: 0, color: '#dc2626' },
+    { name: 'Pear', c2: 0.1, c3: 0.2, c4: 0, color: '#7c3aed' },
+  ];
+
+  let t = 0;
+  let ka = 100;
+
+  function getMobility(c2, kaVal) {
+    const d = interpPhysics(Math.max(kaVal, 0.01));
+    return d.fH * (1 + c2 * d.sigma2);
+  }
+
+  function draw() {
+    t += 1;
+    ka = parseFloat(slider.value);
+    // Map slider 0-100 to ka 0.01 to 300 (log scale)
+    const kaActual = Math.pow(10, -2 + (ka / 100) * (Math.log10(300) + 2));
+    valDisplay.textContent = kaActual < 1 ? kaActual.toFixed(2) : kaActual < 10 ? kaActual.toFixed(1) : Math.round(kaActual);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#f0f7ff';
+    ctx.fillRect(0, 0, W, H);
+
+    // E-field arrows
+    ctx.strokeStyle = '#dc262688';
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 4; i++) {
+      const xx = 15;
+      const yy = 40 + i * 60;
+      ctx.beginPath();
+      ctx.moveTo(xx, yy);
+      ctx.lineTo(xx + 35, yy);
+      ctx.stroke();
+      ctx.fillStyle = '#dc262688';
+      ctx.beginPath();
+      ctx.moveTo(xx + 35, yy);
+      ctx.lineTo(xx + 28, yy - 4);
+      ctx.lineTo(xx + 28, yy + 4);
+      ctx.fill();
+    }
+    ctx.font = '600 13px Inter';
+    ctx.fillStyle = '#dc2626';
+    ctx.textAlign = 'center';
+    ctx.fillText('E', 32, 22);
+
+    // Compute mobilities and normalize
+    const sphereMob = getMobility(0, kaActual);
+    const baseSpeed = 0.4;
+
+    for (let i = 0; i < shapes.length; i++) {
+      const s = shapes[i];
+      const mob = getMobility(s.c2, kaActual);
+      const speed = baseSpeed * (mob / sphereMob);
+      const cy = 40 + i * 60;
+      const cx = ((t * speed) % (W + 100)) - 50;
+
+      drawShape(ctx, cx, cy, 20, s.c2, s.c3, s.c4, {
+        color: s.color,
+        fill: s.color + '22',
+        lineWidth: 2,
+      });
+
+      // Label on the right
+      ctx.font = '12px Inter';
+      ctx.fillStyle = s.color;
+      ctx.textAlign = 'left';
+      const mobPercent = ((mob / sphereMob - 1) * 100);
+      const label = s.name + (Math.abs(mobPercent) > 0.1 && s.c2 !== 0 ?
+        ' (' + (mobPercent > 0 ? '+' : '') + mobPercent.toFixed(1) + '%)' : '');
+      ctx.fillText(label, W - 140, cy + 5);
+    }
+
+    // Ka display
+    ctx.font = '600 13px Inter';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.textAlign = 'center';
+    ctx.fillText('\u03BAa = ' + (kaActual < 1 ? kaActual.toFixed(2) : kaActual < 10 ? kaActual.toFixed(1) : Math.round(kaActual)), W / 2, H - 10);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ TOC SCROLL HIGHLIGHTING ============
+(function() {
+  const tocLinks = document.querySelectorAll('.toc a');
+  const sections = [];
+  tocLinks.forEach(link => {
+    const id = link.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) sections.push({ id, el, link });
+  });
+
+  function onScroll() {
+    const scrollY = window.scrollY + 120;
+    let current = sections[0];
+    for (const s of sections) {
+      if (s.el.offsetTop <= scrollY) current = s;
+    }
+    tocLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Smooth scroll on click
+  tocLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
 })();
 </script>
 

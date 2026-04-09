@@ -185,7 +185,7 @@ nav {
 .media-card {
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 1.25rem;
+  overflow: hidden;
   transition: box-shadow 0.2s, border-color 0.2s;
   display: flex;
   flex-direction: column;
@@ -196,6 +196,18 @@ nav {
   border-color: var(--accent);
   box-shadow: 0 4px 12px rgba(37,99,235,0.08);
   text-decoration: none;
+}
+.media-thumb {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+.media-card-body {
+  padding: 1rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 .media-outlet {
   font-size: 0.75rem;
@@ -224,6 +236,11 @@ nav {
   color: var(--accent);
   margin-top: 0.75rem;
 }
+.more-stories {
+  margin-top: 1.25rem;
+  font-size: 0.92rem;
+  font-family: 'Source Serif 4', Georgia, serif;
+}
 
 /* ── Blog cards ── */
 .blog-list {
@@ -232,10 +249,10 @@ nav {
   gap: 1rem;
 }
 .blog-card {
-  display: block;
+  display: flex;
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 1.25rem 1.5rem;
+  overflow: hidden;
   transition: box-shadow 0.2s, border-color 0.2s;
   text-decoration: none;
   color: var(--text);
@@ -244,6 +261,18 @@ nav {
   border-color: var(--accent);
   box-shadow: 0 4px 12px rgba(37,99,235,0.08);
   text-decoration: none;
+}
+.blog-card-thumb {
+  width: 200px;
+  min-height: 140px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.blog-card-body {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .blog-card h3 {
   font-size: 1rem;
@@ -294,6 +323,8 @@ footer {
   .nav-name { padding: 0.7rem 0 0.3rem; }
   .nav-links { padding-bottom: 0.4rem; }
   .media-grid { grid-template-columns: 1fr; }
+  .blog-card { flex-direction: column; }
+  .blog-card-thumb { width: 100%; min-height: 160px; }
 }
 </style>
 </head>
@@ -349,27 +380,37 @@ footer {
   <div class="media-grid">
 
     <a class="media-card" href="https://www.nytimes.com/2025/11/06/science/alan-turing-patterns-boxfish.html?unlocked_article_code=1.zE8.orbh.nyZrXi7zVKtd&smid=url-share" target="_blank" rel="noopener">
-      <div class="media-outlet">The New York Times</div>
-      <h3>Alan Turing's Patterns and the Boxfish</h3>
-      <p>Coverage of our work on Turing patterns and biological self-organization.</p>
-      <div class="read-more">Read article &rarr;</div>
+      <img class="media-thumb" src="assets/fish-image.png" alt="Boxfish Turing patterns">
+      <div class="media-card-body">
+        <div class="media-outlet">The New York Times</div>
+        <h3>Alan Turing's Patterns and the Boxfish</h3>
+        <p>Coverage of our work on Turing patterns and biological self-organization.</p>
+        <div class="read-more">Read article &rarr;</div>
+      </div>
     </a>
 
     <a class="media-card" href="https://www.newyorker.com/science/elements/how-the-tiger-really-got-his-stripes" target="_blank" rel="noopener">
-      <div class="media-outlet">The New Yorker</div>
-      <h3>How the Tiger Really Got His Stripes</h3>
-      <p>On the mathematical principles behind pattern formation in nature.</p>
-      <div class="read-more">Read article &rarr;</div>
+      <img class="media-thumb" src="https://media.newyorker.com/photos/67a2811fe8645e49710d1a62/16:9/w_1280,c_limit/Galchen_Stripes.jpg" alt="Tiger stripes">
+      <div class="media-card-body">
+        <div class="media-outlet">The New Yorker</div>
+        <h3>How the Tiger Really Got His Stripes</h3>
+        <p>On the mathematical principles behind pattern formation in nature.</p>
+        <div class="read-more">Read article &rarr;</div>
+      </div>
     </a>
 
     <a class="media-card" href="https://cen.acs.org/physical-chemistry/computational-chemistry/rules-road-ions/102/i17" target="_blank" rel="noopener">
-      <div class="media-outlet">Chemical &amp; Engineering News</div>
-      <h3>Rules of the Road for Ions</h3>
-      <p>On our work understanding how ions move and self-organize in solution.</p>
-      <div class="read-more">Read article &rarr;</div>
+      <img class="media-thumb" src="https://s7d1.scene7.com/is/image/CENODS/10217-scicon6-fig:Widescreen" alt="Rules of the road for ions">
+      <div class="media-card-body">
+        <div class="media-outlet">Chemical &amp; Engineering News</div>
+        <h3>Rules of the Road for Ions</h3>
+        <p>On our work understanding how ions move and self-organize in solution.</p>
+        <div class="read-more">Read article &rarr;</div>
+      </div>
     </a>
 
   </div>
+  <p class="more-stories">For more stories related to our work, take a look at <a href="https://www.colorado.edu/chbe/taxonomy/term/331" target="_blank" rel="noopener">our news page at CU Boulder</a>.</p>
 </section>
 
 <!-- ── Blog ── -->
@@ -379,9 +420,12 @@ footer {
   <div class="blog-list">
 
     <a class="blog-card" href="blog/electrophoresis-shape/">
-      <h3>How Claude Code Helped Us Solve a Fluids and Electrokinetics Problem <span class="blog-tag">Interactive</span></h3>
-      <div class="blog-meta">April 2026 &middot; Ankur Gupta and Arkava Ganguly</div>
-      <p>We used AI to solve a mathematical physics problem on how particle shape affects electrophoretic mobility. Includes interactive visualizations of the physics and an honest account of where AI helped and where it stumbled.</p>
+      <img class="blog-card-thumb" src="assets/og-blog.png" alt="Electrophoresis shape blog post">
+      <div class="blog-card-body">
+        <h3>How Claude Code Helped Us Solve a Fluid Mechanics and Electrokinetics Problem <span class="blog-tag">Interactive</span></h3>
+        <div class="blog-meta">April 2026 &middot; Ankur Gupta and Arkava Ganguly</div>
+        <p>We used AI to solve a mathematical physics problem on how particle shape affects electrophoretic mobility. Includes interactive visualizations of the physics and an honest account of where AI helped and where it stumbled.</p>
+      </div>
     </a>
 
   </div>
