@@ -164,6 +164,113 @@ li { margin-bottom: 0.4rem; }
   margin: 1rem 0;
 }
 
+/* Project timeline */
+.timeline {
+  margin: 1.5rem 0 2rem;
+  padding-left: 0.5rem;
+}
+.timeline-item {
+  position: relative;
+  padding-left: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-left: 2px solid var(--border);
+}
+.timeline-item:last-child {
+  border-left-color: transparent;
+  padding-bottom: 0.25rem;
+}
+.timeline-dot {
+  position: absolute;
+  left: -7px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.timeline-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+.timeline-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Flowchart of AI interaction */
+.flowchart {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.flow-step.ok    { background: #ecfdf5; border-left: 3px solid #10b981; }
+.flow-step.warn  { background: #fef3c7; border-left: 3px solid #f59e0b; }
+.flow-step.error { background: #fee2e2; border-left: 3px solid #ef4444; }
+.flow-step.human { background: #eff6ff; border-left: 3px solid #3b82f6; }
+.flow-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #fff;
+}
+.flow-step.ok    .flow-icon { background: #10b981; }
+.flow-step.warn  .flow-icon { background: #f59e0b; }
+.flow-step.error .flow-icon { background: #ef4444; }
+.flow-step.human .flow-icon { background: #3b82f6; }
+.flow-label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.15rem;
+  color: #1a1a1a;
+}
+.flow-arrow {
+  text-align: center;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 0.8;
+  margin: -0.1rem 0;
+}
+.flow-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border);
+}
+.flow-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.flow-legend .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
 /* Footer */
 .footer {
   margin-top: 4rem;
@@ -243,7 +350,8 @@ li { margin-bottom: 0.4rem; }
     <li><a href="#electrophoresis">What Is Electrophoresis?</a></li>
     <li><a href="#smoluchowski">Shape Doesn't Matter?</a></li>
     <li><a href="#our-question">Our Question</a></li>
-    <li><a href="#why-claude">Why We Thought Claude Could Help</a></li>
+    <li><a href="#timeline">The Long Road</a></li>
+    <li><a href="#why-claude">Why Claude Could Help</a></li>
     <li><a href="#results">What We Found</a></li>
     <li><a href="#interactive">Shape Your Own Particle</a></li>
     <li><a href="#validation">Checking Our Work</a></li>
@@ -255,7 +363,7 @@ li { margin-bottom: 0.4rem; }
 </nav>
 
 <div class="tldr">
-  <strong>TL;DR:</strong> Claude Code helped us solve a problem in fluid mechanics and electrokinetics that we had been working on. We published a <a href="#">preprint</a> on this result that is being submitted for peer review. We are sharing this because it was a highly technical problem that Claude was very capable at solving, though it made mistakes. Details below.
+  <strong>TL;DR:</strong> We spent about 1.5 years chasing a problem in fluid mechanics and electrokinetics, cycling through numerical simulations, COMSOL, and several analytical detours before finding the right formulation (thanks to a timely suggestion from Prof. Howard Stone). At that point, Claude Code became a real collaborator. It accelerated the hardest parts of the analytical derivation, generated all the figures, and helped us write the paper. It also made mistakes that we had to catch and correct along the way. We published a <a href="#">preprint</a> on this result, which is being submitted for peer review. This post walks through the physics, the long road that got us here, and how we actually used AI in the process, including where it helped and where it slipped.
 </div>
 
 <!-- ============ ABOUT US ============ -->
@@ -304,7 +412,7 @@ li { margin-bottom: 0.4rem; }
 
 <p>We realized that to answer this, we need to relax the thin double-layer assumption. However, relaxing it presents challenges since most of the ways to calculate mobility only work with the thin double-layer assumption. We, therefore, leaned on a framework from our prior work (Ganguly &amp; Gupta, 2024) that allowed us to circumvent this assumption by keeping the full volume of the ion cloud in the calculation.</p>
 
-<p>We focused on <strong>slightly deformed spheres</strong> because that is analytically tractable. Think of a slight deformation of a sphere. In this limit, you can create a range of shapes but still preserve them under the same mathematical construct. The particle surface is described by:</p>
+<p>We focused on <strong>slightly deformed spheres</strong> because that is analytically tractable. Think of a slight deformation of a sphere: a football (stretched), an M&amp;M (squashed), a pear, a mushroom. In this limit, you can create a range of shapes but still preserve them under the same mathematical construct. The particle surface is described by:</p>
 
 <div class="equation-block">
   $$r_s(\theta) = a\bigl[1 + \varepsilon\, f(\theta)\bigr], \quad f(\theta) = \sum_n c_n P_n(\cos\theta)$$
@@ -317,6 +425,57 @@ li { margin-bottom: 0.4rem; }
   <canvas id="anim-deformation" width="660" height="320"></canvas>
   <div class="animation-caption">A sphere smoothly deforming through different shapes: prolate (football), oblate (M&amp;M), and pear-shaped. Each is built from a different combination of Legendre modes.</div>
 </div>
+
+<!-- ============ PROJECT TIMELINE ============ -->
+<h2 id="timeline">The Long Road to This Problem</h2>
+<p>Before we get to how Claude helped, it is worth being honest about how long this took. The question of "how does shape change electrophoretic mobility" sounds simple, but getting to a formulation we could actually solve was a roughly 1.5 year journey with several false starts. Here is the condensed version:</p>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="timeline-content">
+      <div class="timeline-date">Fall 2024</div>
+      <div class="timeline-body"><strong>Full spheroids, numerical attempt.</strong> We began with the full spheroids problem. Arkava and Zoe had done earlier work validating mobility and disturbance coefficients. But the full Poisson-Nernst-Planck equations would not converge in our own solver.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="timeline-content">
+      <div class="timeline-date">Spring 2025</div>
+      <div class="timeline-body"><strong>Transition to COMSOL.</strong> We started getting numerical solutions but struggled to benchmark them against prior literature. After a lot of back and forth, we matched the classical result at zero eccentricity (a sphere), but the finite eccentricity results were hard to trust.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="timeline-content">
+      <div class="timeline-date">Summer-Fall 2025</div>
+      <div class="timeline-body"><strong>Axisymmetric spheroid, analytical.</strong> We simplified to an axisymmetric spheroidal problem we could attack analytically. This captured the H&uuml;ckel limit for low but finite eccentricity. But there was still a quantitative mismatch at the Smoluchowski limit we could not reconcile.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="timeline-content">
+      <div class="timeline-date">December 2025</div>
+      <div class="timeline-body"><strong>Slightly curved surface.</strong> We pivoted to electrophoresis near a slightly curved surface, trying to capture the shape effect through a singular perturbation in $\kappa$. Promising, but still not the clean framing we needed.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="timeline-content">
+      <div class="timeline-date">February 2026</div>
+      <div class="timeline-body"><strong>The right problem.</strong> Prof. Howard Stone suggested the canonical deformed-sphere formulation. In hindsight this was the unlock. The same perturbation framework we had been groping toward suddenly had clean boundary conditions, a well-defined small parameter, and a clear path to compute the correction order by order.</div>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="timeline-content">
+      <div class="timeline-date">Spring 2026</div>
+      <div class="timeline-body"><strong>Claude enters the picture.</strong> With the right formulation in hand, we used Claude (first chat, then Claude Code) to carry out the analytical derivation, generate every figure in the paper, and help write the manuscript. This is where the project finally accelerated. Details in the section below.</div>
+    </div>
+  </div>
+</div>
+
+<p>We share this timeline for two reasons. First, it is easy to read a preprint and think the ideas arrived fully formed; they almost never do. Second, the AI only became genuinely useful once the problem was correctly posed. No amount of prompting was going to rescue us from an ill-posed formulation. The human step of recognizing the right framing (with Prof. Stone's help) was not something we could outsource.</p>
 
 <!-- ============ WHY CLAUDE ============ -->
 <h2 id="why-claude">Why We Thought Claude Could Help</h2>
@@ -347,8 +506,8 @@ li { margin-bottom: 0.4rem; }
 </div>
 
 <div class="finding-box">
-  <strong>2. Only one type of deformation matters.</strong><br>
-  Of all the ways you can deform a sphere, only the "elongation vs. flattening" mode (the $P_2$ or quadrupolar mode) affects the mobility. Pear shapes, bumpy shapes, wavy shapes: they are all <em>electrophoretically silent</em>. The electric field simply cannot "see" them. This is a consequence of angular selection rules: the dipolar electric field can only couple to the quadrupolar shape mode.
+  <strong>2. Only one kind of shape change matters: stretching or squashing along the field.</strong><br>
+  Think of a football (stretched along the field direction) versus an M&amp;M (squashed along the field direction). That stretch-or-squash mode, called $P_2$ in the math, is the <em>only</em> shape change that affects the mobility at this order. Pear shapes, bumpy shapes, wavy shapes, all of them are <em>electrophoretically silent</em>: the electric field simply cannot "see" them. Technically, this is a consequence of angular selection rules: the dipolar electric field can only couple to the quadrupolar shape mode. The practical upshot is that a football and a pear with the same amount of elongation end up with identical mobilities, even though they look very different.
 </div>
 
 <div class="finding-box">
@@ -421,17 +580,103 @@ li { margin-bottom: 0.4rem; }
 </div>
 
 <!-- ============ HOW WE USED CLAUDE ============ -->
-<h2 id="how-claude">How We Used Claude</h2>
-<p>This is a relatively complex problem that requires a lot of careful analytical work.</p>
+<h2 id="how-claude">How We Used Claude (and What It Got Wrong)</h2>
+<p>Once the deformed-sphere formulation was in hand, the analytical work that lay ahead was exactly the kind of thing that is grinding rather than creative: expand a small parameter, match boundary conditions order by order, carry dozens of intermediate terms without dropping a sign, and repeatedly cross-check against limiting cases. This is where we thought AI could genuinely help. Below is an honest account of how the collaboration unfolded, including the mistakes we had to catch.</p>
 
+<h3>Attempt 1: Claude Sonnet 4.6 (chat, extended thinking)</h3>
 <div class="ai-section">
-<h3>First attempt: Claude Sonnet 4.6 (extended thinking)</h3>
-<p>We initially used the Claude chat option and used the Sonnet 4.6 extended model to try to get the solution. It arrived at a solution, but that was incorrect. The key portion that it struggled with was that we gave it a prompt of trying to solve for the first correction to the thin double layer limit, but it kept using the Stone and Samuel formula, which is only valid for the limit where Smoluchowski exists. This made it go in a loop, and after much digging, we figured that the solver went in that loop. It could have been that our prompt was not sufficiently clear.</p>
+<p>We first tried the chat interface with Sonnet 4.6 in extended-thinking mode. It produced a clean-looking derivation, but the answer was wrong. The failure mode was subtle: we had asked it to compute the <em>first correction to the thin-double-layer limit</em>, and it repeatedly reached for the Stone &amp; Samuel formula, which is only valid <em>at</em> the Smoluchowski (thin-double-layer) limit, not as a starting point for a correction away from it. Every time we pushed back, it would rephrase the same incorrect approach. In retrospect, our prompt was probably not sharp enough, but it was also clear the model had locked onto a familiar result and could not see past it.</p>
 </div>
 
+<h3>Attempt 2: Claude Opus 4.6 (chat) &rarr; Claude Code (VSCode)</h3>
 <div class="ai-section">
-<h3>Second attempt: Claude Opus 4.6</h3>
-<p>By getting inspired by <a href="https://www.anthropic.com/research/vibe-physics">the blog of Prof. Schwartz</a>, we decided to upgrade to Opus 4.6. Here, we first gave it a much clearer prompt, and we asked it to repeat the analysis in our prior work for an arbitrary Debye length, but for deformed spheres. The results were immediately improved. Then we switched to <strong>Claude Code on VSCode</strong> and investigated everything step by step. We also provided guidance on how to do consistency checks. It initially understood the assignment but made mistakes. The key mistake was that it assumed an incorrect coefficient from the Brenner 1964 paper. This was fixed after some prodding. We also used Claude Code to create all the figures, refine the figures, write the paper, and refine everything. If you are interested in some of the prompts we used, please read the <a href="#">preprint</a> where we have provided some of the prompts in the Appendix.</p>
+<p>Inspired by <a href="https://www.anthropic.com/research/vibe-physics">Prof. Matthew Schwartz's "vibe physics" blog post</a>, we upgraded to Opus 4.6. We also rewrote the prompt: instead of asking for a generic "correction to thin-double-layer," we asked it to <em>repeat the derivation from our prior work (Ganguly &amp; Gupta 2024) for arbitrary Debye length, but now for a deformed sphere</em>. Framing it as a concrete extension of a known calculation changed the dynamic immediately. The first few steps were correct.</p>
+<p>We then moved the whole thing into <strong>Claude Code inside VSCode</strong>. Working in a real repository, one file at a time, let us inspect every intermediate expression, re-derive anything that looked suspicious, and version-control the derivation the same way we would version-control source code. We also explicitly told Claude to perform consistency checks at each stage (e.g. recover Henry's function as $\varepsilon \to 0$, recover the spheroid result in the appropriate limit). That discipline is what caught most of the mistakes.</p>
+</div>
+
+<h3>The specific mistakes we had to catch</h3>
+<p>It is easy to say "the AI made some mistakes." It is more useful to be specific about them, because the failure modes were instructive:</p>
+<ul>
+  <li><strong>Wrong coefficient from Brenner 1964.</strong> When pulling a classical result for the disturbance flow around a deformed sphere from H. Brenner's 1964 paper, Claude confidently wrote down the wrong prefactor. The downstream algebra looked self-consistent, so this would have been easy to miss if we had not cross-checked against the original paper ourselves. Once we pointed at the exact equation in Brenner, it corrected the coefficient and re-propagated it through the derivation.</li>
+  <li><strong>Sign and factor-of-two errors in Legendre projections.</strong> Projecting onto $P_n$ modes repeatedly generates normalization factors like $2/(2n+1)$. Several of these drifted during the derivation. The consistency checks (does the $c_2 \to 0$ limit recover the sphere? does the small-$\kappa a$ limit recover H&uuml;ckel?) caught them. This is a good argument for always writing the cross-checks <em>before</em> trusting the answer.</li>
+  <li><strong>Silently dropping a boundary term.</strong> At one stage, an integration-by-parts step dropped a surface contribution that happened to be nonzero. The visible algebra looked clean. The only reason we caught it was that the Yoon &amp; Kim spheroid benchmark disagreed by a constant offset at small $\kappa a$. Tracing the discrepancy backwards led us to the missing term.</li>
+  <li><strong>Over-eager simplification.</strong> When asked to simplify a messy expression, Claude would occasionally apply an identity that was only valid in a special case (e.g. assuming a term was small when it was not). We learned to ask it to keep derivations in their raw form and only simplify at the very end, with explicit justification for each step.</li>
+</ul>
+
+<p>In every case, the fix was the same loop: point at the specific step, demand a re-derivation, and compare against an independent check. Claude is good at repairing a known-wrong calculation once you localize the error. It is much less good at <em>spotting</em> the error on its own.</p>
+
+<h3>What the interaction actually looked like</h3>
+<p>Schematically, our workflow with Claude Code followed this pattern:</p>
+
+<div class="flowchart">
+  <div class="flow-step human">
+    <div class="flow-icon">1</div>
+    <div>
+      <span class="flow-label">Human: pose the next sub-problem precisely</span>
+      "Compute the $O(\varepsilon)$ correction to the flow field from the $P_2$ shape mode, given the unperturbed solution in file X."
+    </div>
+  </div>
+  <div class="flow-arrow">&darr;</div>
+  <div class="flow-step ok">
+    <div class="flow-icon">2</div>
+    <div>
+      <span class="flow-label">Claude: proposes a derivation</span>
+      Writes out the expansion, applies boundary conditions, returns an intermediate expression and a proposed check.
+    </div>
+  </div>
+  <div class="flow-arrow">&darr;</div>
+  <div class="flow-step human">
+    <div class="flow-icon">3</div>
+    <div>
+      <span class="flow-label">Human: run the cross-check</span>
+      Take $\varepsilon \to 0$. Take $\kappa a \to 0$ and $\kappa a \to \infty$. Compare against Yoon &amp; Kim at a known spheroid.
+    </div>
+  </div>
+  <div class="flow-arrow">&darr;</div>
+  <div class="flow-step warn">
+    <div class="flow-icon">4</div>
+    <div>
+      <span class="flow-label">Check fails &rarr; localize the error</span>
+      "The $\kappa a \to 0$ limit is off by a factor of 3. Look at the step where you projected onto $P_2$. Redo it from line Y."
+    </div>
+  </div>
+  <div class="flow-arrow">&darr;</div>
+  <div class="flow-step error">
+    <div class="flow-icon">5</div>
+    <div>
+      <span class="flow-label">Root cause found</span>
+      E.g. "Brenner 1964 Eq. (4.7) uses a different normalization; the prefactor should be $-3/2$, not $-1/2$."
+    </div>
+  </div>
+  <div class="flow-arrow">&darr;</div>
+  <div class="flow-step ok">
+    <div class="flow-icon">6</div>
+    <div>
+      <span class="flow-label">Claude: re-propagates the fix</span>
+      Regenerates every downstream expression, re-runs the cross-check, confirms all limits recover.
+    </div>
+  </div>
+  <div class="flow-arrow">&darr;</div>
+  <div class="flow-step human">
+    <div class="flow-icon">7</div>
+    <div>
+      <span class="flow-label">Human: accept, commit, move to next sub-problem</span>
+      Version-control the derivation file, note the fix in the commit message, advance to the next order or the next check.
+    </div>
+  </div>
+  <div class="flow-legend">
+    <span><span class="swatch" style="background:#3b82f6"></span>Human-driven step</span>
+    <span><span class="swatch" style="background:#10b981"></span>AI produced / fix accepted</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Check failed, debugging</span>
+    <span><span class="swatch" style="background:#ef4444"></span>Root cause identified</span>
+  </div>
+</div>
+
+<p>The key observation is how much of the loop is <em>human</em>. Claude produced the raw algebra and did it fast, but the correctness signal (pick the right cross-check, interpret the discrepancy, point at the right line) came from us. Without that, the errors listed above would have silently propagated into the paper.</p>
+
+<h3>Beyond the derivation</h3>
+<div class="ai-section">
+<p>Once the analytical result was nailed down, we also used Claude Code to: generate every figure in the paper from Python scripts (including the Yoon &amp; Kim comparison and the spheroid benchmark plots), draft and iterate on sections of the manuscript, and build this interactive blog post. Each of those had the same character: fast first drafts that needed careful human editing, but a substantial speedup over starting from scratch. If you are curious about the actual prompts we used, the preprint includes several of them in the Appendix.</p>
 </div>
 
 <!-- ============ THOUGHTS ============ -->
