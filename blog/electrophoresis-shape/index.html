@@ -363,7 +363,7 @@ li { margin-bottom: 0.4rem; }
 </nav>
 
 <div class="tldr">
-  <strong>TL;DR:</strong> We spent about 1.5 years chasing a problem in fluid mechanics and electrokinetics, cycling through numerical simulations, COMSOL, and several analytical detours before finding the right formulation (thanks to a timely suggestion from Prof. Howard Stone). At that point, Claude Code became a real collaborator. It accelerated the hardest parts of the analytical derivation, generated all the figures, and helped us write the paper. It also made mistakes that we had to catch and correct along the way. We published a <a href="#">preprint</a> on this result, which is being submitted for peer review. This post walks through the physics, the long road that got us here, and how we actually used AI in the process, including where it helped and where it slipped.
+  <strong>TL;DR:</strong> We spent about 1.5 years chasing a problem in fluid mechanics and electrokinetics, cycling through numerical simulations, COMSOL, and several analytical detours before finding the right formulation (thanks to a timely suggestion from Prof. Howard Stone). At that point, Claude became a real collaborator. Over four distinct sessions (three in chat, one in Claude Code in VSCode) and roughly 128 substantive prompts, it helped us carry out the analytical derivation, generate every figure in the paper, and draft much of the manuscript. It also made mistakes along the way: a phantom $-9/5$ factor from a catastrophic cancellation, repeatedly reverting to a formula only valid in the thin-double-layer limit, proposing an ad-hoc multiplicative patch when the Smoluchowski limit would not recover, and a sign error in a Brenner 1964 coefficient. Each had to be caught by us re-reading primary sources and refusing to let the model move on. We published a <a href="#">preprint</a> on this result that is being submitted for peer review. This post walks through the physics, the long road that got us here, and an honest account of how we actually used AI, including where it helped and where it slipped.
 </div>
 
 <!-- ============ ABOUT US ============ -->
@@ -581,102 +581,64 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ HOW WE USED CLAUDE ============ -->
 <h2 id="how-claude">How We Used Claude (and What It Got Wrong)</h2>
-<p>Once the deformed-sphere formulation was in hand, the analytical work that lay ahead was exactly the kind of thing that is grinding rather than creative: expand a small parameter, match boundary conditions order by order, carry dozens of intermediate terms without dropping a sign, and repeatedly cross-check against limiting cases. This is where we thought AI could genuinely help. Below is an honest account of how the collaboration unfolded, including the mistakes we had to catch.</p>
+<p>Once the deformed-sphere formulation was in hand, the analytical work was exactly the kind of thing that is grinding rather than creative: expand a small parameter, carry the algebra order by order, and repeatedly cross-check against limiting cases. This is where we thought AI could genuinely help. The collaboration unfolded over approximately one month and four distinct sessions: three in the Claude chat interface and a final one in Claude Code integrated with VSCode. In total, we issued roughly <strong>128 substantive prompts</strong> and received around <strong>882 assistant responses</strong> across the four sessions. Each session tried a different mathematical route, and the progression across them is really the story of converging on a workable formulation. The four-session structure, and the errors we had to catch in each, are laid out below.</p>
 
-<h3>Attempt 1: Claude Sonnet 4.6 (chat, extended thinking)</h3>
-<div class="ai-section">
-<p>We first tried the chat interface with Sonnet 4.6 in extended-thinking mode. It produced a clean-looking derivation, but the answer was wrong. The failure mode was subtle: we had asked it to compute the <em>first correction to the thin-double-layer limit</em>, and it repeatedly reached for the Stone &amp; Samuel formula, which is only valid <em>at</em> the Smoluchowski (thin-double-layer) limit, not as a starting point for a correction away from it. Every time we pushed back, it would rephrase the same incorrect approach. In retrospect, our prompt was probably not sharp enough, but it was also clear the model had locked onto a familiar result and could not see past it.</p>
-</div>
-
-<h3>Attempt 2: Claude Opus 4.6 (chat) &rarr; Claude Code (VSCode)</h3>
-<div class="ai-section">
-<p>Inspired by <a href="https://www.anthropic.com/research/vibe-physics">Prof. Matthew Schwartz's "vibe physics" blog post</a>, we upgraded to Opus 4.6. We also rewrote the prompt: instead of asking for a generic "correction to thin-double-layer," we asked it to <em>repeat the derivation from our prior work (Ganguly &amp; Gupta 2024) for arbitrary Debye length, but now for a deformed sphere</em>. Framing it as a concrete extension of a known calculation changed the dynamic immediately. The first few steps were correct.</p>
-<p>We then moved the whole thing into <strong>Claude Code inside VSCode</strong>. Working in a real repository, one file at a time, let us inspect every intermediate expression, re-derive anything that looked suspicious, and version-control the derivation the same way we would version-control source code. We also explicitly told Claude to perform consistency checks at each stage (e.g. recover Henry's function as $\varepsilon \to 0$, recover the spheroid result in the appropriate limit). That discipline is what caught most of the mistakes.</p>
-</div>
-
-<h3>The specific mistakes we had to catch</h3>
-<p>It is easy to say "the AI made some mistakes." It is more useful to be specific about them, because the failure modes were instructive:</p>
-<ul>
-  <li><strong>Wrong coefficient from Brenner 1964.</strong> When pulling a classical result for the disturbance flow around a deformed sphere from H. Brenner's 1964 paper, Claude confidently wrote down the wrong prefactor. The downstream algebra looked self-consistent, so this would have been easy to miss if we had not cross-checked against the original paper ourselves. Once we pointed at the exact equation in Brenner, it corrected the coefficient and re-propagated it through the derivation.</li>
-  <li><strong>Sign and factor-of-two errors in Legendre projections.</strong> Projecting onto $P_n$ modes repeatedly generates normalization factors like $2/(2n+1)$. Several of these drifted during the derivation. The consistency checks (does the $c_2 \to 0$ limit recover the sphere? does the small-$\kappa a$ limit recover H&uuml;ckel?) caught them. This is a good argument for always writing the cross-checks <em>before</em> trusting the answer.</li>
-  <li><strong>Silently dropping a boundary term.</strong> At one stage, an integration-by-parts step dropped a surface contribution that happened to be nonzero. The visible algebra looked clean. The only reason we caught it was that the Yoon &amp; Kim spheroid benchmark disagreed by a constant offset at small $\kappa a$. Tracing the discrepancy backwards led us to the missing term.</li>
-  <li><strong>Over-eager simplification.</strong> When asked to simplify a messy expression, Claude would occasionally apply an identity that was only valid in a special case (e.g. assuming a term was small when it was not). We learned to ask it to keep derivations in their raw form and only simplify at the very end, with explicit justification for each step.</li>
-</ul>
-
-<p>In every case, the fix was the same loop: point at the specific step, demand a re-derivation, and compare against an independent check. Claude is good at repairing a known-wrong calculation once you localize the error. It is much less good at <em>spotting</em> the error on its own.</p>
-
-<h3>What the interaction actually looked like</h3>
-<p>Schematically, our workflow with Claude Code followed this pattern:</p>
+<h3>The four sessions</h3>
+<p>The flowchart below summarises each session's approach, what went wrong, and how we moved to the next. All four sessions are also documented with representative prompts in the <a href="#">Appendix of the preprint</a>.</p>
 
 <div class="flowchart">
-  <div class="flow-step human">
+  <div class="flow-step warn">
     <div class="flow-icon">1</div>
     <div>
-      <span class="flow-label">Human: pose the next sub-problem precisely</span>
-      "Compute the $O(\varepsilon)$ correction to the flow field from the $P_2$ shape mode, given the unperturbed solution in file X."
-    </div>
-  </div>
-  <div class="flow-arrow">&darr;</div>
-  <div class="flow-step ok">
-    <div class="flow-icon">2</div>
-    <div>
-      <span class="flow-label">Claude: proposes a derivation</span>
-      Writes out the expansion, applies boundary conditions, returns an intermediate expression and a proposed check.
+      <span class="flow-label">Session 1 &middot; Sonnet 4.6 extended (chat) &middot; thin-EDL + shape perturbation</span>
+      We tried a double asymptotic expansion: the thin-EDL (Stone &amp; Samuel) limit combined with a small-shape perturbation in $\varepsilon$. The model produced a factor of $-9/5$ for the $\kappa^{-1}$ correction but could not justify it. When pressed, it turned out two individually $O(\kappa a)$ terms were supposed to cancel to leave an $O(1/\kappa a)$ residual &mdash; catastrophic under floating-point subtraction. The model kept constructing post-hoc justifications for the $-9/5$ rather than confronting the cancellation issue. We had to literally ask <em>"Couldn't resolve it?"</em> and <em>"Seems like you have given up?"</em> before it acknowledged the dead end. <strong>Unlock:</strong> we proposed abandoning the thin-EDL assumption entirely and instead using a Debye&ndash;H&uuml;ckel linearisation with a single perturbation in $\varepsilon$ valid for all $\kappa a$.
     </div>
   </div>
   <div class="flow-arrow">&darr;</div>
   <div class="flow-step human">
-    <div class="flow-icon">3</div>
+    <div class="flow-icon">2</div>
     <div>
-      <span class="flow-label">Human: run the cross-check</span>
-      Take $\varepsilon \to 0$. Take $\kappa a \to 0$ and $\kappa a \to \infty$. Compare against Yoon &amp; Kim at a known spheroid.
+      <span class="flow-label">Session 2 &middot; Sonnet 4.6 extended (chat) &middot; reframe via Ganguly &amp; Gupta 2024</span>
+      Clean restart. We framed the problem directly in terms of the reciprocal-theorem expression from our prior work (Ganguly &amp; Gupta 2024, Eq.\,2.11), and laid out the four components that needed to be perturbed to $O(\varepsilon)$: $M_{UF}$, $D^T$, $b$, and the volume element $\mathrm{d}V$. In the course of this session, <em>we</em> caught a misconception of our own: we had initially assumed the self-mobility $M_{UF}$ stays constant at $O(\varepsilon)$. Reading Brenner 1964 in detail showed us it does not, and that Brenner already gives the required shape correction to the Stokes drag. This was a case of the AI helping us <em>debug our own assumption</em>, not the other way around.
     </div>
   </div>
   <div class="flow-arrow">&darr;</div>
   <div class="flow-step warn">
-    <div class="flow-icon">4</div>
+    <div class="flow-icon">3</div>
     <div>
-      <span class="flow-label">Check fails &rarr; localize the error</span>
-      "The $\kappa a \to 0$ limit is off by a factor of 3. Look at the step where you projected onto $P_2$. Redo it from line Y."
-    </div>
-  </div>
-  <div class="flow-arrow">&darr;</div>
-  <div class="flow-step error">
-    <div class="flow-icon">5</div>
-    <div>
-      <span class="flow-label">Root cause found</span>
-      E.g. "Brenner 1964 Eq. (4.7) uses a different normalization; the prefactor should be $-3/2$, not $-1/2$."
+      <span class="flow-label">Session 3 &middot; Opus 4.6 (chat) &middot; Brenner + Ganguly framework</span>
+      We upgraded to Opus 4.6 and asked it to combine Brenner's deformed-sphere drag result with the Ganguly et al.\ framework. The setup was correct, but the large-$\kappa a$ behaviour did not recover the Smoluchowski limit. The model's response was to propose an ad-hoc interpolation: <em>multiply the result by a factor of $0.8$ so the limit works out</em>. We flatly rejected the patch (<em>"So there is an artificial fix by adding a 0.8 value?"</em>) and insisted on the full calculation (<em>"Please do the full calculation instead of an interpolated ad-hoc formula"</em>). Progress stalled in chat, so we transitioned the work into Claude Code for finer control over files and iteration.
     </div>
   </div>
   <div class="flow-arrow">&darr;</div>
   <div class="flow-step ok">
-    <div class="flow-icon">6</div>
+    <div class="flow-icon">4</div>
     <div>
-      <span class="flow-label">Claude: re-propagates the fix</span>
-      Regenerates every downstream expression, re-runs the cross-check, confirms all limits recover.
-    </div>
-  </div>
-  <div class="flow-arrow">&darr;</div>
-  <div class="flow-step human">
-    <div class="flow-icon">7</div>
-    <div>
-      <span class="flow-label">Human: accept, commit, move to next sub-problem</span>
-      Version-control the derivation file, note the fix in the commit message, advance to the next order or the next check.
+      <span class="flow-label">Session 4 &middot; Opus 4.6 in Claude Code (VSCode) &middot; the productive phase</span>
+      Working in a real repository, one file at a time, unlocked everything. The key fix was a sign/magnitude error in the Brenner drag coefficient: $\alpha_2^{\rm drag} = +1/5$, <em>not</em> $+3/5$. We caught it by cross-reading Brenner 1964 Eq.\,1.7 ourselves and noticing that with the correct sign the result would also match the low-eccentricity limit of Yoon &amp; Kim 1989. Once that was corrected, the full $\sigma_2(\kappa a)$ curve fell out, limits were recovered, and the Yoon &amp; Kim benchmark agreed. This session also produced every figure in the paper and a large fraction of the manuscript text. Session 4 alone accounts for roughly $56$ of the $128$ prompts and $759$ of the $882$ responses, though the latter is inflated because Claude Code emits one message per tool call while editing files.
     </div>
   </div>
   <div class="flow-legend">
-    <span><span class="swatch" style="background:#3b82f6"></span>Human-driven step</span>
-    <span><span class="swatch" style="background:#10b981"></span>AI produced / fix accepted</span>
-    <span><span class="swatch" style="background:#f59e0b"></span>Check failed, debugging</span>
-    <span><span class="swatch" style="background:#ef4444"></span>Root cause identified</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Session got stuck, required reformulation</span>
+    <span><span class="swatch" style="background:#3b82f6"></span>Human-driven unlock</span>
+    <span><span class="swatch" style="background:#10b981"></span>Productive session</span>
   </div>
 </div>
 
-<p>The key observation is how much of the loop is <em>human</em>. Claude produced the raw algebra and did it fast, but the correctness signal (pick the right cross-check, interpret the discrepancy, point at the right line) came from us. Without that, the errors listed above would have silently propagated into the paper.</p>
+<h3>The specific mistakes we had to catch</h3>
+<p>It is easy to say "the AI made some mistakes." It is more useful to be specific, because the failure modes were instructive and all four come from the four sessions above:</p>
+<ul>
+  <li><strong>The $-9/5$ phantom (Session 1).</strong> The model produced a factor of $-9/5$ from a catastrophic cancellation of two individually large $O(\kappa a)$ terms, then constructed plausible-sounding justifications for it rather than questioning the underlying expansion. Only when we explicitly refused to let the conversation move on (<em>"Couldn't resolve it?"</em>) did it concede the result had not converged. The lesson: the model will keep walking even when the ground underneath has disappeared, and you have to be the one who stops it.</li>
+  <li><strong>Reverting to Stone &amp; Samuel (Session 1).</strong> After we had explicitly told it to drop the thin-EDL assumption and re-derive for arbitrary $\kappa a$, the very next iteration quietly reached back for the Stone &amp; Samuel slip-velocity formula, which is only valid in the thin-EDL limit. We had to re-issue the correction: <em>"The Stone &amp; Samuel formula is only true for the large $\kappa a$ limit, and using it for all $\kappa a$ is futile."</em> Asymptotic regimes do not persist across turns on their own.</li>
+  <li><strong>The ad-hoc $0.8$ patch (Session 3).</strong> When the large-$\kappa a$ limit did not recover Smoluchowski, the model's instinct was to propose a multiplicative fudge factor rather than to surface the underlying inconsistency in the derivation. This is probably the most dangerous failure mode in the whole project, because the patched result would have looked perfectly correct in a plot. We only caught it because the patch was suspicious on its face.</li>
+  <li><strong>Brenner drag coefficient sign error (Session 4).</strong> The Brenner drag correction for a $P_2$-deformed sphere was initially written with the wrong sign/magnitude: the code had $+3/5$, but Brenner 1964 Eq.\,1.7 (once you account for which side of the equation $\alpha$ sits on) gives $+1/5$. The downstream algebra was self-consistent, so this would have been easy to miss if we had not cross-read Brenner ourselves and noticed that $+1/5$ is what matches the low-eccentricity formula of Yoon &amp; Kim 1989. Once we pointed at the specific equation, Claude corrected it and re-propagated.</li>
+</ul>
+
+<p>Running through all four: the common thread is that the model had a strong tendency to <em>construct justifications for its own earlier answers</em> rather than to question them. Catching each error required a human to be willing to stop the forward motion, re-read a primary source (Brenner 1964, Yoon &amp; Kim 1989), and localise the problem to a specific equation. Claude was good at re-propagating a fix once we pointed at it; it was much less good at <em>spotting</em> the error on its own.</p>
 
 <h3>Beyond the derivation</h3>
 <div class="ai-section">
-<p>Once the analytical result was nailed down, we also used Claude Code to: generate every figure in the paper from Python scripts (including the Yoon &amp; Kim comparison and the spheroid benchmark plots), draft and iterate on sections of the manuscript, and build this interactive blog post. Each of those had the same character: fast first drafts that needed careful human editing, but a substantial speedup over starting from scratch. If you are curious about the actual prompts we used, the preprint includes several of them in the Appendix.</p>
+<p>Once the analytical result was nailed down in Session 4, Claude Code also generated every figure in the paper, drafted and iterated on sections of the manuscript, and built this interactive blog post. All of those had the same character: fast first drafts that needed careful human editing, but a substantial speedup over starting from scratch. The figures in particular were produced by giving Claude the plotting style of an earlier paper (Ganguly &amp; Gupta 2024) as a reference and asking it to match the aesthetics, which was considerably faster than writing plotting scripts from scratch. If you are curious about the actual prompts we used in each session, the <a href="#">preprint Appendix</a> reproduces a representative set verbatim.</p>
 </div>
 
 <!-- ============ THOUGHTS ============ -->
