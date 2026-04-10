@@ -363,19 +363,19 @@ li { margin-bottom: 0.4rem; }
 </nav>
 
 <div class="tldr">
-  <strong>TL;DR:</strong> We spent about 1.5 years on a problem in fluid mechanics and electrokinetics: how does the shape of a charged particle change how fast it moves in an electric field? After many false starts, a timely suggestion from Prof. Howard Stone pointed us to the right formulation, and Claude became a real collaborator from there. Across four sessions (three in chat and one in Claude Code), it helped us work through the math, make all the figures, and draft much of the paper. It also made real mistakes that we had to catch along the way. This post walks through the physics, the long road to get here, and an honest account of how we actually used AI, including where it helped and where it slipped. The <a href="#">preprint</a> is being submitted for peer review.
+  <strong>TL;DR:</strong> We spent about 1.5 years on a problem in fluid mechanics and electrokinetics: how does the shape of a charged particle impact its motion in an electric field? After many false starts, a timely suggestion from Prof. Howard Stone pointed us to the right formulation, and Claude became a real collaborator from there. Across four sessions (three in chat and one in Claude Code), it helped us work through the math, make all the figures, and draft much of the paper. It also made real mistakes that we had to catch along the way. This post walks through the physics, the long road to get here, and an honest account of how we actually used AI, including where it helped and where it slipped. The <a href="#">preprint</a> is being submitted for peer review.
 </div>
 
 <!-- ============ ABOUT US ============ -->
 <h2 id="about-us">About Us</h2>
-<p>I am an <a href="https://www.colorado.edu/chbe/ankur-gupta">Assistant Professor</a> in the Department of Chemical and Biological Engineering at the University of Colorado Boulder. My research group, <a href="https://www.colorado.edu/faculty/gupta/">LIFE</a> (Laboratory of Interfaces, Flow, and Electrokinetics), focuses on understanding how particles and ions move and self-organize for a broad range of applications. My group utilizes a range of mathematical techniques that we used to solve this problem.</p>
-<p>My student, Arkava Ganguly (now a postdoc at NYU), and I were always intrigued about how shape impacts the motion of particles when they are driven by fields, or when they themselves create fields through the so-called self-propelling mechanism. For instance, one of Arkava's PhD papers focused on how <a href="https://link.aps.org/doi/10.1103/PhysRevFluids.8.014103">self-propelling bent rods go around in circles</a>. This blog post is about a new result on shape and particle motion, specifically a phenomenon called <em>electrophoresis</em>.</p>
+<p>I am an <a href="https://www.colorado.edu/chbe/ankur-gupta">Assistant Professor</a> in the Department of Chemical and Biological Engineering at the University of Colorado Boulder. My research group, <a href="https://www.colorado.edu/faculty/gupta/">LIFE</a> (Laboratory of Interfaces, Flow, and Electrokinetics), focuses on understanding how particles and ions move and self-organize for a broad range of applications. My group uses a range of mathematical techniques to solve problems.</p>
+<p>My student, Arkava Ganguly (now a postdoc at NYU), and I have long been intrigued by how shape impacts particle motion, whether the particles are driven by external fields or generate fields themselves through the so-called self-propelling mechanism. One of Arkava's PhD papers, for instance, showed how <a href="https://link.aps.org/doi/10.1103/PhysRevFluids.8.014103">self-propelling bent rods go around in circles</a>. This post is about a new result on shape and particle motion, specifically a phenomenon called <em>electrophoresis</em>.</p>
 
 <!-- ============ WHAT IS ELECTROPHORESIS ============ -->
 <h2 id="electrophoresis">What Is Electrophoresis?</h2>
-<p>If you aren't familiar with electrophoresis, the basic idea is to understand how fast a charged particle would move in response to an electric field when it is suspended in an electrolyte solution (think table salt in water). Imagine a tiny charged particle, say a protein, a nanoparticle, or a colloid, suspended in salty water. You switch on an electric field. The particle starts to move. <em>How fast</em> it moves relative to the field strength defines a quantity called the <strong>mobility</strong>. One of my colleagues calls mobility the "bang for your buck": it tells us how much we can drive the motion of the particles.</p>
+<p>Imagine a tiny charged particle, say a protein, a nanoparticle, or a colloid, suspended in salty water. You switch on an electric field, and the particle starts to move. <em>How fast</em> it moves relative to the field strength defines a quantity called the <strong>mobility</strong>. One of my colleagues calls mobility the "bang for your buck": it tells us how much we can drive the motion of the particles.</p>
 
-<p>This is an important topic because electrophoresis is helpful for a range of problems. It is used in gel electrophoresis to separate DNA and proteins, in measuring the surface charge of nanoparticles (the "zeta potential"), in microfluidic devices for sorting cells, and in characterizing colloids for drug delivery and environmental remediation.</p>
+<p>Electrophoresis shows up everywhere: separating DNA and proteins in a gel, measuring the surface charge ("zeta potential") of nanoparticles, sorting cells in microfluidic devices, and characterizing colloids for drug delivery and environmental remediation.</p>
 
 <div class="animation-container">
   <canvas id="anim-electrophoresis" width="660" height="320"></canvas>
@@ -395,24 +395,22 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ SMOLUCHOWSKI ============ -->
 <h2 id="smoluchowski">The Smoluchowski Surprise: Shape Doesn't Matter?</h2>
-<p>One of the key results in electrophoresis is that the <strong>mobility is shape-independent</strong>. It basically argues that you can have any shape of the particle, and it would always have the same mobility value. A sphere, a cube, a rod, a crumpled piece of paper: they all move at the same speed, as long as they carry the same surface charge.</p>
+<p>A classical result in electrophoresis is that the <strong>mobility is shape-independent</strong>. A sphere, a cube, a rod, a crumpled piece of paper: they all move at the same speed, as long as they carry the same surface charge.</p>
 
 <div class="animation-container">
   <canvas id="anim-shape-independence" width="660" height="300"></canvas>
   <div class="animation-caption">In the Smoluchowski limit, particles of any shape move at the same speed, but only when the ion cloud is much thinner than the particle.</div>
 </div>
 
-<p>This is a well-known result and there was even debate about it when it was first proposed. H&uuml;ckel (1924) calculated a mobility that was only 2/3 of Smoluchowski's value. It turned out both were correct, just in different limits. H&uuml;ckel's result applies when the ion cloud is very thick; Smoluchowski's when it is very thin. Henry (1931) later bridged them with the interpolation function $f_H(\kappa a)$.</p>
+<p>There was even debate about this when it was first proposed. H&uuml;ckel (1924) calculated a mobility only 2/3 of Smoluchowski's value. Both were right, just in different limits: H&uuml;ckel's result applies when the ion cloud is very thick, Smoluchowski's when it is very thin. Henry (1931) bridged them with the interpolation function $f_H(\kappa a)$.</p>
 
-<p>However, the shape-independence only works in the so-called thin double-layer limit. The double layer is the length scale at which oppositely charged ions get electrostatically attracted. For many real systems (nanoparticles, proteins, particles in low-salt solutions), the ion cloud can be comparable in size to the particle itself. In that regime, shape <em>should</em> matter.</p>
+<p>But shape-independence only holds in the so-called thin double-layer limit. For many real systems (nanoparticles, proteins, particles in low-salt solutions), the ion cloud can be comparable to the particle itself. In that regime, shape <em>should</em> matter.</p>
 
 <!-- ============ OUR QUESTION ============ -->
 <h2 id="our-question">Our Question: What If Shape <em>Does</em> Matter?</h2>
-<p>How would shape matter in electrophoresis?</p>
+<p>How would shape matter in electrophoresis? To answer this, we had to relax the thin double-layer assumption, but most ways of calculating mobility rely on exactly that assumption. We leaned on a framework from our prior work (Ganguly, Roychowdhury &amp; Gupta, 2024) that keeps the full ion cloud in the calculation and lets us sidestep this restriction.</p>
 
-<p>We realized that to answer this, we need to relax the thin double-layer assumption. However, relaxing it presents challenges since most of the ways to calculate mobility only work with the thin double-layer assumption. We, therefore, leaned on a framework from our prior work (Ganguly, Roychowdhury &amp; Gupta, 2024) that allowed us to circumvent this assumption by keeping the full volume of the ion cloud in the calculation.</p>
-
-<p>We focused on <strong>slightly deformed spheres</strong> because that is analytically tractable. Think of a slight deformation of a sphere: a football (stretched), an M&amp;M (squashed), a pear, a mushroom. In this limit, you can create a range of shapes but still preserve them under the same mathematical construct. The particle surface is described by:</p>
+<p>We focused on <strong>slightly deformed spheres</strong> because they are analytically tractable. Picture a gentle deformation of a sphere: a football (stretched), an M&amp;M (squashed), a pear, a mushroom. All of these live under the same mathematical construct. The particle surface is described by:</p>
 
 <div class="equation-block">
   $$r_s(\theta) = a\bigl[1 + \varepsilon\, f(\theta)\bigr], \quad f(\theta) = \sum_n c_n P_n(\cos\theta)$$
@@ -428,28 +426,28 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ PROJECT TIMELINE ============ -->
 <h2 id="timeline">The Long Road to This Problem</h2>
-<p>Before we get to how Claude helped, it is worth being honest about how long this took. The question of "how does shape change electrophoretic mobility" sounds simple, but getting to a formulation we could actually solve was a roughly 1.5 year journey with several false starts. Here is the condensed version:</p>
+<p>Before we get to how Claude helped, it is worth being honest about how long this took. "How does shape change electrophoretic mobility" sounds simple, but getting to a formulation we could actually solve took roughly 1.5 years and several false starts. Here is the condensed version:</p>
 
 <div class="timeline">
   <div class="timeline-item">
     <div class="timeline-dot"></div>
     <div class="timeline-content">
       <div class="timeline-date">Fall 2024</div>
-      <div class="timeline-body"><strong>Full spheroids, numerical attempt.</strong> We began with the full spheroids problem. Arkava and Zoe had done earlier work validating mobility and disturbance coefficients. But the full Poisson-Nernst-Planck equations would not converge in our own solver.</div>
+      <div class="timeline-body"><strong>Full spheroids, numerical attempt.</strong> We began with the full spheroids problem. Arkava and Zoe had already validated the mobility and disturbance coefficients, but the full Poisson-Nernst-Planck equations would not converge in our own solver.</div>
     </div>
   </div>
   <div class="timeline-item">
     <div class="timeline-dot"></div>
     <div class="timeline-content">
       <div class="timeline-date">Spring 2025</div>
-      <div class="timeline-body"><strong>Transition to COMSOL.</strong> We started getting numerical solutions but struggled to benchmark them against prior literature. After a lot of back and forth, we matched the classical result at zero eccentricity (a sphere), but the finite eccentricity results were hard to trust.</div>
+      <div class="timeline-body"><strong>Transition to COMSOL.</strong> We started getting numerical solutions but struggled to benchmark them against prior literature. We eventually matched the classical result at zero eccentricity (a sphere), but the finite-eccentricity results were hard to trust.</div>
     </div>
   </div>
   <div class="timeline-item">
     <div class="timeline-dot"></div>
     <div class="timeline-content">
       <div class="timeline-date">Summer-Fall 2025</div>
-      <div class="timeline-body"><strong>Axisymmetric spheroid, analytical.</strong> We simplified to an axisymmetric spheroidal problem we could attack analytically. This captured the H&uuml;ckel limit for low but finite eccentricity. But there was still a quantitative mismatch at the Smoluchowski limit we could not reconcile.</div>
+      <div class="timeline-body"><strong>Axisymmetric spheroid, analytical.</strong> We simplified to an axisymmetric spheroidal problem we could attack analytically. This captured the H&uuml;ckel limit for low but finite eccentricity, but a quantitative mismatch at the Smoluchowski limit still would not go away.</div>
     </div>
   </div>
   <div class="timeline-item">
@@ -463,33 +461,31 @@ li { margin-bottom: 0.4rem; }
     <div class="timeline-dot"></div>
     <div class="timeline-content">
       <div class="timeline-date">February 2026</div>
-      <div class="timeline-body"><strong>The right problem.</strong> Prof. Howard Stone suggested the canonical deformed-sphere formulation. In hindsight this was the unlock. The same perturbation framework we had been groping toward suddenly had clean boundary conditions, a well-defined small parameter, and a clear path to compute the correction order by order.</div>
+      <div class="timeline-body"><strong>The right problem.</strong> Prof. Howard Stone suggested the canonical deformed-sphere formulation. This was the unlock. The perturbation framework we had been groping toward suddenly had clean boundary conditions, a well-defined small parameter, and a clear path to compute the correction order by order.</div>
     </div>
   </div>
   <div class="timeline-item">
     <div class="timeline-dot"></div>
     <div class="timeline-content">
       <div class="timeline-date">Spring 2026</div>
-      <div class="timeline-body"><strong>Claude enters the picture.</strong> With the right formulation in hand, we used Claude (first chat, then Claude Code) to carry out the analytical derivation, generate every figure in the paper, and help write the manuscript. This is where the project finally accelerated. Details in the section below.</div>
+      <div class="timeline-body"><strong>Claude enters the picture.</strong> With the right formulation in hand, we used Claude (first chat, then Claude Code) to carry out the derivation, generate every figure, and help write the manuscript. This is where the project finally accelerated. Details below.</div>
     </div>
   </div>
 </div>
 
-<p>We share this timeline for two reasons. First, it is easy to read a preprint and think the ideas arrived fully formed; they almost never do. Second, the AI only became genuinely useful once the problem was correctly posed. No amount of prompting was going to rescue us from an ill-posed formulation. The human step of recognizing the right framing (with Prof. Stone's help) was not something we could outsource.</p>
+<p>We share this timeline for two reasons. First, it is easy to read a preprint and assume the ideas arrived fully formed; they almost never do. Second, the AI only became genuinely useful once the problem was correctly posed. No amount of prompting was going to rescue us from an ill-posed formulation, and recognizing the right framing (with Prof. Stone's help) was not something we could outsource.</p>
 
 <!-- ============ WHY CLAUDE ============ -->
 <h2 id="why-claude">Why We Thought Claude Could Help</h2>
 
-<p>Our approach to this problem relies on a mathematical technique called <strong>perturbation theory</strong>. The idea is to start from a known solution (a sphere) and systematically compute corrections for small changes (the shape deformation). Think of it as asking: if I know exactly how a sphere behaves, can I figure out how a slightly squished sphere behaves by computing a small correction?</p>
+<p>Our approach relies on a mathematical technique called <strong>perturbation theory</strong>: start from a known solution (a sphere) and compute corrections for small changes (the shape deformation). If I know exactly how a sphere behaves, can I figure out how a slightly squished sphere behaves by computing a small correction?</p>
 
-<p>Initially, we were thinking of using a mixture of regular and singular perturbation methods to get the first correction to the thin ion cloud assumption with small surface charge. In such analyses, you end up juggling many variables, length scales, and intermediate expressions. Keeping track of all of this is time-consuming and error-prone, especially when one sign error can invalidate the entire calculation. This is where we thought Claude could help significantly.</p>
-
-<p>In addition, we knew that some of the mathematical solutions needed for slow viscous flow (the so-called low Reynolds number regime) may need cumbersome calculations. However, the governing equations in this regime are <em>linear</em>, meaning they follow the principle of superposition: you can break a complex problem into simpler pieces, solve each one, and add the results. We believed that Claude, trained on a broad mathematical corpus, would be well-suited to handle these types of structured, step-by-step analytical calculations.</p>
+<p>These calculations involve juggling many variables, length scales, and intermediate expressions. Keeping track of all of it is time-consuming and error-prone, and one sign error can invalidate the whole thing. On top of that, slow viscous flow (the low Reynolds number regime) is governed by <em>linear</em> equations, so the principle of superposition lets you break a complex problem into simpler pieces, solve each one, and add the results. We thought Claude, trained on a broad mathematical corpus, would be well-suited to this kind of structured, step-by-step calculation.</p>
 
 <!-- ============ RESULTS ============ -->
 <h2 id="results">What We Found</h2>
 
-<p>We quantified the impact of shape on mobility. Our main result is a compact formula for how shape modifies the mobility:</p>
+<p>Our main result is a compact formula for how shape modifies the mobility:</p>
 
 <div class="equation-block">
   $$C_\parallel = f_H(\kappa a)\bigl[1 + \varepsilon\, c_2\, \sigma_2(\kappa a)\bigr]$$
@@ -554,7 +550,7 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ SILENCING DEMO ============ -->
 <h2 id="silencing">Electrophoretic Silencing</h2>
-<p>To drive home the point that only the $P_2$ mode matters, consider four particles that look very different but are grouped into two pairs sharing the same elongation ($c_2$). Within each pair, the particles have different higher-order features ($c_3$), yet produce <em>identical</em> mobility curves.</p>
+<p>To drive the point home, consider four particles grouped into two pairs, each pair sharing the same elongation ($c_2$). Within each pair, the particles have different higher-order features ($c_3$), yet produce <em>identical</em> mobility curves.</p>
 
 <div class="animation-container">
   <canvas id="silencing-canvas" width="660" height="360"></canvas>
@@ -563,7 +559,7 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ SHAPE & SPEED INTERACTIVE ============ -->
 <h2 id="speed-demo">Shape and Speed: An Interactive Comparison</h2>
-<p>Earlier, we saw that in the Smoluchowski limit all shapes move at the same speed. But what happens as we change the ion cloud thickness? Use the slider below to adjust $\kappa a$ and watch how different shapes start moving at different speeds as the ion cloud gets thicker.</p>
+<p>In the Smoluchowski limit, all shapes move at the same speed. What happens as the ion cloud gets thicker? Drag the slider below and watch the shapes separate.</p>
 
 <div class="interactive-widget">
   <div class="widget-title">How Ion Cloud Thickness Changes Shape Effects</div>
@@ -571,27 +567,31 @@ li { margin-bottom: 0.4rem; }
     <canvas id="speed-demo-canvas" width="660" height="280"></canvas>
   </div>
   <div class="slider-group" style="max-width:500px; margin:0 auto;">
-    <label>Ion cloud thickness ($\kappa a$) <span id="ka-val">100</span></label>
+    <label>Particle size / Debye length ($\kappa a$) <span id="ka-val">100</span></label>
     <input type="range" id="slider-ka" min="0" max="100" step="1" value="100">
+    <div style="display:flex; justify-content:space-between; font-family:Inter,sans-serif; font-size:0.72rem; color:var(--muted); margin-top:0.15rem;">
+      <span>&larr; thick cloud</span>
+      <span>thin cloud &rarr;</span>
+    </div>
   </div>
   <div class="animation-caption" style="text-align:center; margin-top:0.5rem;">
-    At high $\kappa a$ (thin cloud), all shapes move together. Drag the slider to lower values (thicker cloud) and watch the shapes separate: the prolate particle pulls ahead while the oblate one falls behind.
+    At high $\kappa a$ (thin cloud), all shapes move together. Drag the slider to lower values (thicker cloud) and watch the prolate particle pull ahead while the oblate one falls behind.
   </div>
 </div>
 
 <!-- ============ HOW WE USED CLAUDE ============ -->
 <h2 id="how-claude">How We Used Claude (and What It Got Wrong)</h2>
-<p>Once the deformed-sphere formulation was in hand, the analytical work was exactly the kind of thing that is grinding rather than creative: expand a small parameter, carry the algebra order by order, and repeatedly cross-check against limiting cases. This is where we thought AI could genuinely help. The collaboration unfolded over approximately one month and four distinct sessions: three in the Claude chat interface and a final one in Claude Code integrated with VSCode. In total, we issued roughly <strong>128 substantive prompts</strong> and received around <strong>882 assistant responses</strong> across the four sessions. Each session tried a different mathematical route, and the progression across them is really the story of converging on a workable formulation. The four-session structure, and the errors we had to catch in each, are laid out below.</p>
+<p>Once the deformed-sphere formulation was in hand, the analytical work was grinding rather than creative: expand a small parameter, carry the algebra order by order, cross-check against limits. Exactly the kind of thing where AI might help. The collaboration unfolded over about a month across four sessions: three in Claude chat and a final one in Claude Code inside VSCode. In total, we issued roughly <strong>128 substantive prompts</strong> and received around <strong>882 assistant responses</strong>. Each session tried a different mathematical route, and the progression across them is really the story of converging on a workable formulation.</p>
 
 <h3>The four sessions</h3>
-<p>The flowchart below summarises each session's approach, what went wrong, and how we moved to the next. All four sessions are also documented with representative prompts in the <a href="#">Appendix of the preprint</a>.</p>
+<p>The flowchart below summarises each session's approach, what went wrong, and how we moved to the next. Representative prompts from each session are in the <a href="#">Appendix of the preprint</a>.</p>
 
 <div class="flowchart">
   <div class="flow-step warn">
     <div class="flow-icon">1</div>
     <div>
       <span class="flow-label">Session 1 &middot; Sonnet 4.6 extended (chat) &middot; thin-EDL + shape perturbation</span>
-      We tried a double asymptotic expansion: the thin-EDL (Stone &amp; Samuel) limit combined with a small-shape perturbation in $\varepsilon$. The model produced a factor of $-9/5$ for the $\kappa^{-1}$ correction but could not justify it. When pressed, it turned out two individually $O(\kappa a)$ terms were supposed to cancel to leave an $O(1/\kappa a)$ residual &mdash; catastrophic under floating-point subtraction. The model kept constructing post-hoc justifications for the $-9/5$ rather than confronting the cancellation issue. We had to literally ask <em>"Couldn't resolve it?"</em> and <em>"Seems like you have given up?"</em> before it acknowledged the dead end. <strong>Unlock:</strong> we proposed abandoning the thin-EDL assumption entirely and instead using a Debye&ndash;H&uuml;ckel linearisation with a single perturbation in $\varepsilon$ valid for all $\kappa a$.
+      We tried a double asymptotic expansion: the thin-EDL (Stone &amp; Samuel) limit plus a small-shape perturbation in $\varepsilon$. The model produced a factor of $-9/5$ for the $\kappa^{-1}$ correction but could not justify it. It turned out two individually $O(\kappa a)$ terms were supposed to cancel to leave an $O(1/\kappa a)$ residual, which is catastrophic under floating-point subtraction. Rather than confronting the cancellation, the model kept constructing post-hoc justifications for the $-9/5$. We had to ask <em>"Couldn't resolve it?"</em> and <em>"Seems like you have given up?"</em> before it acknowledged the dead end. <strong>Unlock:</strong> we dropped the thin-EDL assumption entirely in favor of a Debye&ndash;H&uuml;ckel linearisation with a single perturbation in $\varepsilon$ valid for all $\kappa a$.
     </div>
   </div>
   <div class="flow-arrow">&darr;</div>
@@ -599,7 +599,7 @@ li { margin-bottom: 0.4rem; }
     <div class="flow-icon">2</div>
     <div>
       <span class="flow-label">Session 2 &middot; Sonnet 4.6 extended (chat) &middot; reframe via Ganguly, Roychowdhury &amp; Gupta 2024</span>
-      Clean restart. We framed the problem directly in terms of the reciprocal-theorem expression from our prior work (Ganguly, Roychowdhury &amp; Gupta 2024, Eq. 2.11), and laid out the four components that needed to be perturbed to $O(\varepsilon)$: $M_{UF}$, $D^T$, $b$, and the volume element $\mathrm{d}V$. In the course of this session, <em>we</em> caught a misconception of our own: we had initially assumed the self-mobility $M_{UF}$ stays constant at $O(\varepsilon)$. Reading Brenner 1964 in detail showed us it does not, and that Brenner already gives the required shape correction to the Stokes drag. This was a case of the AI helping us <em>debug our own assumption</em>, not the other way around.
+      Clean restart. We framed the problem directly in terms of the reciprocal-theorem expression from our prior work (Ganguly, Roychowdhury &amp; Gupta 2024, Eq. 2.11), and listed the four components that needed to be perturbed to $O(\varepsilon)$: $M_{UF}$, $D^T$, $b$, and the volume element $\mathrm{d}V$. In this session, <em>we</em> caught a misconception of our own: we had assumed the self-mobility $M_{UF}$ stays constant at $O(\varepsilon)$. Reading Brenner 1964 closely showed it does not, and that Brenner already provides the required shape correction to the Stokes drag. A case of the AI helping us debug our own assumption, not the other way around.
     </div>
   </div>
   <div class="flow-arrow">&darr;</div>
@@ -607,7 +607,7 @@ li { margin-bottom: 0.4rem; }
     <div class="flow-icon">3</div>
     <div>
       <span class="flow-label">Session 3 &middot; Opus 4.6 (chat) &middot; Brenner + Ganguly framework</span>
-      We upgraded to Opus 4.6 and asked it to combine Brenner's deformed-sphere drag result with the Ganguly et al. framework. The setup was correct, but the large-$\kappa a$ behaviour did not recover the Smoluchowski limit. The model's response was to propose an ad-hoc interpolation: <em>multiply the result by a factor of $0.8$ so the limit works out</em>. We flatly rejected the patch (<em>"So there is an artificial fix by adding a 0.8 value?"</em>) and insisted on the full calculation (<em>"Please do the full calculation instead of an interpolated ad-hoc formula"</em>). Progress stalled in chat, so we transitioned the work into Claude Code for finer control over files and iteration.
+      We upgraded to Opus 4.6 and asked it to combine Brenner's deformed-sphere drag result with the Ganguly et al. framework. The setup was correct, but the large-$\kappa a$ behaviour did not recover the Smoluchowski limit. The model proposed an ad-hoc interpolation: <em>multiply the result by a factor of $0.8$ so the limit works out</em>. We rejected the patch (<em>"So there is an artificial fix by adding a 0.8 value?"</em>) and insisted on the full calculation (<em>"Please do the full calculation instead of an interpolated ad-hoc formula"</em>). Progress stalled in chat, so we moved into Claude Code for finer control over files and iteration.
     </div>
   </div>
   <div class="flow-arrow">&darr;</div>
@@ -615,7 +615,7 @@ li { margin-bottom: 0.4rem; }
     <div class="flow-icon">4</div>
     <div>
       <span class="flow-label">Session 4 &middot; Opus 4.6 in Claude Code (VSCode) &middot; the productive phase</span>
-      Working in a real repository, one file at a time, unlocked everything. The key fix was a sign/magnitude error in the Brenner drag coefficient: $\alpha_2^{\rm drag} = +1/5$, <em>not</em> $+3/5$. We caught it by cross-reading Brenner 1964 Eq. 1.7 ourselves and noticing that with the correct sign the result would also match the low-eccentricity limit of Yoon &amp; Kim 1989. Once that was corrected, the full $\sigma_2(\kappa a)$ curve fell out, limits were recovered, and the Yoon &amp; Kim benchmark agreed. This session also produced every figure in the paper and a large fraction of the manuscript text. Session 4 alone accounts for roughly $56$ of the $128$ prompts and $759$ of the $882$ responses, though the latter is inflated because Claude Code emits one message per tool call while editing files.
+      Working in a real repository, one file at a time, unlocked everything. The key fix was a sign/magnitude error in the Brenner drag coefficient: $\alpha_2^{\rm drag} = +1/5$, <em>not</em> $+3/5$. We caught it by cross-reading Brenner 1964 Eq. 1.7 and noticing that the correct sign is what matches the low-eccentricity limit of Yoon &amp; Kim 1989. Once that was fixed, the full $\sigma_2(\kappa a)$ curve fell out, the limits recovered, and the Yoon &amp; Kim benchmark agreed. This session also produced every figure and most of the manuscript text. Session 4 alone accounts for ~56 of the 128 prompts and 759 of the 882 responses (the latter inflated because Claude Code emits one message per tool call while editing files).
     </div>
   </div>
   <div class="flow-legend">
@@ -633,19 +633,19 @@ li { margin-bottom: 0.4rem; }
 </div>
 
 <h3>The specific mistakes we had to catch</h3>
-<p>It is easy to say "the AI made some mistakes." It is more useful to be specific, because the failure modes were instructive and all four come from the four sessions above:</p>
+<p>It helps to be specific, because the failure modes were instructive. All four come from the four sessions above:</p>
 <ul>
-  <li><strong>The $-9/5$ phantom (Session 1).</strong> The model produced a factor of $-9/5$ from a catastrophic cancellation of two individually large $O(\kappa a)$ terms, then constructed plausible-sounding justifications for it rather than questioning the underlying expansion. Only when we explicitly refused to let the conversation move on (<em>"Couldn't resolve it?"</em>) did it concede the result had not converged. The lesson: the model will keep walking even when the ground underneath has disappeared, and you have to be the one who stops it.</li>
-  <li><strong>Reverting to Stone &amp; Samuel (Session 1).</strong> After we had explicitly told it to drop the thin-EDL assumption and re-derive for arbitrary $\kappa a$, the very next iteration quietly reached back for the Stone &amp; Samuel slip-velocity formula, which is only valid in the thin-EDL limit. We had to re-issue the correction: <em>"The Stone &amp; Samuel formula is only true for the large $\kappa a$ limit, and using it for all $\kappa a$ is futile."</em> Asymptotic regimes do not persist across turns on their own.</li>
-  <li><strong>The ad-hoc $0.8$ patch (Session 3).</strong> When the large-$\kappa a$ limit did not recover Smoluchowski, the model's instinct was to propose a multiplicative fudge factor rather than to surface the underlying inconsistency in the derivation. This is probably the most dangerous failure mode in the whole project, because the patched result would have looked perfectly correct in a plot. We only caught it because the patch was suspicious on its face.</li>
-  <li><strong>Brenner drag coefficient sign error (Session 4).</strong> The Brenner drag correction for a $P_2$-deformed sphere was initially written with the wrong sign/magnitude: the code had $+3/5$, but Brenner 1964 Eq. 1.7 (once you account for which side of the equation $\alpha$ sits on) gives $+1/5$. The downstream algebra was self-consistent, so this would have been easy to miss if we had not cross-read Brenner ourselves and noticed that $+1/5$ is what matches the low-eccentricity formula of Yoon &amp; Kim 1989. Once we pointed at the specific equation, Claude corrected it and re-propagated.</li>
+  <li><strong>The $-9/5$ phantom (Session 1).</strong> The model produced a factor of $-9/5$ from a catastrophic cancellation of two large $O(\kappa a)$ terms, then kept constructing plausible justifications for it rather than questioning the underlying expansion. Only when we refused to let the conversation move on (<em>"Couldn't resolve it?"</em>) did it concede. The lesson: the model will keep walking even when the ground underneath has disappeared.</li>
+  <li><strong>Reverting to Stone &amp; Samuel (Session 1).</strong> After we explicitly told it to drop the thin-EDL assumption and re-derive for arbitrary $\kappa a$, the next iteration quietly reached back for the Stone &amp; Samuel slip-velocity formula, which is only valid in the thin-EDL limit. We had to re-issue the correction: <em>"The Stone &amp; Samuel formula is only true for the large $\kappa a$ limit, and using it for all $\kappa a$ is futile."</em> Asymptotic regimes do not persist across turns on their own.</li>
+  <li><strong>The ad-hoc $0.8$ patch (Session 3).</strong> When the large-$\kappa a$ limit did not recover Smoluchowski, the model proposed a multiplicative fudge factor rather than surfacing the underlying inconsistency. This is probably the most dangerous failure mode of the project, because the patched result would have looked perfectly correct in a plot. We caught it only because the patch was suspicious on its face.</li>
+  <li><strong>Brenner drag coefficient sign error (Session 4).</strong> The Brenner drag correction for a $P_2$-deformed sphere was written with the wrong sign: the code had $+3/5$, but Brenner 1964 Eq. 1.7 gives $+1/5$. The downstream algebra was self-consistent, so this would have been easy to miss. We caught it by cross-reading Brenner and noticing that $+1/5$ is what matches the low-eccentricity formula of Yoon &amp; Kim 1989.</li>
 </ul>
 
-<p>Running through all four: the common thread is that the model had a strong tendency to <em>construct justifications for its own earlier answers</em> rather than to question them. Catching each error required a human to be willing to stop the forward motion, re-read a primary source (Brenner 1964, Yoon &amp; Kim 1989), and localise the problem to a specific equation. Claude was good at re-propagating a fix once we pointed at it; it was much less good at <em>spotting</em> the error on its own.</p>
+<p>The common thread across all four is that the model tended to <em>construct justifications for its own earlier answers</em> rather than question them. Catching each error required a human willing to stop the forward motion, re-read a primary source, and localise the problem. Claude was good at re-propagating a fix once we pointed at it. It was much less good at spotting the error on its own.</p>
 
 <h3>Beyond the derivation</h3>
 <div class="ai-section">
-<p>Once the analytical result was nailed down in Session 4, Claude Code also generated every figure in the paper, drafted and iterated on sections of the manuscript, and built this interactive blog post. All of those had the same character: fast first drafts that needed careful human editing, but a substantial speedup over starting from scratch. The figures in particular were produced by giving Claude the plotting style of an earlier paper (Ganguly, Roychowdhury &amp; Gupta 2024) as a reference and asking it to match the aesthetics, which was considerably faster than writing plotting scripts from scratch. If you are curious about the actual prompts we used in each session, the <a href="#">preprint Appendix</a> reproduces a representative set verbatim.</p>
+<p>Once the analytical result was nailed down in Session 4, Claude Code also generated every figure in the paper, drafted and iterated on manuscript sections, and built this interactive blog post. Each had the same character: fast first drafts that needed careful human editing, but a real speedup over starting from scratch. For the figures, we pointed Claude at the plotting style of an earlier paper (Ganguly, Roychowdhury &amp; Gupta 2024) and asked it to match the aesthetics, which was much faster than writing plotting scripts from scratch. The <a href="#">preprint Appendix</a> reproduces a representative set of prompts verbatim.</p>
 </div>
 
 <!-- ============ THOUGHTS ============ -->
