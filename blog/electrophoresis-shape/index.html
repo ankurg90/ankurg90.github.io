@@ -498,7 +498,7 @@ li { margin-bottom: 0.4rem; }
 
 <div class="finding-box">
   <strong>1. Shape correction is smooth and predictable.</strong><br>
-  The correction factor $\sigma_2$ starts at $+1/5$ when the ion cloud is thick (where the only effect of shape is to change the drag on the particle) and smoothly goes to zero when the cloud is thin (recovering Smoluchowski's shape-independence). A prolate (football-shaped) particle can move up to ~6% faster than a sphere in thick ion clouds.
+  The correction factor $\sigma_2$ starts at $+1/5$ when the ion cloud is thick (where the only effect of shape is to change the drag on the particle) and smoothly goes to zero when the cloud is thin (recovering Smoluchowski's shape-independence). It reaches a maximum of about $0.25$ near $\kappa a \approx 0.5$. The actual change in mobility is $\varepsilon c_2 \sigma_2(\kappa a)$, so the magnitude depends on how deformed the particle is, but the <em>shape</em> of the $\sigma_2$ curve is universal.
 </div>
 
 <div class="finding-box">
@@ -575,7 +575,7 @@ li { margin-bottom: 0.4rem; }
     </div>
   </div>
   <div class="animation-caption" style="text-align:center; margin-top:0.5rem;">
-    At high $\kappa a$ (thin cloud), all shapes move together. Drag the slider to lower values (thicker cloud) and watch the prolate particle pull ahead while the oblate one falls behind.
+    At high $\kappa a$ (thin cloud), all shapes move together. Drag the slider to lower values (thicker cloud) and watch the prolate particle pull ahead while the oblate one falls behind. The shape amplitudes are fixed at illustrative values; the true mobility change scales as $\varepsilon c_2 \sigma_2(\kappa a)$, so the visual speed differences depend on that choice.
   </div>
 </div>
 
@@ -1754,10 +1754,7 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
       ctx.font = '12px Inter';
       ctx.fillStyle = s.color;
       ctx.textAlign = 'left';
-      const mobPercent = ((mob / sphereMob - 1) * 100);
-      const label = s.name + (Math.abs(mobPercent) > 0.1 && s.c2 !== 0 ?
-        ' (' + (mobPercent > 0 ? '+' : '') + mobPercent.toFixed(1) + '%)' : '');
-      ctx.fillText(label, W - 140, cy + 5);
+      ctx.fillText(s.name, W - 140, cy + 5);
     }
 
     // Ka display
