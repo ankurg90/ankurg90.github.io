@@ -426,7 +426,7 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ PROJECT TIMELINE ============ -->
 <h2 id="timeline">The Long Road to This Problem</h2>
-<p>Before we get to how Claude helped, it is worth being honest about how long this took. "How does shape change electrophoretic mobility" sounds simple, but getting to a formulation we could actually solve took roughly 1.5 years and several false starts. Here is the condensed version:</p>
+<p>Before we get to how Claude helped, it is worth being honest about how long this took. "How does shape change electrophoretic mobility" sounds simple, but getting to a formulation we could actually solve took roughly 1.5 years and several unsuccessful attempts. Here is the condensed version:</p>
 
 <div class="timeline">
   <div class="timeline-item">
@@ -637,10 +637,10 @@ li { margin-bottom: 0.4rem; }
 <h3>The specific mistakes we had to catch</h3>
 <p>It helps to be specific, because the failure modes were instructive. All four come from the four sessions above:</p>
 <ul>
-  <li><strong>The $-9/5$ phantom (Session 1).</strong> The model produced a factor of $-9/5$ from a catastrophic cancellation of two large $O(\kappa a)$ terms, then kept constructing plausible justifications for it rather than questioning the underlying expansion. Only when we refused to let the conversation move on (<em>"Couldn't resolve it?"</em>) did it concede. The lesson: the model will keep walking even when the ground underneath has disappeared.</li>
-  <li><strong>Reverting to Stone &amp; Samuel (Session 1).</strong> After we explicitly told it to drop the thin-EDL assumption and re-derive for arbitrary $\kappa a$, the next iteration quietly reached back for the Stone &amp; Samuel slip-velocity formula, which is only valid in the thin-EDL limit. We had to re-issue the correction: <em>"The Stone &amp; Samuel formula is only true for the large $\kappa a$ limit, and using it for all $\kappa a$ is futile."</em> Asymptotic regimes do not persist across turns on their own.</li>
+  <li><strong>The $-9/5$ phantom (Session 1).</strong> The model produced a factor of $-9/5$ from a catastrophic cancellation of two large $O(\kappa a)$ terms, then kept constructing plausible justifications for it rather than questioning the underlying expansion. Only when we refused to let the conversation move on (<em>"Couldn't resolve it?"</em>) did it concede. The lesson: the model will dig in on an incorrect solution confidently &mdash; checking the work is crucial.</li>
+  <li><strong>Reverting to Stone &amp; Samuel (Session 1).</strong> After we explicitly told it to drop the thin-EDL assumption and re-derive for arbitrary $\kappa a$, the next iteration quietly reached back for the Stone &amp; Samuel slip-velocity formula, which is only valid in the thin-EDL limit. We had to re-issue the correction: <em>"The Stone &amp; Samuel formula is only true for the large $\kappa a$ limit, and using it for all $\kappa a$ is futile."</em></li>
   <li><strong>The ad-hoc $0.8$ patch (Session 3).</strong> When the large-$\kappa a$ limit did not recover Smoluchowski, the model proposed a multiplicative fudge factor rather than surfacing the underlying inconsistency. This is probably the most dangerous failure mode of the project, because the patched result would have looked perfectly correct in a plot. We caught it only because the patch was suspicious on its face.</li>
-  <li><strong>Brenner drag coefficient sign error (Session 4).</strong> The Brenner drag correction for a $P_2$-deformed sphere was written with the wrong sign: the code had $+3/5$, but Brenner 1964 Eq. 1.7 gives $+1/5$. The downstream algebra was self-consistent, so this would have been easy to miss. We caught it by cross-reading Brenner and noticing that $+1/5$ is what matches the low-eccentricity formula of Yoon &amp; Kim 1989.</li>
+  <li><strong>Brenner drag coefficient sign error (Session 4).</strong> The Brenner drag correction for a $P_2$-deformed sphere was written with the wrong value: the code had $\alpha = -3/5$ on the right-hand side of Brenner's formula, but Brenner 1964 Eq. 1.7 gives $\alpha = -1/5$ (equivalently, $+1/5$ in the final mobility). The downstream algebra was self-consistent, so this would have been easy to miss. We caught it by cross-reading Brenner and noticing that $+1/5$ is what matches the low-eccentricity formula of Yoon &amp; Kim 1989.</li>
 </ul>
 
 <p>The common thread across all four is that the model tended to <em>construct justifications for its own earlier answers</em> rather than question them. Catching each error required a human willing to stop the forward motion, re-read a primary source, and localise the problem. Claude was good at re-propagating a fix once we pointed at it. It was much less good at spotting the error on its own.</p>
@@ -651,17 +651,14 @@ li { margin-bottom: 0.4rem; }
 </div>
 
 <!-- ============ THOUGHTS ============ -->
-<h2 id="thoughts">Our Thoughts on AI in Research</h2>
-<ul>
-  <li><strong>It is very powerful.</strong></li>
-  <li><strong>It needs to be used with caution</strong> as it can confuse even the experts.</li>
-  <li><strong>Guardrails are needed on its use.</strong> Undergraduate and graduate training needs to be thoughtful so as to not offload thinking.</li>
-</ul>
+<h2 id="thoughts">Our Thoughts on AI and Research</h2>
+<p>When we first started using Claude, it simultaneously invoked the emotions <em>powerful</em> and <em>scary</em>. The reason is simple: it can solve complicated math problems at an unprecedented pace. As one of our colleagues put it, the distance between a well-formulated problem and a potential solution is a lot shorter now with tools like Claude. A shorter distance, however, should not come at the expense of rigorously checking the solution. This is the tension we keep coming back to &mdash; speed is seductive, and it is precisely when the answer arrives quickly that the temptation to trust it without verification is highest.</p>
+<p>We also believe, especially in undergraduate and graduate training, that Claude should not be used to offload thinking. If students let the model do the work of setting up problems, tracking the algebra, and interpreting the results, they will eventually lose the ability to check its work &mdash; and without that check, the speed advantage turns into a liability. The right use is the one we tried to describe throughout this post: formulate the problem yourself, let Claude accelerate the mechanical parts, and treat every intermediate result as something that still needs to be verified against a primary source or an independent calculation.</p>
 
 <!-- ============ FOOTER ============ -->
 <div class="footer">
-  <p><strong>Preprint:</strong> <a href="#">Ganguly &amp; Gupta, "Shape-dependence of electrophoretic mobility" (2025)</a></p>
-  <p><strong>Acknowledgments:</strong> A.G. thanks the U.S. National Science Foundation (CBET-2238412, CAREER award) and the Air Force Office of Scientific Research (FA9550-25-1-0176, Young Investigator Program award). We are grateful to Professor Howard A. Stone for suggesting the deformed-sphere approach.</p>
+  <p><strong>Preprint:</strong> <a href="#">Ganguly &amp; Gupta, "Shape-dependence of electrophoretic mobility" (2026)</a></p>
+  <p><strong>Acknowledgments:</strong> A. Gupta thanks the U.S. National Science Foundation (CBET-2238412, CAREER award) and the Air Force Office of Scientific Research (FA9550-25-1-0176, Young Investigator Program award). We are grateful to Professor Howard A. Stone for suggesting the deformed-sphere approach, and to the many friends, family members, and colleagues who read drafts of this blog post and offered feedback that made it substantially better.</p>
 </div>
 
 </div><!-- end container -->
@@ -1694,8 +1691,12 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
     { name: 'Pear', c2: 0.1, c3: 0.2, c4: 0, color: '#7c3aed' },
   ];
 
-  let t = 0;
-  let ka = 100;
+  // Race phase: a single global 0 -> 1 variable that all shapes share.
+  // The fastest shape reaches the finish line exactly when phase = 1, then
+  // all shapes reset together. Positions within a cycle are proportional to
+  // each shape's mobility, so the ordering on screen is always the true
+  // mobility ordering at the current ka.
+  let phase = 0;
 
   function getMobility(c2, kaVal) {
     const d = interpPhysics(Math.max(kaVal, 0.01));
@@ -1703,8 +1704,7 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
   }
 
   function draw() {
-    t += 1;
-    ka = parseFloat(slider.value);
+    const ka = parseFloat(slider.value);
     // Map slider 0-100 to ka 0.01 to 300 (log scale)
     const kaActual = Math.pow(10, -2 + (ka / 100) * (Math.log10(300) + 2));
     valDisplay.textContent = kaActual < 1 ? kaActual.toFixed(2) : kaActual < 10 ? kaActual.toFixed(1) : Math.round(kaActual);
@@ -1735,16 +1735,39 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
     ctx.textAlign = 'center';
     ctx.fillText('E', 32, 22);
 
-    // Compute mobilities and normalize
-    const sphereMob = getMobility(0, kaActual);
-    const baseSpeed = 0.4;
+    // Track geometry
+    const trackStart = 60;
+    const trackEnd = W - 160;
+    const trackLen = trackEnd - trackStart;
+
+    // Start/finish lines (subtle)
+    ctx.strokeStyle = '#9ca3af';
+    ctx.setLineDash([2, 3]);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(trackStart, 20);
+    ctx.lineTo(trackStart, H - 20);
+    ctx.moveTo(trackEnd, 20);
+    ctx.lineTo(trackEnd, H - 20);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Compute mobilities at the current ka and find the maximum (leader)
+    const mobs = shapes.map(s => getMobility(s.c2, kaActual));
+    const maxMob = Math.max.apply(null, mobs);
+
+    // Advance the global phase by a fixed fraction each frame. This means
+    // the fastest shape always takes the same wall-clock time to cross the
+    // track, and every shape's on-screen position is (phase * mob / maxMob)
+    // of the way across. All shapes reset simultaneously at phase = 1.
+    phase += 0.004;
+    if (phase >= 1) phase = 0;
 
     for (let i = 0; i < shapes.length; i++) {
       const s = shapes[i];
-      const mob = getMobility(s.c2, kaActual);
-      const speed = baseSpeed * (mob / sphereMob);
+      const relSpeed = mobs[i] / maxMob; // in (0, 1]
+      const cx = trackStart + phase * relSpeed * trackLen;
       const cy = 40 + i * 60;
-      const cx = ((t * speed) % (W + 100)) - 50;
 
       drawShape(ctx, cx, cy, 20, s.c2, s.c3, s.c4, {
         color: s.color,
