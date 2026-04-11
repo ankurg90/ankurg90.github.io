@@ -797,27 +797,43 @@ function P4(x) { return (35*x*x*x*x - 30*x*x + 3) / 8; }
 
 // Draw a deformed sphere cross-section on a canvas
 function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
+  // Axisymmetric shape r(theta) = radius * [1 + c2 P2 + c3 P3 + c4 P4],
+  // where theta is measured from the shape's symmetry axis.
+  //
+  // opts.axis === 'horizontal' puts the symmetry axis along x (matching a
+  // horizontal applied electric field). The default ('vertical') puts the
+  // symmetry axis along y. The choice must match the orientation of the
+  // E-field in the surrounding figure — with a horizontal field, a prolate
+  // particle (c2 > 0) has to be drawn elongated along x, not along y.
   const eps = 1;
   const color = opts.color || '#2563eb';
   const fill = opts.fill || 'rgba(37,99,235,0.12)';
   const lineWidth = opts.lineWidth || 2;
+  const horizontal = opts.axis === 'horizontal';
   ctx.beginPath();
   for (let i = 0; i <= 200; i++) {
     const theta = Math.PI * i / 200;
     const cosT = Math.cos(theta);
+    const sinT = Math.sin(theta);
     const r = radius * (1 + eps * (c2 * P2(cosT) + c3 * P3(cosT) + c4 * P4(cosT)));
-    const x = cx + r * Math.sin(theta);
-    const y = cy - r * Math.cos(theta);
+    // 'along' runs parallel to the symmetry axis; 'perp' is perpendicular.
+    const along = r * cosT;
+    const perp = r * sinT;
+    const x = horizontal ? cx + along : cx + perp;
+    const y = horizontal ? cy - perp  : cy - along;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
-  // Mirror for full shape (negative theta = reflect x)
+  // Mirror for full shape (reflect across the symmetry axis).
   for (let i = 200; i >= 0; i--) {
     const theta = Math.PI * i / 200;
     const cosT = Math.cos(theta);
+    const sinT = Math.sin(theta);
     const r = radius * (1 + eps * (c2 * P2(cosT) + c3 * P3(cosT) + c4 * P4(cosT)));
-    const x = cx - r * Math.sin(theta);
-    const y = cy - r * Math.cos(theta);
+    const along = r * cosT;
+    const perp = r * sinT;
+    const x = horizontal ? cx + along  : cx - perp;
+    const y = horizontal ? cy + perp   : cy - along;
     ctx.lineTo(x, y);
   }
   ctx.closePath();
@@ -1056,6 +1072,7 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
         color: s.color,
         fill: s.color + '22',
         lineWidth: 2,
+        axis: 'horizontal',
       });
 
       // Label
@@ -1773,6 +1790,7 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
         color: s.color,
         fill: s.color + '22',
         lineWidth: 2,
+        axis: 'horizontal',
       });
 
       // Label on the right
