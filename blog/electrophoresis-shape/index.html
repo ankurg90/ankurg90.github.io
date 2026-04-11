@@ -421,8 +421,10 @@ li { margin-bottom: 0.4rem; }
 
 <div class="animation-container">
   <canvas id="anim-deformation" width="660" height="320"></canvas>
-  <div class="animation-caption">A sphere smoothly deforming through different shapes: prolate (football), oblate (M&amp;M), and pear-shaped. Each is built from a different combination of Legendre modes.</div>
+  <div class="animation-caption">A sphere smoothly deforming through different shapes: prolate (football), oblate (M&amp;M), and pear-shaped. The red arrow marks the applied electric field direction, and each shape is drawn with its symmetry axis aligned with it. Each shape is built from a different combination of Legendre modes.</div>
 </div>
+
+<p>One convention worth spelling out before we go further. Labels like <em>prolate (football)</em> and <em>oblate (M&amp;M)</em> are defined <em>relative to the applied electric field</em>. A football is prolate only when its long axis is aligned with the field; an M&amp;M is oblate when its short (symmetry) axis is aligned with the field. Rotate either by $90^\circ$ and you are describing a different physical problem altogether. Every animation below marks the field direction explicitly, and the particle's symmetry axis is always drawn aligned with it.</p>
 
 <!-- ============ PROJECT TIMELINE ============ -->
 <h2 id="timeline">The Long Road to This Problem</h2>
@@ -535,7 +537,7 @@ li { margin-bottom: 0.4rem; }
     <div class="widget-right">
       <canvas id="mobility-canvas" width="360" height="300"></canvas>
       <div class="animation-caption" style="text-align:center; margin-top:0.5rem;">
-        Move the <strong>elongation</strong> slider and watch the mobility curve shift. Now try the other sliders. The curve doesn't budge. The electric field is blind to those shape details.
+        The red arrow on the left marks the applied field direction, and the particle is drawn with its symmetry axis along the field &mdash; so positive $c_2$ is a football pointing along the field, and negative $c_2$ is an M&amp;M with its short axis along the field. Move the <strong>elongation</strong> slider and watch the mobility curve shift. Now try the other sliders. The curve doesn't budge. The electric field is blind to those shape details.
       </div>
     </div>
   </div>
@@ -556,7 +558,7 @@ li { margin-bottom: 0.4rem; }
 
 <div class="animation-container">
   <canvas id="silencing-canvas" width="660" height="360"></canvas>
-  <div class="animation-caption">Four particles grouped by their $c_2$ value. Despite looking very different, particles with the same elongation have identical mobility curves. Higher-order shape details are "electrophoretically silent."</div>
+  <div class="animation-caption">Four particles, each drawn with its symmetry axis along the applied field (red arrow), grouped by their $c_2$ value. Despite looking very different, particles with the same elongation along the field have identical mobility curves. Higher-order shape details are "electrophoretically silent."</div>
 </div>
 
 <!-- ============ SHAPE & SPEED INTERACTIVE ============ -->
@@ -1138,6 +1140,26 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
 
     const currentName = ease < 0.5 ? modes[modeIdx].name : modes[nextIdx].name;
 
+    // E-field arrow (vertical — the shape's symmetry axis is drawn along y,
+    // so "prolate" means elongated along the arrow, "oblate" means flattened
+    // along the arrow).
+    ctx.strokeStyle = '#dc2626';
+    ctx.fillStyle = '#dc2626';
+    ctx.lineWidth = 2;
+    const arrX = 45;
+    ctx.beginPath();
+    ctx.moveTo(arrX, 55);
+    ctx.lineTo(arrX, 255);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(arrX, 255);
+    ctx.lineTo(arrX - 5, 247);
+    ctx.lineTo(arrX + 5, 247);
+    ctx.fill();
+    ctx.font = '600 14px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('E', arrX, 45);
+
     // Draw reference sphere (dashed)
     ctx.setLineDash([5, 5]);
     ctx.strokeStyle = '#d1d5db';
@@ -1217,19 +1239,24 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
     // Deformed shape
     drawShape(sCtx, sW/2, sH/2, 100, c2, c3, c4);
 
-    // Axis indicator
-    sCtx.strokeStyle = '#9ca3af';
-    sCtx.lineWidth = 1;
-    sCtx.setLineDash([3, 3]);
+    // E-field arrow (vertical — matches the shape's symmetry axis, so
+    // positive c_2 is a particle elongated along the field).
+    sCtx.strokeStyle = '#dc2626';
+    sCtx.fillStyle = '#dc2626';
+    sCtx.lineWidth = 2;
+    const arrSX = 28;
     sCtx.beginPath();
-    sCtx.moveTo(sW/2, 20);
-    sCtx.lineTo(sW/2, sH - 20);
+    sCtx.moveTo(arrSX, 40);
+    sCtx.lineTo(arrSX, sH - 30);
     sCtx.stroke();
-    sCtx.setLineDash([]);
-    sCtx.font = '11px Inter';
-    sCtx.fillStyle = '#9ca3af';
+    sCtx.beginPath();
+    sCtx.moveTo(arrSX, sH - 30);
+    sCtx.lineTo(arrSX - 5, sH - 38);
+    sCtx.lineTo(arrSX + 5, sH - 38);
+    sCtx.fill();
+    sCtx.font = '600 13px Inter';
     sCtx.textAlign = 'center';
-    sCtx.fillText('E field direction', sW/2, 15);
+    sCtx.fillText('E', arrSX, 30);
 
     // --- Mobility panel ---
     mCtx.clearRect(0, 0, mW, mH);
@@ -1542,6 +1569,27 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = '#fafaf8';
   ctx.fillRect(0, 0, W, H);
+
+  // E-field arrow (vertical — all four shapes share the same field
+  // direction, and each is drawn with its symmetry axis along it).
+  // Placed in the left margin, clear of the shape columns at cx=55 and
+  // cx=140.
+  ctx.strokeStyle = '#dc2626';
+  ctx.fillStyle = '#dc2626';
+  ctx.lineWidth = 2;
+  const arrSilX = 13;
+  ctx.beginPath();
+  ctx.moveTo(arrSilX, 55);
+  ctx.lineTo(arrSilX, 310);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(arrSilX, 310);
+  ctx.lineTo(arrSilX - 4, 302);
+  ctx.lineTo(arrSilX + 4, 302);
+  ctx.fill();
+  ctx.font = '600 13px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText('E', arrSilX, 45);
 
   // Shapes on the left
   const shapeW = 200;
