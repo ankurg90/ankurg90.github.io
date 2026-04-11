@@ -556,7 +556,7 @@ li { margin-bottom: 0.4rem; }
 
 <div class="animation-container">
   <canvas id="yk-canvas" width="660" height="340"></canvas>
-  <div class="animation-caption">Our perturbation theory (solid lines) vs. the exact spheroid solutions of Yoon &amp; Kim 1989 (circles). Left: prolate (football). Right: oblate (M&amp;M). Grey line: sphere (Henry's function).</div>
+  <div class="animation-caption">Our perturbation theory (solid coloured lines) vs. the exact spheroid solutions of Yoon &amp; Kim 1989 (open circles). Left: prolate (football). Right: oblate (M&amp;M). The dashed grey line is the sphere result, $f_H(\kappa a)$ (Henry's function).</div>
 </div>
 
 <!-- ============ SILENCING DEMO ============ -->
@@ -1406,7 +1406,7 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
   const avolCObl = Math.pow(1/0.8, 2/3);
 
   const halfW = W / 2 - 10;
-  const pad = { left: 55, right: 15, top: 30, bottom: 50 };
+  const pad = { left: 65, right: 15, top: 36, bottom: 42 };
   const pw = halfW - pad.left - pad.right;
   const ph = H - pad.top - pad.bottom;
   const logMin = Math.log10(0.003), logMax = Math.log10(200);
@@ -1435,10 +1435,10 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
       ctx.moveTo(xx, pad.top);
       ctx.lineTo(xx, pad.top + ph);
       ctx.stroke();
-      ctx.font = '10px Inter';
+      ctx.font = '14px Inter';
       ctx.fillStyle = '#6b7280';
       ctx.textAlign = 'center';
-      ctx.fillText(tick.toString(), xx, pad.top + ph + 14);
+      ctx.fillText(tick.toString(), xx, pad.top + ph + 18);
     }
     for (const tick of [0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]) {
       const yy = toY(tick);
@@ -1447,23 +1447,23 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
       ctx.lineTo(ox + pad.left + pw, yy);
       ctx.stroke();
       if (ox === 0) {
-        ctx.font = '10px Inter';
+        ctx.font = '14px Inter';
         ctx.fillStyle = '#6b7280';
         ctx.textAlign = 'right';
-        ctx.fillText(tick.toFixed(2), ox + pad.left - 6, yy + 3);
+        ctx.fillText(tick.toFixed(2), ox + pad.left - 8, yy + 4);
       }
     }
 
     // Title
-    ctx.font = '600 13px Inter';
+    ctx.font = '600 16px Inter';
     ctx.fillStyle = '#1a1a1a';
     ctx.textAlign = 'center';
-    ctx.fillText(title, ox + pad.left + pw/2, pad.top - 10);
+    ctx.fillText(title, ox + pad.left + pw/2, pad.top - 12);
 
     // x-axis label
-    ctx.font = '11px Inter';
-    ctx.fillStyle = '#6b7280';
-    ctx.fillText('\u03BAc', ox + pad.left + pw/2, H - 10);
+    ctx.font = '15px Inter';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillText('\u03BAc', ox + pad.left + pw/2, H - 8);
 
     // Henry (sphere) - grey dashed
     ctx.beginPath();
@@ -1516,48 +1516,16 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
 
   // Y-axis label
   ctx.save();
-  ctx.font = '12px Inter';
+  ctx.font = '15px Inter';
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'center';
-  ctx.translate(12, pad.top + ph/2);
+  ctx.translate(16, pad.top + ph/2);
   ctx.rotate(-Math.PI/2);
   ctx.fillText('Mobility  M / (\u03B5\u03B6/\u03BC)', 0, 0);
   ctx.restore();
 
   drawPanel(0, 'Prolate (football)', ykProlateKc, ykProlateC, epsC2Pro, avolCPro, '#2563eb');
   drawPanel(halfW + 20, 'Oblate (M&M)', ykOblateKc, ykOblateC, epsC2Obl, avolCObl, '#dc2626');
-
-  // Legend
-  const lx = W/2 - 120;
-  const ly = H - 30;
-  ctx.strokeStyle = '#9ca3af';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([5, 3]);
-  ctx.beginPath();
-  ctx.moveTo(lx, ly);
-  ctx.lineTo(lx + 25, ly);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.font = '11px Inter';
-  ctx.fillStyle = '#9ca3af';
-  ctx.textAlign = 'left';
-  ctx.fillText('Sphere', lx + 30, ly + 4);
-
-  ctx.strokeStyle = '#2563eb';
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.moveTo(lx + 90, ly);
-  ctx.lineTo(lx + 115, ly);
-  ctx.stroke();
-  ctx.fillStyle = '#1a1a1a';
-  ctx.fillText('Our theory', lx + 120, ly + 4);
-
-  ctx.beginPath();
-  ctx.arc(lx + 205, ly, 4, 0, Math.PI * 2);
-  ctx.strokeStyle = '#1a1a1a';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  ctx.fillText('Yoon & Kim 1989', lx + 215, ly + 4);
 })();
 
 // ============ SILENCING DEMO ============
