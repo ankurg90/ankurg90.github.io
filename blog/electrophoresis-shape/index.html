@@ -496,12 +496,12 @@ li { margin-bottom: 0.4rem; }
 <!-- ============ RESULTS ============ -->
 <h2 id="results">What We Found</h2>
 
-<p>Our main result is a compact formula for how shape modifies the mobility:</p>
+<p>Our main result is a compact formula for how shape modifies the mobility introduced earlier. For a slightly deformed sphere, the mobility along the field direction is:</p>
 
 <div class="equation-block">
-  $$C_\parallel = f_H(\kappa a)\bigl[1 + \varepsilon\, c_2\, \sigma_2(\kappa a)\bigr]$$
+  $$M = \frac{\varepsilon_f \zeta}{\mu}\, f_H(\kappa a)\bigl[1 + \varepsilon\, c_2\, \sigma_2(\kappa a)\bigr]$$
   <div class="equation-caption">
-    The mobility of a deformed sphere is Henry's function for a sphere, multiplied by a correction that depends on the shape ($\varepsilon\, c_2$) and a new "shape correction factor" $\sigma_2(\kappa a)$ that we computed.
+    The mobility of a deformed sphere is the sphere result $M_{\rm sphere} = (\varepsilon_f \zeta / \mu)\, f_H(\kappa a)$ multiplied by a small shape correction. The correction depends on the elongation along the field ($\varepsilon\, c_2$) and a new "shape correction factor" $\sigma_2(\kappa a)$ that we computed.
   </div>
 </div>
 
@@ -1521,7 +1521,7 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
   ctx.textAlign = 'center';
   ctx.translate(12, pad.top + ph/2);
   ctx.rotate(-Math.PI/2);
-  ctx.fillText('Mobility (C\u2225)', 0, 0);
+  ctx.fillText('Mobility  M / (\u03B5\u03B6/\u03BC)', 0, 0);
   ctx.restore();
 
   drawPanel(0, 'Prolate (football)', ykProlateKc, ykProlateC, epsC2Pro, avolCPro, '#2563eb');
