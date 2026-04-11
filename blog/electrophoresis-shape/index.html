@@ -382,29 +382,36 @@ li { margin-bottom: 0.4rem; }
   <div class="animation-caption">A charged particle in an electrolyte. When an electric field is applied, the particle drifts while the surrounding ion cloud exerts a drag. Only nearby ions are shown for simplicity.</div>
 </div>
 
-<p>The mathematical description is elegant. The velocity $U$ of the particle is:</p>
+<p>The mathematical description is elegant. The velocity $U$ of the particle is proportional to the applied field, and the constant of proportionality is the mobility:</p>
 
 <div class="equation-block">
-  $$U = M \times E_\infty, \qquad M = \frac{\varepsilon_f \zeta}{\mu}\, f_H(\kappa a)$$
+  $$U = M \times E_\infty.$$
   <div class="equation-caption">
-    The mobility $M$ depends on: the fluid permittivity $\varepsilon_f$, the particle's surface potential $\zeta$ (zeta potential), the fluid viscosity $\mu$, and a function $f_H$ that captures how thick the ion cloud is ($\kappa^{-1}$, the Debye length) relative to the particle size ($a$).
+    In general, $M$ depends on the particle's surface charge, the properties of the surrounding fluid, and &mdash; in principle &mdash; the particle's shape and the thickness of the ion cloud around it.
   </div>
 </div>
 
-<p>The function $f_H(\kappa a)$, known as <strong>Henry's function</strong>, smoothly connects two classical limits. When the ion cloud is very thick compared to the particle ($\kappa a \to 0$, the "H&uuml;ckel limit"), $f_H = 2/3$. When the ion cloud is very thin ($\kappa a \to \infty$, the "Smoluchowski limit"), $f_H = 1$.</p>
+<p>The cleanest case to think about first is a <strong>sphere</strong>. For a sphere of radius $a$ with surface potential $\zeta$ (the so-called zeta potential) sitting in a fluid of permittivity $\varepsilon_f$ and viscosity $\mu$, the mobility is</p>
+
+<div class="equation-block">
+  $$M_{\rm sphere} = \frac{\varepsilon_f \zeta}{\mu}\, f_H(\kappa a),$$
+  <div class="equation-caption">
+    where $f_H(\kappa a)$ is <strong>Henry's function</strong>, and $\kappa^{-1}$ is the Debye length &mdash; the thickness of the ion cloud around the particle. The combination $\kappa a$ is the particle size measured in units of that ion cloud thickness.
+  </div>
+</div>
+
+<p>Henry's function smoothly connects two classical limits, both for a sphere. When the ion cloud is very thick compared to the particle ($\kappa a \to 0$, the "H&uuml;ckel limit"), $f_H = 2/3$. When the ion cloud is very thin ($\kappa a \to \infty$, the "Smoluchowski limit"), $f_H = 1$. There was actually a real debate when these were first proposed: H&uuml;ckel (1924) calculated a mobility only $2/3$ of Smoluchowski's value, and the two looked irreconcilable. Both were right, just in different limits, and Henry (1931) bridged them with the interpolation function $f_H(\kappa a)$.</p>
 
 <!-- ============ SMOLUCHOWSKI ============ -->
 <h2 id="smoluchowski">The Smoluchowski Surprise: Shape Doesn't Matter?</h2>
-<p>A classical result in electrophoresis is that the <strong>mobility is shape-independent</strong>. A sphere, a cube, a rod, a crumpled piece of paper: they all move at the same speed, as long as they carry the same surface charge.</p>
+<p>Here is where it gets surprising. In the Smoluchowski limit ($\kappa a \to \infty$), the answer is $f_H = 1$ <em>not just for a sphere, but for any shape</em>: a sphere, a cube, a rod, a crumpled piece of paper all move at exactly the same speed as long as they carry the same zeta potential. The mobility is <strong>shape-independent</strong>.</p>
 
 <div class="animation-container">
   <canvas id="anim-shape-independence" width="660" height="300"></canvas>
   <div class="animation-caption">In the Smoluchowski limit, particles of any shape move at the same speed, but only when the ion cloud is much thinner than the particle.</div>
 </div>
 
-<p>There was even debate about this when it was first proposed. H&uuml;ckel (1924) calculated a mobility only 2/3 of Smoluchowski's value. Both were right, just in different limits: H&uuml;ckel's result applies when the ion cloud is very thick, Smoluchowski's when it is very thin. Henry (1931) bridged them with the interpolation function $f_H(\kappa a)$.</p>
-
-<p>But shape-independence only holds in the so-called thin double-layer limit. For many real systems (nanoparticles, proteins, particles in low-salt solutions), the ion cloud can be comparable to the particle itself. In that regime, shape <em>should</em> matter.</p>
+<p>But this shape-independence only holds in that thin-cloud limit. For many real systems (nanoparticles, proteins, particles in low-salt solutions), the ion cloud can be comparable to the particle itself, and the Smoluchowski argument no longer applies. In that regime, shape <em>should</em> matter &mdash; and the question is how.</p>
 
 <!-- ============ OUR QUESTION ============ -->
 <h2 id="our-question">Our Question: What If Shape <em>Does</em> Matter?</h2>
