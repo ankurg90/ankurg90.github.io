@@ -487,7 +487,7 @@ li { margin-bottom: 0.4rem; }
 <!-- ============ WHY CLAUDE ============ -->
 <h2 id="why-claude">Why and How We Thought Claude Could Help</h2>
 
-<p>Our approach relies on a mathematical technique called <strong>perturbation theory</strong>: start from a known solution (a sphere) and compute corrections for small changes (the shape deformation). If we know exactly how a sphere behaves, can we figure out how a slightly squished sphere behaves by computing the corresponding correction? These calculations involve juggling many variables, length scales, and intermediate expressions. Keeping track of all of it is time-consuming and error-prone, and one sign error can invalidate the whole thing. This is where Claude can substantially speed this up, because it is very fast at keeping track of details, as long as the problem is formulated correctly. Of course, one still needs to check the work along the way (details below as to why).</p>
+<p>Our approach relies on a mathematical technique called <strong>perturbation theory</strong>: start from a known solution (a sphere) and compute corrections for small changes (the shape deformation). If we know exactly how a sphere behaves, can we figure out how a slightly squished sphere behaves by computing the corresponding correction? These calculations involve juggling many variables, length scales, and intermediate expressions. Keeping track of all of it is time-consuming and error-prone, and one sign error can invalidate the whole thing. This is where Claude can substantially speed this up, because it is very fast at keeping track of details, as long as the problem is formulated correctly and the output is carefully verified at each step. The latter point is crucial (details below as to why).</p>
 
 <p>We believe this problem is solvable, and we could likely have solved it without any assistance from Claude. However, it would have taken substantially longer, perhaps months or even a year of effort. In contrast, the core derivation with Claude's help took about 5 weeks from the correct formulation to a validated result.</p>
 
@@ -514,7 +514,7 @@ li { margin-bottom: 0.4rem; }
 
 <div class="finding-box">
   <strong>2. Only one kind of shape change matters: stretching or squashing along the field.</strong><br>
-  Think of a football (stretched along the field direction) versus an M&amp;M (squashed along the field direction). That stretch-or-squash mode, called $P_2$ in the math, is the <em>only</em> shape change that affects the mobility at this order. Pear shapes, bumpy shapes, wavy shapes, all of them are <em>electrophoretically silent</em>: the electric field simply cannot "see" them. Technically, this is a consequence of angular selection rules: the dipolar electric field can only couple to the quadrupolar shape mode. The practical upshot is that a football and a pear with the same amount of elongation end up with identical mobilities, even though they look very different.
+  Think of a football (stretched along the field direction) versus an M&amp;M (squashed along the field direction). That stretch-or-squash mode, called $P_2$ in the math, is the <em>only</em> shape change that affects the mobility at this order. Pear shapes, bumpy shapes, wavy shapes, all of them are <em>electrophoretically silent</em>: the electric field simply cannot "see" them. An analogy: imagine shining a flashlight through a window. The flashlight only "sees" whether the glass is curved (like a lens) or flat &mdash; it cannot tell if the glass has a scratch or a bump on one side. Similarly, the electric field can only interact with the stretch-or-squash component of the shape; all the other details are invisible to it. The practical upshot is that a football and a pear with the same amount of elongation end up with identical mobilities, even though they look very different.
 </div>
 
 <div class="finding-box">
@@ -565,7 +565,7 @@ li { margin-bottom: 0.4rem; }
 
 <div class="animation-container">
   <canvas id="silencing-canvas" width="660" height="360"></canvas>
-  <div class="animation-caption">Four particles, each drawn with its symmetry axis along the applied field (red arrow), grouped by their $c_2$ value. Despite looking very different, particles with the same elongation along the field have identical mobility curves. Higher-order shape details are "electrophoretically silent."</div>
+  <div class="animation-caption">Four particles, each drawn with its symmetry axis along the applied field (red arrow), grouped by their $c_2$ value. The dashed grey line is the sphere result. Despite looking very different, particles with the same elongation along the field have identical mobility curves. Higher-order shape details are "electrophoretically silent."</div>
 </div>
 
 <!-- ============ DISTURBANCE FLOWS ============ -->
@@ -1497,6 +1497,17 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
     }
     ctx.stroke();
     ctx.setLineDash([]);
+    // Label the sphere line
+    const sphereLabelKc = 5;
+    const sphereLabelX = toX(sphereLabelKc, ox);
+    const sphereLabelIdx = physicsData.findIndex(d => d[0]/avolC >= sphereLabelKc);
+    if (sphereLabelIdx >= 0) {
+      const sphereLabelY = toY(physicsData[sphereLabelIdx][1]) - 10;
+      ctx.font = '12px Inter';
+      ctx.fillStyle = '#9ca3af';
+      ctx.textAlign = 'center';
+      ctx.fillText('Sphere', sphereLabelX, sphereLabelY);
+    }
 
     // Our prediction - solid
     ctx.beginPath();
@@ -1709,6 +1720,7 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
   const lx = plotOx + pad.left + 10;
   const ly = pad.top + 12;
   const items = [
+    { name: 'Sphere', color: '#9ca3af', dash: true },
     { name: 'Prolate (solid)', color: '#2563eb', dash: false },
     { name: 'Pear (dashed)', color: '#2563eb', dash: true },
     { name: 'Oblate (solid)', color: '#dc2626', dash: false },
