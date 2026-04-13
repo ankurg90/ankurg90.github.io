@@ -415,7 +415,7 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ OUR QUESTION ============ -->
 <h2 id="our-question">Our Question: What If Shape <em>Does</em> Matter?</h2>
-<p>How would shape matter in electrophoresis? To answer this, we had to relax the thin double-layer assumption, but most ways of calculating mobility rely on exactly that assumption. We leaned on a framework from our prior work (Ganguly, Roychowdhury &amp; Gupta, 2024) that keeps the full ion cloud in the calculation and lets us sidestep this restriction.</p>
+<p>How would shape matter in electrophoresis? To answer this, we had to relax the thin double-layer assumption, but most ways of calculating mobility rely on exactly that assumption. We leaned on a framework from our prior work (<a href="https://doi.org/10.1017/jfm.2024.588">Ganguly, Roychowdhury &amp; Gupta, 2024</a>) that keeps the full ion cloud in the calculation and lets us sidestep this restriction.</p>
 
 <p>We focused on <strong>slightly deformed spheres</strong> because they are analytically tractable. Picture a gentle deformation of a sphere: a football (stretched), an M&amp;M (squashed), a pear, a mushroom. All of these live under the same mathematical construct. The particle surface is described by:</p>
 
@@ -519,7 +519,7 @@ li { margin-bottom: 0.4rem; }
 
 <div class="finding-box">
   <strong>3. Our results match known exact solutions.</strong><br>
-  For the special case of spheroids (ellipsoids of revolution), exact solutions were computed by Yoon &amp; Kim in 1989. Our perturbation theory agrees with their results quantitatively, including a subtle non-monotonic behavior for oblate particles.
+  For the special case of spheroids (ellipsoids of revolution), exact solutions were computed by <a href="https://doi.org/10.1016/0021-9797(89)90184-X">Yoon &amp; Kim in 1989</a>. Our perturbation theory agrees with their results quantitatively, including a subtle non-monotonic behavior for oblate particles.
 </div>
 
 <!-- ============ INTERACTIVE WIDGET ============ -->
@@ -552,7 +552,7 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ YOON & KIM ============ -->
 <h2 id="validation">Checking Our Work</h2>
-<p>We validated our results against the exact spheroid solutions of Yoon &amp; Kim (1989). A spheroid is a special case of our deformed-sphere framework: an ellipsoid of revolution maps onto a pure $P_2$ deformation. The comparison is shown below for the closest-to-spherical case they computed ($c/a = 0.8$).</p>
+<p>We validated our results against the exact spheroid solutions of <a href="https://doi.org/10.1016/0021-9797(89)90184-X">Yoon &amp; Kim (1989)</a>. A spheroid is a special case of our deformed-sphere framework: an ellipsoid of revolution maps onto a pure $P_2$ deformation. The comparison is shown below for the closest-to-spherical case they computed ($c/a = 0.8$).</p>
 
 <div class="animation-container">
   <canvas id="yk-canvas" width="660" height="340"></canvas>
@@ -610,7 +610,7 @@ li { margin-bottom: 0.4rem; }
     <div class="flow-icon">1</div>
     <div>
       <span class="flow-label">Session 1 &middot; Sonnet 4.6 extended (chat) &middot; thin-EDL + shape perturbation</span>
-      We tried a double asymptotic expansion: the thin-EDL (Stone &amp; Samuel) limit plus a small-shape perturbation in $\varepsilon$. The model produced a factor of $-9/5$ for the $\kappa^{-1}$ correction but could not justify it. It turned out two individually $O(\kappa a)$ terms were supposed to cancel to leave an $O(1/\kappa a)$ residual, which is catastrophic under floating-point subtraction. Rather than confronting the cancellation, the model kept constructing post-hoc justifications for the $-9/5$. We had to ask <em>"Couldn't resolve it?"</em> and <em>"Seems like you have given up?"</em> before it acknowledged the dead end. <strong>Unlock:</strong> we dropped the thin-EDL assumption entirely in favor of a Debye&ndash;H&uuml;ckel linearisation with a single perturbation in $\varepsilon$ valid for all $\kappa a$.
+      We tried a double asymptotic expansion: the thin-EDL (<a href="https://doi.org/10.1103/PhysRevLett.77.4102">Stone &amp; Samuel</a>) limit plus a small-shape perturbation in $\varepsilon$. The model produced a factor of $-9/5$ for the $\kappa^{-1}$ correction but could not justify it. It turned out two individually $O(\kappa a)$ terms were supposed to cancel to leave an $O(1/\kappa a)$ residual, which is catastrophic under floating-point subtraction. Rather than confronting the cancellation, the model kept constructing post-hoc justifications for the $-9/5$. We had to ask <em>"Couldn't resolve it?"</em> and <em>"Seems like you have given up?"</em> before it acknowledged the dead end. <strong>Unlock:</strong> we dropped the thin-EDL assumption entirely in favor of a Debye&ndash;H&uuml;ckel linearisation with a single perturbation in $\varepsilon$ valid for all $\kappa a$.
     </div>
   </div>
   <div class="flow-arrow">&darr;</div>
@@ -618,7 +618,7 @@ li { margin-bottom: 0.4rem; }
     <div class="flow-icon">2</div>
     <div>
       <span class="flow-label">Session 2 &middot; Sonnet 4.6 extended (chat) &middot; reframe via Ganguly, Roychowdhury &amp; Gupta 2024</span>
-      Clean restart. We framed the problem directly in terms of the reciprocal-theorem expression from our prior work (Ganguly, Roychowdhury &amp; Gupta 2024, Eq. 2.11), and listed the four components that needed to be perturbed to $O(\varepsilon)$: $M_{UF}$, $D^T$, $b$, and the volume element $\mathrm{d}V$. In this session, <em>we</em> caught a misconception of our own: we had assumed the self-mobility $M_{UF}$ stays constant at $O(\varepsilon)$. Reading Brenner 1964 closely showed it does not, and that Brenner already provides the required shape correction to the Stokes drag. A case of the AI helping us debug our own assumption, not the other way around.
+      Clean restart. We framed the problem directly in terms of the reciprocal-theorem expression from our prior work (Ganguly, Roychowdhury &amp; Gupta 2024, Eq. 2.11), and listed the four components that needed to be perturbed to $O(\varepsilon)$: $M_{UF}$, $D^T$, $b$, and the volume element $\mathrm{d}V$. In this session, <em>we</em> caught a misconception of our own: we had assumed the self-mobility $M_{UF}$ stays constant at $O(\varepsilon)$. Reading <a href="https://doi.org/10.1016/0009-2509(64)85084-3">Brenner 1964</a> closely showed it does not, and that Brenner already provides the required shape correction to the Stokes drag. A case of the AI helping us debug our own assumption, not the other way around.
     </div>
   </div>
   <div class="flow-arrow">&darr;</div>
