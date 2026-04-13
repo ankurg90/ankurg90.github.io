@@ -363,7 +363,7 @@ li { margin-bottom: 0.4rem; }
 </nav>
 
 <div class="tldr">
-  <strong>TL;DR:</strong> We spent about 1.5 years on a problem in fluid mechanics and electrokinetics: how does the shape of a charged particle impact its motion in an electric field? After many unsuccessful attempts, a timely suggestion from Prof. Howard Stone pointed us to the right formulation, and Claude became a real collaborator from there. Across four sessions (three in chat and one in Claude Code) spanning about 5 weeks, it helped us work through the math, make all the figures, and draft much of the paper. It also made real mistakes that we had to catch along the way. This post walks through the physics, the long road to get here, and an honest account of how we actually used AI, including where it helped and where it slipped. The <a href="#">preprint</a> is being submitted for peer review.
+  <strong>TL;DR:</strong> We spent about 1.5 years on a problem in fluid mechanics and electrokinetics: how does the shape of a charged particle impact its motion in an electric field? After many unsuccessful attempts, a timely suggestion from Prof. Howard Stone pointed us to the right formulation, and Claude became a real collaborator from there. Across five sessions (three in chat and two in Claude Code) spanning about 5 weeks, it helped us work through the math, make all the figures, and draft much of the paper. It also made real mistakes that we had to catch along the way. This post walks through the physics, the long road to get here, and an honest account of how we actually used AI, including where it helped and where it slipped. The <a href="#">preprint</a> is being submitted for peer review.
 </div>
 
 <!-- ============ ABOUT US ============ -->
@@ -600,9 +600,9 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ HOW WE USED CLAUDE ============ -->
 <h2 id="how-claude">How We Used Claude (and What It Got Wrong)</h2>
-<p>Once the deformed-sphere formulation was in hand, the analytical work was grinding rather than creative: expand a small parameter, carry the algebra order by order, cross-check against limits. Exactly the kind of thing where AI might help. The collaboration unfolded over about a month across four sessions: three in Claude chat and a final one in Claude Code inside VSCode. In total, we issued roughly <strong>128 substantive prompts</strong> and received around <strong>882 assistant responses</strong>. Each session tried a different mathematical route, and the progression across them is really the story of converging on a workable formulation.</p>
+<p>Once the deformed-sphere formulation was in hand, the analytical work was grinding rather than creative: expand a small parameter, carry the algebra order by order, cross-check against limits. Exactly the kind of thing where AI might help. The collaboration unfolded over about 5 weeks across five sessions: three in Claude chat and two in Claude Code inside VSCode. In total, we issued roughly <strong>160 substantive prompts</strong> and received around <strong>1200 assistant responses</strong>. Each session tried a different mathematical route, and the progression across them is really the story of converging on a workable formulation.</p>
 
-<h3>The four sessions</h3>
+<h3>The five sessions</h3>
 <p>The flowchart below summarises each session's approach, what went wrong, and how we moved to the next. Representative prompts from each session are in the <a href="#">Appendix of the preprint</a>.</p>
 
 <div class="flowchart">
@@ -634,7 +634,15 @@ li { margin-bottom: 0.4rem; }
     <div class="flow-icon">4</div>
     <div>
       <span class="flow-label">Session 4 &middot; Opus 4.6 in Claude Code (VSCode) &middot; where it all came together</span>
-      Working in a real repository, one file at a time, unlocked everything. The key fix was a sign/magnitude error in the Brenner drag coefficient: the code had $\alpha = -3/5$ on the right-hand side of Brenner's formula, but Brenner 1964 Eq. 1.7 gives $\alpha = -1/5$ (equivalently, $+1/5$ in the final mobility). We caught it by cross-reading Brenner and noticing that $+1/5$ is what matches the low-eccentricity limit of Yoon &amp; Kim 1989. Once that was fixed, the full $\sigma_2(\kappa a)$ curve fell out, the limits recovered, and the Yoon &amp; Kim benchmark agreed. This session also produced every figure and most of the manuscript text. Session 4 alone accounts for ~56 of the 128 prompts and 759 of the 882 responses (the latter inflated because Claude Code emits one message per tool call while editing files).
+      Working in a real repository, one file at a time, unlocked everything. The key fix was a sign/magnitude error in the Brenner drag coefficient: the code had $\alpha = -3/5$ on the right-hand side of Brenner's formula, but Brenner 1964 Eq. 1.7 gives $\alpha = -1/5$ (equivalently, $+1/5$ in the final mobility). We caught it by cross-reading Brenner and noticing that $+1/5$ is what matches the low-eccentricity limit of Yoon &amp; Kim 1989. Once that was fixed, the full $\sigma_2(\kappa a)$ curve fell out, the limits recovered, and the Yoon &amp; Kim benchmark agreed. This session also produced every figure and most of the manuscript text. Session 4 alone accounts for ~56 of the 160 prompts and 759 of the 1200 responses (the latter inflated because Claude Code emits one message per tool call while editing files).
+    </div>
+  </div>
+  <div class="flow-arrow">&darr;</div>
+  <div class="flow-step ok">
+    <div class="flow-icon">5</div>
+    <div>
+      <span class="flow-label">Session 5 &middot; Opus 4.6 in Claude Code (VSCode) &middot; refinement and verification</span>
+      A second Claude Code session focused on deriving the $n = 3$ closed forms, auditing sign conventions, expanding the asymptotic discussion, and performing additional consistency checks against the literature. We identified a sign convention mismatch (Convention A vs. Convention B for the Gegenbauer streamfunction) in which two sign errors had cancelled, leaving the final velocities correct but the intermediate expressions inconsistent. This session also expanded the manuscript's asymptotic analysis and added physical-intuition checks for prolate vs. oblate behaviour.
     </div>
   </div>
   <div class="flow-legend">
@@ -652,7 +660,7 @@ li { margin-bottom: 0.4rem; }
 </div>
 
 <h3>The specific mistakes we had to catch</h3>
-<p>It helps to be specific, because the failure modes were instructive. All four come from the four sessions above:</p>
+<p>It helps to be specific, because the failure modes were instructive. All four come from the sessions above:</p>
 <ul>
   <li><strong>The $-9/5$ phantom (Session 1).</strong> The model produced a factor of $-9/5$ from a catastrophic cancellation of two large $O(\kappa a)$ terms, then kept constructing plausible justifications for it rather than questioning the underlying expansion. Only when we refused to let the conversation move on (<em>"Couldn't resolve it?"</em>) did it concede. The lesson: the model will confidently dig in on an incorrect solution &mdash; checking the work is crucial.</li>
   <li><strong>Reverting to Stone &amp; Samuel (Session 1).</strong> After we explicitly told it to drop the thin-EDL assumption and re-derive for arbitrary $\kappa a$, the next iteration quietly reached back for the Stone &amp; Samuel slip-velocity formula, which is only valid in the thin-EDL limit. We had to re-issue the correction: <em>"The Stone &amp; Samuel formula is only true for the large $\kappa a$ limit, and using it for all $\kappa a$ is futile."</em></li>
