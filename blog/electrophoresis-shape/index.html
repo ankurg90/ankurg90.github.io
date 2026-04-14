@@ -519,7 +519,7 @@ li { margin-bottom: 0.4rem; }
 
 <div class="finding-box">
   <strong>3. Our results match known exact solutions.</strong><br>
-  For the special case of spheroids (ellipsoids of revolution), exact solutions were computed by <a href="https://doi.org/10.1016/0021-9797(89)90184-X">Yoon &amp; Kim in 1989</a>. Our perturbation theory agrees with their results quantitatively, including a subtle non-monotonic behavior for oblate particles.
+  For the special case of spheroids (ellipsoids of revolution), exact solutions were computed by <a href="https://www.sciencedirect.com/science/article/abs/pii/0021979789904050">Yoon &amp; Kim in 1989</a>. Our perturbation theory agrees with their results quantitatively, including a subtle non-monotonic behavior for oblate particles.
 </div>
 
 <!-- ============ INTERACTIVE WIDGET ============ -->
@@ -552,7 +552,7 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ YOON & KIM ============ -->
 <h2 id="validation">Checking Our Work</h2>
-<p>We validated our results against the exact spheroid solutions of <a href="https://doi.org/10.1016/0021-9797(89)90184-X">Yoon &amp; Kim (1989)</a>. A spheroid is a special case of our deformed-sphere framework: an ellipsoid of revolution maps onto a pure $P_2$ deformation. The comparison is shown below for the closest-to-spherical case they computed ($c/a = 0.8$).</p>
+<p>We validated our results against the exact spheroid solutions of <a href="https://www.sciencedirect.com/science/article/abs/pii/0021979789904050">Yoon &amp; Kim (1989)</a>. A spheroid is a special case of our deformed-sphere framework: an ellipsoid of revolution maps onto a pure $P_2$ deformation. The comparison is shown below for the closest-to-spherical case they computed ($c/a = 0.8$).</p>
 
 <div class="animation-container">
   <canvas id="yk-canvas" width="660" height="340"></canvas>
@@ -1497,17 +1497,6 @@ function drawShape(ctx, cx, cy, radius, c2, c3, c4, opts={}) {
     }
     ctx.stroke();
     ctx.setLineDash([]);
-    // Label the sphere line
-    const sphereLabelKc = 5;
-    const sphereLabelX = toX(sphereLabelKc, ox);
-    const sphereLabelIdx = physicsData.findIndex(d => d[0]/avolC >= sphereLabelKc);
-    if (sphereLabelIdx >= 0) {
-      const sphereLabelY = toY(physicsData[sphereLabelIdx][1]) - 10;
-      ctx.font = '12px Inter';
-      ctx.fillStyle = '#9ca3af';
-      ctx.textAlign = 'center';
-      ctx.fillText('Sphere', sphereLabelX, sphereLabelY);
-    }
 
     // Our prediction - solid
     ctx.beginPath();
