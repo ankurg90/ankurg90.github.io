@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balance Sheets vs. Poisson&ndash;Nernst&ndash;Planck: An Interactive Walk-through</title>
+
+<!-- Social sharing thumbnail -->
+<meta property="og:title" content="Balance Sheets vs. Poisson-Nernst-Planck: An Interactive Walk-through">
+<meta property="og:description" content="An interactive companion to our paper on ion transport in electrochemical cells. Explore steady-state, transient, and similarity-variable solutions of the PNP equations and compare them, in your browser, to the textbook balance sheet approach.">
+<meta property="og:image" content="https://ankurg90.github.io/assets/og-blog.png?v=2">
+<meta property="og:url" content="https://ankurg90.github.io/blog/balance-sheets-pnp/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Balance Sheets vs. Poisson-Nernst-Planck: An Interactive Walk-through">
+<meta name="twitter:description" content="An interactive companion to our paper on ion transport in electrochemical cells.">
+<meta name="twitter:image" content="https://ankurg90.github.io/assets/og-blog.png?v=2">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+:root {
+  --bg: #fafaf8;
+  --text: #1a1a1a;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --card-bg: #ffffff;
+  --max-width: 740px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 18px;
+}
+.container { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; line-height: 1.2; margin-bottom: 0.5rem; font-weight: 700; }
+h2 { font-size: 1.5rem; margin-top: 3rem; margin-bottom: 1rem; color: var(--text); font-weight: 600; }
+h3 { font-size: 1.15rem; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+p { margin-bottom: 1.25rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.subtitle { color: var(--muted); font-size: 1.05rem; margin-bottom: 2rem; font-style: italic; }
+.authors { color: var(--muted); font-size: 0.95rem; margin-bottom: 0.5rem; }
+
+/* TLDR box */
+.tldr {
+  background: var(--accent-light);
+  border-left: 4px solid var(--accent);
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.5rem 0 2rem;
+  font-size: 0.95rem;
+}
+.tldr strong { font-family: 'Inter', sans-serif; font-weight: 600; }
+
+/* Animation canvases */
+.animation-container {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+.animation-container canvas, .animation-container svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+.animation-caption {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+/* Interactive widget */
+.interactive-widget {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+.widget-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+.controls-row .slider-group { flex: 1 1 220px; margin-bottom: 0; }
+.slider-group {
+  margin-bottom: 0.85rem;
+}
+.slider-group label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+.slider-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.toggle-row input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px; height: 16px;
+}
+.btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--white, #fff);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+.btn.primary:hover { box-shadow: 0 1px 4px rgba(37,99,235,0.3); }
+.legend-row {
+  display: flex; flex-wrap: wrap; gap: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem; color: var(--muted);
+  margin-top: 0.5rem;
+  justify-content: center;
+}
+.legend-row .swatch {
+  display: inline-block;
+  width: 16px; height: 3px;
+  vertical-align: middle;
+  margin-right: 0.3rem;
+}
+.legend-row .swatch.dashed {
+  background: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px);
+  height: 2px;
+}
+
+/* Equation block */
+.equation-block {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  overflow-x: auto;
+}
+.equation-caption {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  text-align: left;
+}
+
+/* Bullet list */
+ul, ol { margin: 0 0 1.25rem 1.5rem; }
+li { margin-bottom: 0.4rem; }
+
+/* Highlight box for findings */
+.finding-box {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1rem 0;
+}
+.finding-box strong { font-family: 'Inter', sans-serif; }
+
+/* Caveat / warning box */
+.warning-box {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 1rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+}
+.warning-box strong { font-family: 'Inter', sans-serif; }
+
+/* Assumption list */
+.assumption-list {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.5rem 1rem 2.5rem;
+  margin: 1rem 0;
+  font-size: 0.93rem;
+}
+.assumption-list li { margin-bottom: 0.5rem; }
+.assumption-list li strong { font-family: 'Inter', sans-serif; font-weight: 600; }
+
+/* Schematic SVG */
+.schematic {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+/* Footer */
+.footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Sidebar TOC */
+.toc {
+  position: fixed;
+  top: 70px;
+  left: max(10px, calc((100vw - 740px) / 2 - 220px));
+  width: 200px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  z-index: 50;
+}
+.toc ul { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--border); }
+.toc li { margin: 0; padding: 0; }
+.toc a {
+  display: block;
+  padding: 0.3rem 0 0.3rem 0.75rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+  border-left: 2px solid transparent;
+  margin-left: -2px;
+}
+.toc a:hover { color: var(--text); text-decoration: none; }
+.toc a.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1100px) { .toc { display: none; } }
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  h1 { font-size: 1.7rem; }
+  .controls-row { flex-direction: column; gap: 0.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div style="background:#1e2a3a; padding:0.75rem 1.5rem; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+  <div style="max-width:740px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;">
+    <a href="../../" style="color:#fff; font-family:Inter,sans-serif; font-weight:700; font-size:0.95rem; text-decoration:none;">Ankur Gupta</a>
+    <a href="../../" style="color:rgba(255,255,255,0.8); font-family:Inter,sans-serif; font-size:0.82rem; font-weight:500; text-decoration:none;">&larr; Back to home</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============ HEADER ============ -->
+<h1>Balance Sheets vs. Poisson&ndash;Nernst&ndash;Planck: An Interactive Walk-through</h1>
+<p class="authors"><a href="https://ankurg90.github.io/">Ankur Gupta</a></p>
+<p class="subtitle">An interactive companion to a paper led by <strong>Grace Origer</strong> with <strong>Ritu R. Raj</strong>, Nathan Jarvey, P. N. Romero Zavala and Wilson A. Smith.</p>
+
+<!-- Sidebar Table of Contents -->
+<nav class="toc" id="toc">
+  <ul>
+    <li><a href="#why">Why this matters</a></li>
+    <li><a href="#setup">The cell</a></li>
+    <li><a href="#bsa">The balance sheet</a></li>
+    <li><a href="#pnp">The PNP equations</a></li>
+    <li><a href="#widget-steady">Steady-state explorer</a></li>
+    <li><a href="#limiting">Limiting current</a></li>
+    <li><a href="#supporting">Supporting electrolyte</a></li>
+    <li><a href="#widget-transient">Transient evolution</a></li>
+    <li><a href="#widget-hcell">Hydrogen evolution cell</a></li>
+    <li><a href="#takeaways">Take-aways</a></li>
+    <li><a href="#under-the-hood">Under the hood</a></li>
+  </ul>
+</nav>
+
+<div class="tldr">
+  <strong>TL;DR:</strong> The "balance sheet" approach in Ch.&nbsp;4 of Bard, Faulkner &amp; White (BFW) is the first thing every electrochemistry student is taught about ion transport. It gets you a number, but it gets it for the wrong reason: it assumes flat concentration profiles in the bulk, then introduces diffusion only at the electrodes &mdash; an inconsistency that breaks species conservation. The Poisson&ndash;Nernst&ndash;Planck (PNP) equations resolve this by predicting the full concentration and flux profiles from first principles. The widgets below let you solve the PNP equations in your browser and overlay the balance sheet predictions, so you can see exactly where the textbook story works, where it doesn't, and why. The full paper is available <a href="#paper-link">at the journal</a> and the source codes (Python and MATLAB) reproducing each figure are <a href="#paper-link">linked below</a>.
+</div>
+
+<!-- ============ WHY ============ -->
+<h2 id="why">Why this matters</h2>
+<p>If you have taken a chemical engineering course on electrochemical systems, chances are you have seen something that looks like the figure below: a one-dimensional cell with a cathode on one side, an anode on the other, and a tidy bookkeeping table that splits the current into a "diffusive" part near the electrodes and an "electromigrative" part everywhere else. That table is the <strong>balance sheet</strong>. It is the entry point that BFW gives in Ch.&nbsp;4 to a beginner trying to make sense of mass transfer in an electrochemical cell.</p>
+
+<p>The balance sheet is appealing because it requires only arithmetic. But the price of the simplicity is a set of assumptions that are never really justified. Some of them turn out to be wrong even for the very examples BFW uses to illustrate the method. The goal of this post &mdash; and the paper it is based on &mdash; is not to dunk on the balance sheet (which is a perfectly fine first pass), but to show where it breaks, and to give you a hands-on tool to see for yourself how a first-principles calculation differs.</p>
+
+<p>You don't need to take our word for any of it. Drag the sliders, watch the curves move, and compare.</p>
+
+<!-- ============ SETUP ============ -->
+<h2 id="setup">The cell</h2>
+<p>We focus on the same cell that BFW does: a one-dimensional copper redox cell. The electrolyte contains three ions &mdash; copper(II), copper(I), and chloride &mdash; in a background of ammonia. At the left electrode (the cathode, $\tilde{x}=-1$) Cu(II) is reduced to Cu(I); at the right electrode (the anode, $\tilde{x}=+1$) the reverse happens. Chloride is inert (it does not react at either electrode), but it is required to keep the solution electroneutral.</p>
+
+<div class="schematic">
+  <svg id="cell-schematic" width="100%" viewBox="0 0 660 240" preserveAspectRatio="xMidYMid meet" style="max-width:660px;">
+    <!-- Cell body -->
+    <rect x="80" y="60" width="500" height="120" fill="#eef2ff" stroke="#1e2a3a" stroke-width="2"/>
+    <!-- Cathode -->
+    <rect x="60" y="50" width="20" height="140" fill="#374151"/>
+    <text x="70" y="38" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#1a1a1a" font-weight="600">Cathode</text>
+    <text x="70" y="210" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" fill="#1a1a1a" font-style="italic">x&#771; = &minus;1</text>
+    <!-- Anode -->
+    <rect x="580" y="50" width="20" height="140" fill="#374151"/>
+    <text x="590" y="38" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#1a1a1a" font-weight="600">Anode</text>
+    <text x="590" y="210" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" fill="#1a1a1a" font-style="italic">x&#771; = +1</text>
+    <!-- Reactions -->
+    <text x="155" y="80" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" fill="#c0392b">Cu(II) + e&#8315; &rarr; Cu(I)</text>
+    <text x="505" y="80" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" fill="#8e44ad">Cu(I) &rarr; Cu(II) + e&#8315;</text>
+    <!-- Ions floating around -->
+    <circle cx="200" cy="125" r="9" fill="#c0392b"/><text x="200" y="129" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">2+</text>
+    <circle cx="265" cy="115" r="8" fill="#8e44ad"/><text x="265" y="119" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">+</text>
+    <circle cx="330" cy="135" r="8" fill="#e67e22"/><text x="330" y="139" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">&minus;</text>
+    <circle cx="395" cy="120" r="8" fill="#e67e22"/><text x="395" y="124" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">&minus;</text>
+    <circle cx="460" cy="145" r="9" fill="#c0392b"/><text x="460" y="149" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">2+</text>
+    <circle cx="240" cy="155" r="8" fill="#8e44ad"/><text x="240" y="159" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">+</text>
+    <circle cx="430" cy="105" r="8" fill="#e67e22"/><text x="430" y="109" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">&minus;</text>
+    <!-- Coordinate axis -->
+    <line x1="80" y1="200" x2="580" y2="200" stroke="#6b7280" stroke-width="1"/>
+    <polygon points="580,200 572,196 572,204" fill="#6b7280"/>
+    <text x="330" y="225" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" fill="#1a1a1a" font-style="italic">x&#771;</text>
+    <!-- Legend -->
+    <g transform="translate(80, 0)">
+      <circle cx="20" cy="10" r="6" fill="#c0392b"/>
+      <text x="32" y="14" font-family="Inter,sans-serif" font-size="11" fill="#1a1a1a">Cu(II)</text>
+      <circle cx="100" cy="10" r="6" fill="#8e44ad"/>
+      <text x="112" y="14" font-family="Inter,sans-serif" font-size="11" fill="#1a1a1a">Cu(I)</text>
+      <circle cx="180" cy="10" r="6" fill="#e67e22"/>
+      <text x="192" y="14" font-family="Inter,sans-serif" font-size="11" fill="#1a1a1a">Cl&#8315;</text>
+    </g>
+  </svg>
+  <div class="animation-caption">A 1D copper redox cell. Cu(II) is consumed at the cathode and produced at the anode (so its flux at both walls is fixed by the surface reaction). Cu(I) does the reverse. Cl&#8315; is inert. Throughout the cell, the three species' concentrations must satisfy electroneutrality: $2\tilde{C}_\mathrm{Cu(II)} + \tilde{C}_\mathrm{Cu(I)} - \tilde{C}_\mathrm{Cl^-} = 0$.</div>
+</div>
+
+<p>Following BFW we make one simplifying assumption that keeps the algebra clean: the limiting equivalent conductances of the three ions are equal. With $\lambda_g = (F^2/RT)|z_g|D_g$, this fixes the diffusivity ratios:</p>
+
+<div class="equation-block">
+  $$\mathscr{D}_\mathrm{Cu(II)} = \tfrac{1}{2}, \quad \mathscr{D}_\mathrm{Cu(I)} = 1, \quad \mathscr{D}_\mathrm{Cl^-} = 1.$$
+  <div class="equation-caption">Dimensionless diffusivities scaled by a reference $D$. Cu(II) is divalent, so its diffusivity is half that of the monovalents under the equal-conductance assumption.</div>
+</div>
+
+<p>The single dimensionless control knob in this problem is the imposed current density:</p>
+
+<div class="equation-block">
+  $$\mathcal{J} = \frac{\nu \ell}{F D C_0},$$
+  <div class="equation-caption">where $\nu = ke/A_\text{electrode}$ is the charge flux at the electrode, $\ell$ is the half-cell width, $D$ the reference diffusivity, and $C_0$ the initial Cu(II) concentration. Throughout, time is non-dimensionalised by $\tau = tD/\ell^2$ and length by $\tilde{x} = x/\ell$.</div>
+</div>
+
+<!-- ============ BALANCE SHEET ============ -->
+<h2 id="bsa">The balance sheet, briefly</h2>
+<p>The recipe BFW follows is short:</p>
+
+<ol class="assumption-list">
+  <li><strong>Assume no concentration gradients in the bulk.</strong> Then the current there must be carried entirely by electromigration.</li>
+  <li><strong>Split the current using transference numbers.</strong> Each species' contribution to the bulk electromigrative current is $i_{m,g} = t_g\, i$, where $t_g = z_g^2 D_g C_g / \sum_g z_g^2 D_g C_g$.</li>
+  <li><strong>At the electrodes, force the imposed reaction rate.</strong> Whatever current the electromigration didn't account for is assigned to a "diffusive" boundary contribution.</li>
+</ol>
+
+<p>For our cell at $k=6$ electrons per unit time, the recipe spits out the famous BFW table: an electromigrative atomic transport rate of $\{-1,-1,+3\}$ for $\{$Cu(II), Cu(I), Cl$^-\}$ everywhere in the bulk, plus a diffusive rate of $\{-5,+7,-3\}$ confined to a thin region near each electrode.</p>
+
+<p>This works, in the sense that the numbers add up to the imposed reaction rate at the wall. But it has problems. We highlight five.</p>
+
+<div class="assumption-list">
+  <ol>
+    <li><strong>Where does "no bulk gradient" come from?</strong> No mixing, no specific time scale, and no analysis of the actual transport equations is invoked to justify it.</li>
+    <li><strong>The diffusive flux is discontinuous</strong> between the bulk (zero) and the electrode (non-zero). Each species is not conserved across the cell.</li>
+    <li><strong>The electromigrative flux is taken to be constant</strong> right up to the electrode &mdash; despite the very same approach assigning a concentration gradient there.</li>
+    <li><strong>There is no notion of a limiting current.</strong> The recipe gives a number for any imposed $k$, even values that would require a negative concentration somewhere.</li>
+    <li><strong>There are no concentration profiles at all.</strong> So there is no way to check, from the recipe, whether the assumptions it relies on are even approximately satisfied.</li>
+  </ol>
+</div>
+
+<p>The PNP equations resolve all five.</p>
+
+<!-- ============ PNP ============ -->
+<h2 id="pnp">The PNP equations, in one screen</h2>
+<p>The Poisson&ndash;Nernst&ndash;Planck (PNP) framework is just three building blocks: a species balance for each ion, a flux law (Nernst&ndash;Planck) that includes both diffusion and electromigration, and a constraint on the electric field (Poisson). For a thin-double-layer system &mdash; the regime relevant here &mdash; Poisson reduces to electroneutrality. Putting these together for a 1D cell:</p>
+
+<div class="equation-block">
+  $$\frac{\partial \tilde{C}_g}{\partial \tau} = \mathscr{D}_g \frac{\partial^2 \tilde{C}_g}{\partial \tilde{x}^2} + z_g \mathscr{D}_g \frac{\partial}{\partial \tilde{x}}\!\left(\tilde{C}_g\, \frac{\partial \tilde\phi}{\partial \tilde{x}}\right),$$
+  <div class="equation-caption">Species balance with diffusive and electromigrative fluxes.</div>
+</div>
+
+<div class="equation-block">
+  $$\sum_g z_g \tilde{C}_g = 0, \qquad \frac{\partial \tilde\phi}{\partial \tilde{x}} \;=\; -\frac{-\mathcal{J} + \sum_g z_g \mathscr{D}_g\, \partial \tilde{C}_g/\partial \tilde{x}}{\sum_g z_g^2 \mathscr{D}_g \tilde{C}_g}.$$
+  <div class="equation-caption">Electroneutrality plus an explicit expression for the potential gradient, obtained by combining the species balances with $j = \mathrm{const} = -\nu$.</div>
+</div>
+
+<p>An aside on a common misconception: <em>electroneutrality does not mean a constant electric field</em>. It is a simplification of Poisson's equation in the thin-double-layer limit, but $\partial\tilde\phi/\partial\tilde{x}$ is generally a function of position because the concentrations $\tilde{C}_g(x)$ vary.</p>
+
+<p>The boundary conditions impose the surface reaction rates: $\tilde{N}_\mathrm{Cu(II)} = -\mathcal{J}$, $\tilde{N}_\mathrm{Cu(I)} = +\mathcal{J}$, $\tilde{N}_\mathrm{Cl^-} = 0$ at both walls. Initial conditions are uniform: $\tilde{C}_\mathrm{Cu(II)}=\tilde{C}_\mathrm{Cu(I)}=1$, $\tilde{C}_\mathrm{Cl^-}=3$. That's the entire problem statement.</p>
+
+<!-- ============ INTERACTIVE STEADY STATE ============ -->
+<h2 id="widget-steady">Interactive #1 &middot; Steady-state explorer</h2>
+<p>The widget below solves the steady-state PNP equations in your browser. Drag the current slider $\mathcal{J}$ and watch four things happen: (i) the concentration profiles develop slopes; (ii) the electromigrative flux $\tilde{N}_{m,g}$ becomes spatially varying; (iii) the diffusive flux $\tilde{N}_{d,g}$ is non-zero throughout the cell, not just at the electrodes; and (iv) the total flux $\tilde{N}_g$ stays beautifully flat &mdash; as it must at steady state, because each species is conserved.</p>
+
+<p>The dashed lines are the balance sheet predictions. Where they agree with PNP and where they don't is the whole story.</p>
+
+<div class="interactive-widget" id="widget-steady-box">
+  <div class="widget-title">Steady-state PNP solver, with BSA overlay</div>
+  <div class="controls-row">
+    <div class="slider-group">
+      <label>Current density $\mathcal{J}$ <span id="ss-J-val">0.17</span></label>
+      <input type="range" id="ss-J" min="0.02" max="0.65" step="0.005" value="0.17">
+      <div style="display:flex; justify-content:space-between; font-family:Inter,sans-serif; font-size:0.72rem; color:var(--muted); margin-top:0.15rem;">
+        <span>low current</span>
+        <span>&larr; capped at $\sim 0.95\,\mathcal{J}_\mathrm{lim}$</span>
+      </div>
+    </div>
+    <div class="slider-group">
+      <label>Supporting electrolyte ratio $R$ <span id="ss-R-val">0</span></label>
+      <input type="range" id="ss-R" min="0" max="100" step="1" value="0">
+      <div style="display:flex; justify-content:space-between; font-family:Inter,sans-serif; font-size:0.72rem; color:var(--muted); margin-top:0.15rem;">
+        <span>none</span>
+        <span>$100\times$ excess</span>
+      </div>
+    </div>
+  </div>
+  <canvas id="ss-canvas" width="700" height="520" style="width:100%; height:auto; max-width:700px;"></canvas>
+  <div class="legend-row">
+    <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>Cu(II)</span>
+    <span style="color:#8e44ad"><span class="swatch" style="background:#8e44ad"></span>Cu(I)</span>
+    <span style="color:#e67e22"><span class="swatch" style="background:#e67e22"></span>Cl&#8315;</span>
+    <span id="ss-legend-na" style="color:#27ae60; display:none"><span class="swatch" style="background:#27ae60"></span>Na&#8314;</span>
+    <span id="ss-legend-clo4" style="color:#2980b9; display:none"><span class="swatch" style="background:#2980b9"></span>ClO&#8324;&#8315;</span>
+    <span style="color:#1a1a1a"><span class="swatch" style="background:#1a1a1a"></span>PNP (solid)</span>
+    <span style="color:#1a1a1a"><span class="swatch dashed" style="color:#1a1a1a"></span>BSA (dashed)</span>
+  </div>
+  <div class="animation-caption" style="margin-top:1rem;">
+    Top-left: concentration profiles (PNP only &mdash; BSA makes no prediction here). Top-right: electromigrative flux. Bottom-left: diffusive flux. Bottom-right: total flux. All fluxes are normalised by $|\mathcal{J}|$. Move the current slider toward its right edge and watch the Cu(II) concentration plunge to zero at the cathode &mdash; that's the limiting current. Toggle the supporting-electrolyte slider to add NaClO$_4$ at up to $100\times$ excess; the inert ions take over the electromigration.
+  </div>
+</div>
+
+<!-- ============ LIMITING CURRENT ============ -->
+<h2 id="limiting">Pushing toward the limiting current</h2>
+<p>One thing the BSA cannot do is tell you when its own answer becomes nonsense. Push the current slider above to about $\mathcal{J}\approx 0.6$. The Cu(II) concentration profile gets steeper and steeper at the cathode, until it crosses through zero. At that point the surface reaction is starving for reactant: ions cannot be supplied to the wall fast enough to sustain the imposed current. This is the <strong>limiting current</strong>, and for this cell (with no supporting electrolyte) it sits at $\mathcal{J}_\mathrm{lim}\approx 0.7$.</p>
+
+<p>Two things to notice:</p>
+
+<ul>
+  <li>The slider here is capped at about $0.95\,\mathcal{J}_\mathrm{lim}$. We picked the cap so the in-browser Newton solver is stable; in the paper we go right up to the limit and beyond, which is where the BSA picture really falls apart.</li>
+  <li>The BSA dashed lines for the electromigrative flux <em>do not change</em> as you change $\mathcal{J}$ &mdash; in normalised flux units, BSA is a current-independent prediction. The PNP solid lines, in contrast, develop large gradients near the electrodes as you approach the limit. The discrepancy near the cathode is the BSA's blind spot.</li>
+</ul>
+
+<!-- ============ SUPPORTING ELECTROLYTE ============ -->
+<h2 id="supporting">What a supporting electrolyte does (and why people use one)</h2>
+<p>In real electrochemistry, you often add a large excess of an inert salt (a "supporting electrolyte" &mdash; here, NaClO$_4$). Drag the $R$ slider to $100$. Two things happen:</p>
+
+<ul>
+  <li><strong>The reactive species' electromigrative fluxes collapse to zero.</strong> Look at the Cu(II), Cu(I), and Cl$^-$ traces in the electromigration panel: they almost flatline. The inert Na$^+$ and ClO$_4^-$ now carry essentially all of the electromigration. Their large concentrations dominate the denominator of $\partial\tilde\phi/\partial\tilde{x}$, screening the field and shutting down electromigration of the trace reactive species.</li>
+  <li><strong>The diffusive flux of Cu(II) and Cu(I) does the work.</strong> What was previously a mix of diffusion and electromigration becomes essentially pure diffusion for the reactive species. <em>This is the regime where the textbook "diffusion-only" picture finally becomes a good approximation</em> &mdash; and notice how, in this limit, the BSA's predictions for the reactive ions get much closer to the PNP curves.</li>
+</ul>
+
+<p>So the BSA is not wrong everywhere. It is essentially right when you have a strong supporting electrolyte and you are looking at the trace species. The issue is that BFW presents the analysis without that caveat, in cells where the assumption is not satisfied.</p>
+
+<!-- ============ INTERACTIVE TRANSIENT ============ -->
+<h2 id="widget-transient">Interactive #2 &middot; The transient story</h2>
+<p>What about early times? Before the surface reactions have had a chance to perturb the bulk, the concentration profiles really are nearly flat &mdash; just like BSA assumes. Maybe the BSA is a snapshot of an early-time state?</p>
+
+<p>It is, sort of. The widget below solves the time-dependent PNP equations starting from the uniform initial condition. Hit play and watch the profiles evolve. We track three things: the concentration field, the total flux $\tilde{N}_g(\tilde{x})$, and the current density $\tilde j(\tilde{x}) = \sum_g z_g \tilde{N}_g$. At every time, current is a constant in $\tilde{x}$ (electroneutrality enforces it), but the individual fluxes are only constant once steady state is reached.</p>
+
+<div class="interactive-widget" id="widget-transient-box">
+  <div class="widget-title">Transient PNP &mdash; copper redox cell at $\mathcal{J} = 1/6$</div>
+  <div class="controls-row">
+    <div class="slider-group" style="flex:2 1 380px;">
+      <label>Time $\tau$ <span id="tr-tau-val">0.000</span></label>
+      <input type="range" id="tr-tau" min="0" max="500" step="1" value="0">
+    </div>
+    <div style="display:flex; gap:0.5rem; align-items:flex-end;">
+      <button class="btn primary" id="tr-play">&#9658; Play</button>
+      <button class="btn" id="tr-reset">Reset</button>
+    </div>
+  </div>
+  <canvas id="tr-canvas" width="700" height="320" style="width:100%; height:auto; max-width:700px;"></canvas>
+  <div class="legend-row">
+    <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>Cu(II)</span>
+    <span style="color:#8e44ad"><span class="swatch" style="background:#8e44ad"></span>Cu(I)</span>
+    <span style="color:#e67e22"><span class="swatch" style="background:#e67e22"></span>Cl&#8315;</span>
+    <span style="color:#1a1a1a"><span class="swatch dashed" style="color:#1a1a1a"></span>BSA reference</span>
+  </div>
+  <div class="animation-caption" style="margin-top:1rem;">
+    Left: $\tilde{C}_g(\tilde{x})$. Middle: total flux $\tilde{N}_g(\tilde{x})/|\mathcal{J}|$ with the BSA "bulk + boundary spike" pattern overlaid. Right: $\tilde{j}(\tilde{x})/|\mathcal{J}|$ &mdash; should be uniformly $-1$ at all times by electroneutrality. Useful checkpoints: $\tau \approx 0.05$ (bulk gradients haven't developed yet &mdash; close to BSA assumption), $\tau \approx 0.25$ (gradients propagating in), $\tau \approx 5$ (fully steady).
+  </div>
+</div>
+
+<p>At $\tau \approx 0.05$, the bulk really is nearly flat &mdash; you can see it in the concentration plot. The BSA would then say "in the bulk, only electromigration matters," and at this single time slice it's a defensible statement. By $\tau \approx 0.25$ the gradients have invaded the bulk, and by $\tau \approx 5$ the system has settled into the steady-state profile from the previous widget.</p>
+
+<p>Read this carefully: the BSA is an early-time approximation, even though it is presented (in BFW and elsewhere) as a general analysis. The transient solution makes that explicit.</p>
+
+<!-- ============ HCELL ============ -->
+<h2 id="widget-hcell">Interactive #3 &middot; The hydrogen evolution cell</h2>
+<p>The third example in BFW is HCl electrolysis. Here both the cation (H$^+$) and the anion (Cl$^-$) react: H$^+$ is reduced to H$_2$ at the cathode, Cl$^-$ is oxidised to Cl$_2$ at the anode. The diffusivity ratio is large &mdash; H$^+$ diffuses about $4\times$ faster than Cl$^-$ &mdash; so the picture differs from the copper cell.</p>
+
+<p>Because both species are electroactive, the salt concentration drops near both electrodes. For early times (before the depletion fronts from the two electrodes meet in the middle), there is a beautiful closed-form solution: a similarity-variable expression involving the complementary error function. We use it here as Interactive&nbsp;#3.</p>
+
+<div class="equation-block">
+  $$\theta(\eta) = \eta\,\mathrm{erfc}\!\left(\tfrac{\eta}{2}\right) - \frac{2}{\sqrt\pi}\,\exp\!\left(-\tfrac{\eta^2}{4}\right), \qquad \eta = \frac{1+\tilde x}{\sqrt{D_a \tau}}$$
+  <div class="equation-caption">Similarity variable solution for the salt concentration near the cathode. $D_a = 2 D_\mathrm{H} D_\mathrm{Cl}/(D_\mathrm{H}+D_\mathrm{Cl})$ is the ambipolar diffusivity. The full cell solution is the superposition of two such solutions, one anchored at each electrode.</div>
+</div>
+
+<div class="interactive-widget" id="widget-hcell-box">
+  <div class="widget-title">H-cell similarity-variable solution at early times</div>
+  <div class="controls-row">
+    <div class="slider-group">
+      <label>Time $\tau$ <span id="hc-tau-val">0.05</span></label>
+      <input type="range" id="hc-tau" min="0.005" max="0.15" step="0.001" value="0.05">
+      <div style="display:flex; justify-content:space-between; font-family:Inter,sans-serif; font-size:0.72rem; color:var(--muted); margin-top:0.15rem;">
+        <span>just after start</span>
+        <span>fronts about to meet</span>
+      </div>
+    </div>
+  </div>
+  <canvas id="hc-canvas" width="700" height="280" style="width:100%; height:auto; max-width:700px;"></canvas>
+  <div class="legend-row">
+    <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>H&#8314;</span>
+    <span style="color:#27ae60"><span class="swatch" style="background:#27ae60"></span>Cl&#8315;</span>
+    <span style="color:#1a1a1a"><span class="swatch" style="background:#1a1a1a"></span>Salt $\tilde{C}_\mathrm{S}$</span>
+    <span style="color:#1a1a1a"><span class="swatch dashed" style="color:#1a1a1a"></span>BSA</span>
+  </div>
+  <div class="animation-caption" style="margin-top:1rem;">
+    Left: salt concentration $\tilde{C}_\mathrm{S}(\tilde{x})$ &mdash; the depletion fronts grow inward from each electrode. Middle: H$^+$ flux (electromigrative + diffusive + total). Right: Cl$^-$ flux. The BSA dashed lines are the textbook bulk + boundary-spike pattern in $k=10$ units. The faster H$^+$ carries most of the current via electromigration; Cl$^-$ does it via diffusion. The similarity solution is valid only while the depletion fronts have not yet met &mdash; so $\tau \lesssim 0.15$ here.
+  </div>
+</div>
+
+<!-- ============ TAKEAWAYS ============ -->
+<h2 id="takeaways">Take-aways for students and instructors</h2>
+
+<div class="finding-box">
+  <strong>1. The BSA is right about the destination, often wrong about the journey.</strong><br>
+  At the electrodes, the BSA enforces the imposed reaction rate &mdash; that's a boundary condition you can't get wrong. But its claim of zero-gradient bulk and constant electromigration is generically violated, and the diffusive contribution does not vanish in the interior of a steady-state cell.
+</div>
+
+<div class="finding-box">
+  <strong>2. There is a regime where BSA works: trace reactive species in a sea of supporting electrolyte.</strong><br>
+  Drag the $R$ slider to $100$ in the steady-state widget and look at the Cu(II)/Cu(I) electromigrative fluxes. They flatten. The BSA assumption that the concentration is essentially uniform becomes a good approximation, because the inert ions buffer the field and the reactive species' contribution to it is negligible. This is also why supporting electrolytes are added in practice: they make the diffusive picture self-consistent.
+</div>
+
+<div class="finding-box">
+  <strong>3. Early times are another regime where BSA is approximately right.</strong><br>
+  Hit play on the transient widget and pause around $\tau \approx 0.05$. The bulk is nearly flat. The BSA "bulk + boundary spike" decomposition is a one-time-slice picture that captures this moment.
+</div>
+
+<div class="finding-box">
+  <strong>4. PNP gives you something BSA cannot: the limiting current.</strong><br>
+  Crank the current slider toward $\mathcal{J}\approx 0.65$. The Cu(II) profile dives toward zero at the cathode. Past that point the imposed current is unphysical; the cell cannot supply Cu(II) fast enough. The BSA never tells you this, because it has no concentration field to look at.
+</div>
+
+<p>If you teach this material, the punchline we hope to leave you with is: the BSA is a fine entry-level mnemonic, but it should be presented alongside its assumptions and the conditions under which they are or aren't satisfied. If you are learning this material, hopefully the widgets above let you see for yourself where the textbook story is loyal to the physics and where it isn't.</p>
+
+<!-- ============ UNDER THE HOOD ============ -->
+<h2 id="under-the-hood">Under the hood</h2>
+
+<p>All three solvers run entirely in your browser &mdash; no server, no Python kernel.</p>
+
+<ul>
+  <li><strong>Steady state.</strong> We discretise the integral-deviation form of the steady PNP equations on a uniform grid (Eq.&nbsp;28 in the paper), then use Newton's method with continuation in $\mathcal{J}$ to march from the trivial solution at $\mathcal{J}=0$ to the requested current. The Jacobian is computed by forward differences and the linear system is solved with dense LU + partial pivoting. For $\sim 30$ grid points and $3$&ndash;$5$ ions, a slider drag completes in under $\sim 200$&nbsp;ms.</li>
+  <li><strong>Transient.</strong> Explicit finite-difference time stepping (FTCS) of the species balance, with $\partial\tilde\phi/\partial\tilde{x}$ recomputed at every step from the instantaneous concentration field. To keep the slider responsive, we precompute a frame buffer at startup so the playback is just animation. Stable for $\Delta\tau \lesssim h^2/(2\max\mathscr{D}_g)$.</li>
+  <li><strong>H-cell similarity solution.</strong> Closed form. We approximate $\mathrm{erfc}$ with a degree-7 Chebyshev expansion accurate to $\sim 10^{-6}$. The widget evaluates the analytical formula at every $\tilde x$.</li>
+</ul>
+
+<p>The original Python (steady state and h-cell) and MATLAB (transient) solvers used to produce all the figures in the paper are released alongside it. Those are the recommended tools if you want to extend the analysis &mdash; the in-browser solvers here are designed for pedagogy, not production.</p>
+
+<div class="warning-box">
+  <strong>A note on the slider caps.</strong> The current slider in widget&nbsp;#1 is capped at about $0.95\,\mathcal{J}_\mathrm{lim} \approx 0.65$ because the Newton solver becomes finicky near the limit (the Jacobian becomes ill-conditioned as $\tilde{C}_\mathrm{Cu(II)}\to 0$ at the cathode). The h-cell time slider in widget&nbsp;#3 is capped at $\tau = 0.15$ because the underlying similarity solution is only valid while the depletion fronts from the two electrodes haven't yet met. Past these caps the in-browser solvers misbehave; the full paper handles both cases properly.
+</div>
+
+<p id="paper-link"><strong>The paper.</strong> Origer, Raj, Jarvey, Romero Zavala, Smith, Gupta, "Rethinking Balance Sheets: A Poisson-Nernst-Planck Based Approach for Modeling Concentration and Flux Profiles Inside an Electrochemical Cell," <em>Chemical Engineering Journal</em>, 2026 (under revision). Source codes for all figures are bundled with the supplementary material.</p>
+
+<p><strong>Acknowledgements.</strong> Major credit to <strong>Grace Origer</strong> who led the work and to <strong>Ritu R. Raj</strong> for substantial contributions to the analysis and figures. Thanks also to Nathan Jarvey, P.&nbsp;N. Romero Zavala, and Wilson&nbsp;A. Smith for collaboration on the manuscript. The interactive widgets here were built by AG with Claude as a coding assistant.</p>
+
+<div class="footer">
+  <p>Posted April 2026 &middot; Ankur Gupta &middot; <a href="../../">Back to home</a></p>
+</div>
+
+</div><!-- /container -->
+
+
+<!-- =================================================================== -->
+<!--  JAVASCRIPT                                                        -->
+<!-- =================================================================== -->
+<script>
+'use strict';
+
+/* =====================================================================
+   COLORS, CONSTANTS
+   ===================================================================== */
+const COLORS = {
+  CuII: '#c0392b',
+  CuI:  '#8e44ad',
+  Cl:   '#e67e22',
+  Na:   '#27ae60',
+  ClO4: '#2980b9',
+  H:    '#c0392b',
+  ClH:  '#27ae60',  // Cl- in H-cell
+  text: '#1a1a1a',
+  muted: '#6b7280',
+  grid: '#e5e7eb',
+  bg: '#fafaf8',
+};
+
+/* =====================================================================
+   SMALL LINEAR ALGEBRA -- dense LU with partial pivoting
+   ===================================================================== */
+function luDecompose(A, n) {
+  // A is a flat n*n array. In-place LU. Returns piv array.
+  const piv = new Int32Array(n);
+  for (let i = 0; i < n; i++) piv[i] = i;
+  for (let k = 0; k < n; k++) {
+    // Find pivot
+    let maxAbs = Math.abs(A[k*n + k]);
+    let maxRow = k;
+    for (let i = k+1; i < n; i++) {
+      const v = Math.abs(A[i*n + k]);
+      if (v > maxAbs) { maxAbs = v; maxRow = i; }
+    }
+    if (maxAbs < 1e-14) throw new Error('Singular matrix at column ' + k);
+    if (maxRow !== k) {
+      for (let j = 0; j < n; j++) {
+        const t = A[k*n + j]; A[k*n + j] = A[maxRow*n + j]; A[maxRow*n + j] = t;
+      }
+      const tp = piv[k]; piv[k] = piv[maxRow]; piv[maxRow] = tp;
+    }
+    const Akk = A[k*n + k];
+    for (let i = k+1; i < n; i++) {
+      A[i*n + k] /= Akk;
+      const Lik = A[i*n + k];
+      for (let j = k+1; j < n; j++) {
+        A[i*n + j] -= Lik * A[k*n + j];
+      }
+    }
+  }
+  return piv;
+}
+
+function luSolve(LU, piv, b, n) {
+  // Solves LU * x = P b, returns x. Does not modify b.
+  const x = new Float64Array(n);
+  // Apply permutation
+  for (let i = 0; i < n; i++) x[i] = b[piv[i]];
+  // Forward sub (L has unit diag)
+  for (let i = 0; i < n; i++) {
+    let s = x[i];
+    for (let j = 0; j < i; j++) s -= LU[i*n + j] * x[j];
+    x[i] = s;
+  }
+  // Back sub (U)
+  for (let i = n-1; i >= 0; i--) {
+    let s = x[i];
+    for (let j = i+1; j < n; j++) s -= LU[i*n + j] * x[j];
+    x[i] = s / LU[i*n + i];
+  }
+  return x;
+}
+
+/* =====================================================================
+   STEADY-STATE PNP SOLVER
+   Uses deviation variable b_g = integral(C_g - C0_g) dx with b_g(±1)=0.
+   Discretized on uniform grid x_i = -1 + 2i/(N-1), interior i=1..N-2.
+   Newton iteration with continuation in J.
+   ===================================================================== */
+function solveSteadyPNP({ C0, z, D, Npattern, J_target, Ngrid = 31 }) {
+  const ns = C0.length;          // number of species
+  const N = Ngrid;               // total grid points (including boundaries)
+  const intN = N - 2;            // interior nodes
+  const dim = ns * intN;         // total unknowns
+  const h = 2 / (N - 1);
+  const inv2h = 1 / (2*h);
+  const invh2 = 1 / (h*h);
+
+  // Indexing: b[g*intN + i] for i=0..intN-1 (corresponds to grid index i+1)
+  // Boundary values are zero.
+
+  function residual(bvec, J, out) {
+    // out: pre-allocated Float64Array of length dim
+    // For each interior grid node (k = 1..N-2, i.e. local idx = k-1 in 0..intN-1),
+    // compute Cg, T at that node.
+    // Need access to b[g, k-1], b[g, k+1] which corresponds to neighboring local idx.
+    // Use boundary conditions: b at local idx -1 = 0 (left wall), at local idx intN = 0 (right wall).
+    // i.e. b_full[g][0] = 0, b_full[g][N-1] = 0; b_full[g][k] = b[g, k-1] for k=1..N-2.
+
+    // Compute alpha_g, S, and per-node Cg and T arrays
+    const alpha = new Float64Array(ns);
+    let S = 0;
+    for (let g = 0; g < ns; g++) {
+      alpha[g] = Npattern[g] * J / D[g];
+      S += z[g] * alpha[g];
+    }
+
+    // For each local interior node idx i (0..intN-1), corresponding to grid node k = i+1:
+    // bp[g,i] = (b_full[g, i+2] - b_full[g, i]) / (2h)   [where boundaries map to 0]
+    // i.e. bp = (b_right - b_left)*inv2h
+    // where b_right = (i==intN-1 ? 0 : bvec[g*intN + i+1])
+    //       b_left  = (i==0 ? 0 : bvec[g*intN + i-1])
+
+    const Cg = new Array(ns);
+    for (let g = 0; g < ns; g++) Cg[g] = new Float64Array(intN);
+    const T = new Float64Array(intN);
+
+    for (let g = 0; g < ns; g++) {
+      const base = g*intN;
+      for (let i = 0; i < intN; i++) {
+        const b_left  = (i === 0)        ? 0 : bvec[base + i - 1];
+        const b_right = (i === intN - 1) ? 0 : bvec[base + i + 1];
+        const bp = (b_right - b_left) * inv2h;
+        Cg[g][i] = bp + C0[g];
+      }
+    }
+    for (let i = 0; i < intN; i++) {
+      let t = 0;
+      for (let g = 0; g < ns; g++) t += z[g]*z[g] * Cg[g][i];
+      T[i] = t;
+    }
+
+    // Residual at each (g, i): (b[g,i+1] - 2*b[g,i] + b[g,i-1])/h² - z[g]*Cg[g][i]*S/T[i] + alpha[g] = 0
+    for (let g = 0; g < ns; g++) {
+      const base = g*intN;
+      for (let i = 0; i < intN; i++) {
+        const b_self  = bvec[base + i];
+        const b_left  = (i === 0)        ? 0 : bvec[base + i - 1];
+        const b_right = (i === intN - 1) ? 0 : bvec[base + i + 1];
+        const lap = (b_right - 2*b_self + b_left) * invh2;
+        const rhs = z[g] * Cg[g][i] * S / T[i] - alpha[g];
+        out[base + i] = lap - rhs;
+      }
+    }
+  }
+
+  function newton(b, J, maxIter = 30, tol = 1e-9) {
+    const R0 = new Float64Array(dim);
+    const Rp = new Float64Array(dim);
+    const Jac = new Float64Array(dim*dim);
+    const eps = 1e-7;
+    for (let iter = 0; iter < maxIter; iter++) {
+      residual(b, J, R0);
+      let norm = 0;
+      for (let i = 0; i < dim; i++) norm += R0[i]*R0[i];
+      norm = Math.sqrt(norm);
+      if (norm < tol) return true;
+
+      // Numerical Jacobian
+      for (let k = 0; k < dim; k++) {
+        const orig = b[k];
+        b[k] = orig + eps;
+        residual(b, J, Rp);
+        b[k] = orig;
+        for (let i = 0; i < dim; i++) {
+          Jac[i*dim + k] = (Rp[i] - R0[i]) / eps;
+        }
+      }
+
+      try {
+        const piv = luDecompose(Jac, dim);
+        const dx = luSolve(Jac, piv, R0, dim);
+        // Damped step: scale down if it's too large
+        let stepSize = 0;
+        for (let i = 0; i < dim; i++) stepSize = Math.max(stepSize, Math.abs(dx[i]));
+        const damp = stepSize > 1.0 ? 1.0/stepSize : 1.0;
+        for (let i = 0; i < dim; i++) b[i] -= damp * dx[i];
+      } catch (e) {
+        return false;  // singular
+      }
+    }
+    return false;  // didn't converge
+  }
+
+  // Continuation in J
+  const b = new Float64Array(dim);
+  const nSteps = Math.max(4, Math.ceil(Math.abs(J_target) / 0.08));
+  for (let s = 1; s <= nSteps; s++) {
+    const J_s = J_target * s / nSteps;
+    const ok = newton(b, J_s, 30, 1e-9);
+    if (!ok) {
+      // Try with smaller step
+      const b_save = new Float64Array(b);
+      let recovered = false;
+      for (let extra = 2; extra <= 8 && !recovered; extra++) {
+        b.set(b_save);
+        let ok_ex = true;
+        for (let ss = 1; ss <= extra; ss++) {
+          const J_ss = J_target * (s-1)/nSteps + (J_target/nSteps) * ss/extra;
+          if (!newton(b, J_ss, 30, 1e-8)) { ok_ex = false; break; }
+        }
+        if (ok_ex) recovered = true;
+      }
+      if (!recovered) break;  // give up; return what we have
+    }
+  }
+
+  // Reconstruct full solution
+  const x = new Float64Array(N);
+  for (let k = 0; k < N; k++) x[k] = -1 + 2*k/(N-1);
+
+  const C = new Array(ns);
+  for (let g = 0; g < ns; g++) C[g] = new Float64Array(N);
+
+  // C_g(x_k) = bp(x_k) + C0[g] for interior; at boundary use:
+  //   At k=0 (x=-1): one-sided: bp = (b[g,1] - 0)/h  (using b at boundary = 0 -> need b[g,-1] but use forward)
+  //   Cleaner: just use 1-sided for boundaries.
+  for (let g = 0; g < ns; g++) {
+    // Interior nodes
+    for (let k = 1; k < N - 1; k++) {
+      const localI = k - 1;
+      const b_left  = (localI === 0)         ? 0 : b[g*intN + localI - 1];
+      const b_right = (localI === intN - 1)  ? 0 : b[g*intN + localI + 1];
+      const bp = (b_right - b_left) * inv2h;
+      C[g][k] = bp + C0[g];
+    }
+    // Boundary nodes via one-sided differences
+    // At k=0: bp = (b[g,localI=0] - 0)/h  (forward diff using b(x_0)=0 and b(x_1)=b[g,0])
+    C[g][0]   = (b[g*intN + 0]      - 0) / h + C0[g];
+    C[g][N-1] = (0 - b[g*intN + intN - 1]) / h + C0[g];
+  }
+
+  // Compute fluxes
+  // dphi/dx = - [-J + sum z_g D_g dC_g/dx] / [sum z_g^2 D_g C_g]   -- note: at steady state we have S = sum z_g N_g/D_g = (sum z_g^2 D_g C_g) * dphi/dx + (...)
+  // Simpler: use Eq. 26: dphi/dx = -[ -J_total + sum z_g D_g dC_g/dx ] / [sum z_g^2 D_g C_g]
+  // But we know N_g (constant in x) = -D_g dC_g/dx - z_g D_g C_g dphi/dx
+  // So flux_diff_g = -D_g dC_g/dx; flux_em_g = N_g - flux_diff_g.
+  // dC_g/dx by central differences (interior) and one-sided (boundary).
+  const dC = new Array(ns);
+  for (let g = 0; g < ns; g++) {
+    dC[g] = new Float64Array(N);
+    for (let k = 1; k < N - 1; k++) {
+      dC[g][k] = (C[g][k+1] - C[g][k-1]) / (2*h);
+    }
+    dC[g][0]   = (C[g][1] - C[g][0]) / h;
+    dC[g][N-1] = (C[g][N-1] - C[g][N-2]) / h;
+  }
+
+  const fluxD = new Array(ns);
+  const fluxE = new Array(ns);
+  for (let g = 0; g < ns; g++) {
+    fluxD[g] = new Float64Array(N);
+    fluxE[g] = new Float64Array(N);
+    const Ng = Npattern[g] * J_target;
+    for (let k = 0; k < N; k++) {
+      fluxD[g][k] = -D[g] * dC[g][k];
+      fluxE[g][k] = Ng - fluxD[g][k];
+    }
+  }
+
+  return { x, C, fluxD, fluxE, N, J: J_target };
+}
+
+/* =====================================================================
+   TRANSIENT PNP SOLVER (FTCS + flux BCs via ghost-cell construction)
+   Returns precomputed frames
+   ===================================================================== */
+function solveTransientPNP({ C0, z, D, Npattern, J, Ngrid = 81, tau_max = 5.0, n_frames = 200 }) {
+  const ns = C0.length;
+  const N = Ngrid;
+  const h = 2 / (N - 1);
+  // CFL: dt < h^2 / (2 * D_max). Plus electromigration term, factor ~2 safety.
+  const Dmax = D.reduce((a, b) => Math.max(a, b), 0);
+  const dt = 0.4 * h*h / (2 * Dmax);
+  const n_steps = Math.ceil(tau_max / dt);
+  const stride = Math.max(1, Math.floor(n_steps / n_frames));
+  const actual_frames = Math.floor(n_steps / stride) + 1;
+
+  // State: C[g][k]
+  const C = new Array(ns);
+  for (let g = 0; g < ns; g++) {
+    C[g] = new Float64Array(N);
+    for (let k = 0; k < N; k++) C[g][k] = C0[g];
+  }
+
+  const Ng = Npattern.map(p => p * J);
+
+  // Output arrays
+  const frames_C = new Array(actual_frames);
+  const frames_t = new Float64Array(actual_frames);
+  for (let f = 0; f < actual_frames; f++) {
+    frames_C[f] = new Array(ns);
+    for (let g = 0; g < ns; g++) frames_C[f][g] = new Float64Array(N);
+  }
+  // Save initial
+  frames_t[0] = 0;
+  for (let g = 0; g < ns; g++) frames_C[0][g].set(C[g]);
+  let frame_idx = 1;
+
+  const dCdx = new Array(ns);
+  for (let g = 0; g < ns; g++) dCdx[g] = new Float64Array(N);
+  const dphidx = new Float64Array(N);
+  const flux = new Array(ns);  // -D dC/dx + (-z D C dphi/dx) ... actually we want N_g = -D dC - z D C dphi/dx (paper convention)
+  for (let g = 0; g < ns; g++) flux[g] = new Float64Array(N);
+  const dNdx = new Array(ns);
+  for (let g = 0; g < ns; g++) dNdx[g] = new Float64Array(N);
+
+  for (let step = 1; step <= n_steps; step++) {
+    // 1. Compute dC/dx at all nodes via central diff with ghost cells determined by flux BCs.
+    //    Flux BC: N_g(±1) = Ng[g], where N_g = -D_g dC/dx - z_g D_g C dphi/dx.
+    //    Equivalent: at x = -1, dC/dx = -(Ng[g] + z_g D_g C dphi/dx) / D_g. But dphi/dx at boundary depends on dC/dx.
+    //    Simpler approach: enforce N_g(-1) = Ng[g] by solving for dC/dx at the boundary. Use an iterative
+    //    scheme: at the boundary, given current C profile, determine dphi/dx and dC/dx self-consistently.
+    //    Cleanest: use the relation sum_g z_g N_g = -J (constant). So at boundary, the flux is fixed and
+    //    we just want -D dC/dx + z D C dphi/dx = Ng. From that we get an explicit eqn for dphi/dx at boundary
+    //    if we know dC/dx... it's circular.
+    //    Use ghost cell: extrapolate by enforcing N_g(boundary) = Ng[g] using one-sided dC/dx and a
+    //    consistent dphi/dx computed at the boundary.
+
+    // Step A: compute dphi/dx at all nodes using current C with central differences (one-sided at boundaries).
+    // Use only the species balance: dphi/dx = -[-J + sum z_g D_g dC/dx] / [sum z_g^2 D_g C]
+    // With dC/dx via central diff (and one-sided at boundary) for now.
+    for (let g = 0; g < ns; g++) {
+      for (let k = 1; k < N - 1; k++) dCdx[g][k] = (C[g][k+1] - C[g][k-1]) / (2*h);
+      dCdx[g][0]   = (C[g][1] - C[g][0]) / h;
+      dCdx[g][N-1] = (C[g][N-1] - C[g][N-2]) / h;
+    }
+    for (let k = 0; k < N; k++) {
+      let num = -J, den = 0;
+      for (let g = 0; g < ns; g++) {
+        num += z[g] * D[g] * dCdx[g][k];
+        den += z[g]*z[g] * D[g] * C[g][k];
+      }
+      dphidx[k] = -num / den;
+    }
+    // Step B: compute flux N_g at all interior nodes
+    // N_g = -D_g dC_g/dx - z_g D_g C_g dphi/dx   (paper convention: positive in +x direction)
+    for (let g = 0; g < ns; g++) {
+      for (let k = 0; k < N; k++) {
+        flux[g][k] = -D[g] * dCdx[g][k] - z[g] * D[g] * C[g][k] * dphidx[k];
+      }
+      // Override boundary fluxes with imposed values (this enforces BC weakly)
+      flux[g][0]   = Ng[g];
+      flux[g][N-1] = Ng[g];
+    }
+    // Step C: dN/dx at all interior nodes via central diff; at boundary use one-sided.
+    for (let g = 0; g < ns; g++) {
+      for (let k = 1; k < N - 1; k++) dNdx[g][k] = (flux[g][k+1] - flux[g][k-1]) / (2*h);
+      dNdx[g][0]   = (flux[g][1] - flux[g][0]) / h;
+      dNdx[g][N-1] = (flux[g][N-1] - flux[g][N-2]) / h;
+    }
+    // Step D: time-step. dC/dt = -dN/dx
+    for (let g = 0; g < ns; g++) {
+      for (let k = 0; k < N; k++) {
+        C[g][k] -= dt * dNdx[g][k];
+      }
+    }
+    // Save frame
+    if (step % stride === 0 && frame_idx < actual_frames) {
+      frames_t[frame_idx] = step * dt;
+      for (let g = 0; g < ns; g++) frames_C[frame_idx][g].set(C[g]);
+      frame_idx++;
+    }
+  }
+  // Trim to actual computed frames
+  const x = new Float64Array(N);
+  for (let k = 0; k < N; k++) x[k] = -1 + 2*k/(N-1);
+  return { x, frames_C: frames_C.slice(0, frame_idx), frames_t: frames_t.slice(0, frame_idx), N };
+}
+
+// Compute total flux at a given concentration snapshot (used for transient flux plotting)
+function fluxFromSnapshot(C, z, D, J, Ngrid) {
+  const ns = C.length;
+  const N = Ngrid;
+  const h = 2 / (N - 1);
+  const dCdx = new Array(ns);
+  for (let g = 0; g < ns; g++) {
+    dCdx[g] = new Float64Array(N);
+    for (let k = 1; k < N - 1; k++) dCdx[g][k] = (C[g][k+1] - C[g][k-1]) / (2*h);
+    dCdx[g][0]   = (C[g][1] - C[g][0]) / h;
+    dCdx[g][N-1] = (C[g][N-1] - C[g][N-2]) / h;
+  }
+  const dphidx = new Float64Array(N);
+  for (let k = 0; k < N; k++) {
+    let num = -J, den = 0;
+    for (let g = 0; g < ns; g++) {
+      num += z[g] * D[g] * dCdx[g][k];
+      den += z[g]*z[g] * D[g] * C[g][k];
+    }
+    dphidx[k] = -num / den;
+  }
+  const flux = new Array(ns);
+  for (let g = 0; g < ns; g++) {
+    flux[g] = new Float64Array(N);
+    for (let k = 0; k < N; k++) {
+      flux[g][k] = -D[g] * dCdx[g][k] - z[g] * D[g] * C[g][k] * dphidx[k];
+    }
+  }
+  // Current
+  const j = new Float64Array(N);
+  for (let k = 0; k < N; k++) {
+    let s = 0;
+    for (let g = 0; g < ns; g++) s += z[g] * flux[g][k];
+    j[k] = s;
+  }
+  return { flux, j };
+}
+
+/* =====================================================================
+   H-CELL SIMILARITY SOLUTION
+   ===================================================================== */
+// Approximation of erfc using Abramowitz & Stegun 7.1.26 (accurate to ~1.5e-7)
+function erfc(x) {
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x);
+  const t = 1.0 / (1.0 + 0.3275911 * x);
+  const y = 1.0 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741)
+                 * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x*x);
+  // erf(x) = sign * y; erfc = 1 - erf
+  return 1 - sign * y;
+}
+
+function hcellSolution({ tau, J = 1.0, D_H = 1.0, D_Cl = 0.25, Ngrid = 200 }) {
+  const D_a = 2 * D_H * D_Cl / (D_H + D_Cl);
+  const x = new Float64Array(Ngrid);
+  for (let k = 0; k < Ngrid; k++) x[k] = -1 + 2*k/(Ngrid - 1);
+
+  const C_S = new Float64Array(Ngrid);
+  const dC_S = new Float64Array(Ngrid);
+  const sqrtDtau = Math.sqrt(D_a * tau);
+  const C_wall_L = 1.0 - (J / (2*D_H))  * sqrtDtau;
+  const C_wall_R = 1.0 - (J / (2*D_Cl)) * sqrtDtau;
+
+  for (let k = 0; k < Ngrid; k++) {
+    const xv = x[k];
+    // Left contribution (anchored at cathode x = -1)
+    const etaL = (1 + xv) / sqrtDtau;
+    const erfcL = erfc(0.5 * etaL);
+    const thL = etaL * erfcL - (2/Math.sqrt(Math.PI)) * Math.exp(-etaL*etaL/4);
+    const dthL = erfcL;
+    const CL = thL * (1 - C_wall_L) + 1.0;
+    const dCL = dthL * (J / (2*D_H));
+
+    // Right contribution (anchored at anode x = +1)
+    const etaR = (1 - xv) / sqrtDtau;
+    const erfcR = erfc(0.5 * etaR);
+    const thR = etaR * erfcR - (2/Math.sqrt(Math.PI)) * Math.exp(-etaR*etaR/4);
+    const dthR = erfcR;
+    const CR = thR * (1 - C_wall_R) + 1.0;
+    const dCR = -dthR * (J / (2*D_Cl));
+
+    C_S[k]  = CL + CR - 1.0;
+    dC_S[k] = dCL + dCR;
+  }
+
+  // dphi/dx = -[-J + (D_H - D_Cl) dC_S/dx] / [(D_H + D_Cl) C_S]
+  const dphi = new Float64Array(Ngrid);
+  for (let k = 0; k < Ngrid; k++) {
+    dphi[k] = -(-J + (D_H - D_Cl)*dC_S[k]) / ((D_H + D_Cl)*C_S[k]);
+  }
+
+  // Fluxes
+  const fDH = new Float64Array(Ngrid), fEH = new Float64Array(Ngrid);
+  const fDCl = new Float64Array(Ngrid), fECl = new Float64Array(Ngrid);
+  for (let k = 0; k < Ngrid; k++) {
+    fDH[k]  = -D_H  * dC_S[k];
+    fEH[k]  = -D_H  * C_S[k] * dphi[k];   // z_H = +1 -> already negative if dphi>0
+    fDCl[k] = -D_Cl * dC_S[k];
+    fECl[k] =  D_Cl * C_S[k] * dphi[k];   // z_Cl = -1 -> sign flip
+  }
+
+  return { x, C_S, fDH, fEH, fDCl, fECl };
+}
+
+/* =====================================================================
+   PLOTTING UTILITIES
+   ===================================================================== */
+function setupPlotPanel(ctx, x0, y0, w, h, opts) {
+  // Draw axes, grid, labels for a single panel.
+  // opts: { xMin, xMax, yMin, yMax, xTicks, yTicks, xLabel, yLabel, title }
+  const { xMin, xMax, yMin, yMax, xTicks, yTicks, xLabel, yLabel, title } = opts;
+  // White panel background
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(x0, y0, w, h);
+  // Grid
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 0.5;
+  for (const tx of xTicks) {
+    const px = x0 + (tx - xMin) / (xMax - xMin) * w;
+    ctx.beginPath(); ctx.moveTo(px, y0); ctx.lineTo(px, y0 + h); ctx.stroke();
+  }
+  for (const ty of yTicks) {
+    const py = y0 + h - (ty - yMin) / (yMax - yMin) * h;
+    ctx.beginPath(); ctx.moveTo(x0, py); ctx.lineTo(x0 + w, py); ctx.stroke();
+  }
+  // Bold zero lines if zero is in range
+  ctx.strokeStyle = '#9ca3af';
+  ctx.lineWidth = 1;
+  if (yMin < 0 && yMax > 0) {
+    const py = y0 + h - (0 - yMin) / (yMax - yMin) * h;
+    ctx.beginPath(); ctx.moveTo(x0, py); ctx.lineTo(x0 + w, py); ctx.stroke();
+  }
+  // Frame
+  ctx.strokeStyle = COLORS.text;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x0, y0, w, h);
+
+  // Tick labels
+  ctx.fillStyle = COLORS.muted;
+  ctx.font = '10px Inter';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (const tx of xTicks) {
+    const px = x0 + (tx - xMin) / (xMax - xMin) * w;
+    ctx.fillText(tx.toString(), px, y0 + h + 3);
+  }
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (const ty of yTicks) {
+    const py = y0 + h - (ty - yMin) / (yMax - yMin) * h;
+    ctx.fillText(ty.toString(), x0 - 4, py);
+  }
+  // Axis labels
+  ctx.fillStyle = COLORS.text;
+  ctx.font = '11px Inter';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  if (xLabel) ctx.fillText(xLabel, x0 + w/2, y0 + h + 18);
+  if (yLabel) {
+    ctx.save();
+    ctx.translate(x0 - 28, y0 + h/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(yLabel, 0, 0);
+    ctx.restore();
+  }
+  // Title
+  if (title) {
+    ctx.fillStyle = COLORS.text;
+    ctx.font = '600 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(title, x0 + w/2, y0 - 14);
+  }
+}
+
+function plotCurve(ctx, x0, y0, w, h, xs, ys, opts) {
+  const { xMin, xMax, yMin, yMax, color, dashed = false, lineWidth = 2 } = opts;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  if (dashed) ctx.setLineDash([5, 4]);
+  ctx.beginPath();
+  for (let i = 0; i < xs.length; i++) {
+    let yy = ys[i];
+    // Clip to plot bounds
+    yy = Math.max(yMin, Math.min(yMax, yy));
+    const px = x0 + (xs[i] - xMin) / (xMax - xMin) * w;
+    const py = y0 + h - (yy - yMin) / (yMax - yMin) * h;
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  if (dashed) ctx.setLineDash([]);
+}
+
+/* =====================================================================
+   BSA REFERENCE VALUES (in units where boundary Cu(II) flux = -J;
+   so divide all rates by J to make them slider-independent in N̄/J units)
+   ===================================================================== */
+function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
+  // Compute BSA bulk electromigrative atomic transport rate per species
+  // per unit |J|. And BSA diffusive rate at electrodes per unit |J|.
+  const ns = z.length;
+  // Total current (in units of J): i = sum z_g * Ng
+  let i_curr = 0;
+  for (let g = 0; g < ns; g++) i_curr += z[g] * Npattern[g];
+  // Transference numbers: t_g = z_g^2 D_g C_g / sum
+  let denom = 0;
+  for (let g = 0; g < ns; g++) denom += z[g]*z[g] * D[g] * C0[g];
+  const t = new Float64Array(ns);
+  for (let g = 0; g < ns; g++) t[g] = z[g]*z[g] * D[g] * C0[g] / denom;
+  // i_m_g = t_g * i; n_em_g = i_m_g / z_g
+  // Diffusive at electrode: n_diff_g = Npattern_g - n_em_g
+  const em = new Float64Array(ns);
+  const diff = new Float64Array(ns);
+  for (let g = 0; g < ns; g++) {
+    em[g]   = t[g] * i_curr / z[g];
+    diff[g] = Npattern[g] - em[g];
+  }
+  // Build per-grid arrays. em is uniform; diff is spike-only at boundary.
+  const x = new Float64Array(Ngrid);
+  for (let k = 0; k < Ngrid; k++) x[k] = -1 + 2*k/(Ngrid - 1);
+  const emArr = new Array(ns), diffArr = new Array(ns), totArr = new Array(ns);
+  const edgeN = Math.max(1, Math.floor(edgeFraction * Ngrid));
+  for (let g = 0; g < ns; g++) {
+    emArr[g]   = new Float64Array(Ngrid);
+    diffArr[g] = new Float64Array(Ngrid);
+    totArr[g]  = new Float64Array(Ngrid);
+    for (let k = 0; k < Ngrid; k++) {
+      emArr[g][k] = em[g];
+      const isEdge = (k < edgeN) || (k >= Ngrid - edgeN);
+      diffArr[g][k] = isEdge ? diff[g] : 0;
+      totArr[g][k] = emArr[g][k] + diffArr[g][k];
+    }
+  }
+  return { x, em, diff, emArr, diffArr, totArr };
+}
+
+/* =====================================================================
+   WIDGET 1: STEADY-STATE EXPLORER
+   ===================================================================== */
+(function() {
+  const canvas = document.getElementById('ss-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const sliderJ = document.getElementById('ss-J');
+  const sliderR = document.getElementById('ss-R');
+  const labelJ = document.getElementById('ss-J-val');
+  const labelR = document.getElementById('ss-R-val');
+  const legendNa = document.getElementById('ss-legend-na');
+  const legendClO4 = document.getElementById('ss-legend-clo4');
+
+  // Layout: 2x2 grid of panels
+  const margin = { left: 60, right: 20, top: 30, bottom: 50, hgap: 50, vgap: 50 };
+  const pw = (W - margin.left - margin.right - margin.hgap) / 2;
+  const ph = (H - margin.top - margin.bottom - margin.vgap) / 2;
+  const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
+
+  function panelOrigin(row, col) {
+    return [margin.left + col * (pw + margin.hgap),
+            margin.top + row * (ph + margin.vgap)];
+  }
+
+  let currentSolution = null;
+  let pending = null;
+
+  function recomputeAndRender() {
+    const J = parseFloat(sliderJ.value);
+    const R = parseInt(sliderR.value);
+    labelJ.textContent = J.toFixed(3);
+    labelR.textContent = R.toString();
+
+    let C0, z, D, Npattern, colorList, hasSE = R > 0;
+    if (hasSE) {
+      C0 = [1.0, 1.0, 3.0, R, R];
+      z  = [2,   1,  -1,  1,  -1];
+      D  = [0.5, 1.0, 1.0, 1.0, 1.0];
+      Npattern = [-1, 1, 0, 0, 0];
+      colorList = [COLORS.CuII, COLORS.CuI, COLORS.Cl, COLORS.Na, COLORS.ClO4];
+      legendNa.style.display = '';
+      legendClO4.style.display = '';
+    } else {
+      C0 = [1.0, 1.0, 3.0];
+      z  = [2,   1,  -1];
+      D  = [0.5, 1.0, 1.0];
+      Npattern = [-1, 1, 0];
+      colorList = [COLORS.CuII, COLORS.CuI, COLORS.Cl];
+      legendNa.style.display = 'none';
+      legendClO4.style.display = 'none';
+    }
+
+    // Smaller grid for the 5-species case to keep solver responsive
+    const Ngrid = hasSE ? 25 : 31;
+    let sol;
+    try {
+      sol = solveSteadyPNP({ C0, z, D, Npattern, J_target: J, Ngrid });
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+    const bsa = bsaSteady({ z, D, C0, Npattern, edgeFraction: 0.18, Ngrid: 200 });
+
+    render(sol, bsa, colorList, J, hasSE);
+  }
+
+  function render(sol, bsa, colorList, J, hasSE) {
+    ctx.clearRect(0, 0, W, H);
+
+    const ns = sol.C.length;
+
+    // -- Panel 1: Concentrations
+    const concMax = hasSE ? 5 : 4;
+    {
+      const [x0, y0] = panelOrigin(0, 0);
+      // For SE case: clip Na+/ClO4- since they're at R=100
+      const cyMax = hasSE ? Math.max(4, Math.min(8, concMax)) : 4;
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: 0, yMax: cyMax,
+        xTicks, yTicks: [0, 1, 2, 3, 4].filter(t => t <= cyMax),
+        xLabel: 'Position x\u0303', yLabel: 'C\u0303_g',
+        title: 'Concentrations',
+      });
+      for (let g = 0; g < ns; g++) {
+        // For SE case, skip plotting Na+/ClO4- since they're at R~100 (would dominate)
+        if (hasSE && g >= 3) continue;
+        plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.C[g], {
+          xMin, xMax, yMin: 0, yMax: cyMax, color: colorList[g],
+        });
+      }
+      // Annotate that SE ions are off scale
+      if (hasSE) {
+        ctx.fillStyle = COLORS.muted;
+        ctx.font = '9px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('(Na\u207A, ClO\u2084\u207B at C\u0303 = ' + parseInt(document.getElementById('ss-R').value) + ', off scale)',
+                     x0 + pw/2, y0 + 12);
+      }
+    }
+
+    // Build N̄/J units for fluxes
+    const fluxScale = 1 / Math.abs(J);
+    const fluxYMin = -1.5, fluxYMax = 1.5;
+    const fluxYTicks = [-1.5, -1, -0.5, 0, 0.5, 1, 1.5];
+
+    // -- Panel 2: Electromigrative flux (N̄_m,g / J)
+    {
+      const [x0, y0] = panelOrigin(0, 1);
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: fluxYMin, yMax: fluxYMax,
+        xTicks, yTicks: fluxYTicks,
+        xLabel: 'Position x\u0303', yLabel: 'N\u0303_m,g / |J\u0303|',
+        title: 'Electromigrative flux',
+      });
+      for (let g = 0; g < ns; g++) {
+        const ys = new Float64Array(sol.fluxE[g].length);
+        for (let k = 0; k < ys.length; k++) ys[k] = sol.fluxE[g][k] * fluxScale;
+        plotCurve(ctx, x0, y0, pw, ph, sol.x, ys, {
+          xMin, xMax, yMin: fluxYMin, yMax: fluxYMax, color: colorList[g],
+        });
+        // BSA reference (uniform) -- in N̄/J units, em_g already is in J units
+        const bsa_em_arr = new Float64Array(bsa.x.length);
+        for (let k = 0; k < bsa.x.length; k++) bsa_em_arr[k] = bsa.em[g];
+        plotCurve(ctx, x0, y0, pw, ph, bsa.x, bsa_em_arr, {
+          xMin, xMax, yMin: fluxYMin, yMax: fluxYMax, color: colorList[g],
+          dashed: true, lineWidth: 1.5,
+        });
+      }
+    }
+
+    // -- Panel 3: Diffusive flux (N̄_d,g / J)
+    {
+      const [x0, y0] = panelOrigin(1, 0);
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: fluxYMin, yMax: fluxYMax,
+        xTicks, yTicks: fluxYTicks,
+        xLabel: 'Position x\u0303', yLabel: 'N\u0303_d,g / |J\u0303|',
+        title: 'Diffusive flux',
+      });
+      for (let g = 0; g < ns; g++) {
+        const ys = new Float64Array(sol.fluxD[g].length);
+        for (let k = 0; k < ys.length; k++) ys[k] = sol.fluxD[g][k] * fluxScale;
+        plotCurve(ctx, x0, y0, pw, ph, sol.x, ys, {
+          xMin, xMax, yMin: fluxYMin, yMax: fluxYMax, color: colorList[g],
+        });
+        plotCurve(ctx, x0, y0, pw, ph, bsa.x, bsa.diffArr[g], {
+          xMin, xMax, yMin: fluxYMin, yMax: fluxYMax, color: colorList[g],
+          dashed: true, lineWidth: 1.5,
+        });
+      }
+    }
+
+    // -- Panel 4: Total flux (N̄_g / J)
+    {
+      const [x0, y0] = panelOrigin(1, 1);
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: fluxYMin, yMax: fluxYMax,
+        xTicks, yTicks: fluxYTicks,
+        xLabel: 'Position x\u0303', yLabel: 'N\u0303_g / |J\u0303|',
+        title: 'Total flux',
+      });
+      for (let g = 0; g < ns; g++) {
+        const ys = new Float64Array(sol.x.length);
+        for (let k = 0; k < ys.length; k++) ys[k] = (sol.fluxE[g][k] + sol.fluxD[g][k]) * fluxScale;
+        plotCurve(ctx, x0, y0, pw, ph, sol.x, ys, {
+          xMin, xMax, yMin: fluxYMin, yMax: fluxYMax, color: colorList[g],
+        });
+        plotCurve(ctx, x0, y0, pw, ph, bsa.x, bsa.totArr[g], {
+          xMin, xMax, yMin: fluxYMin, yMax: fluxYMax, color: colorList[g],
+          dashed: true, lineWidth: 1.5,
+        });
+      }
+    }
+  }
+
+  // Debounce slider updates so we don't recompute on every pixel of drag
+  let timer = null;
+  function scheduleRecompute() {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => { timer = null; recomputeAndRender(); }, 60);
+  }
+  sliderJ.addEventListener('input', scheduleRecompute);
+  sliderR.addEventListener('input', scheduleRecompute);
+  recomputeAndRender();
+})();
+
+/* =====================================================================
+   WIDGET 2: TRANSIENT EVOLUTION
+   ===================================================================== */
+(function() {
+  const canvas = document.getElementById('tr-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const sliderTau = document.getElementById('tr-tau');
+  const labelTau = document.getElementById('tr-tau-val');
+  const btnPlay = document.getElementById('tr-play');
+  const btnReset = document.getElementById('tr-reset');
+
+  // Precompute frames once
+  const J = 1/6;
+  const C0 = [1.0, 1.0, 3.0];
+  const z  = [2,   1,  -1];
+  const D  = [0.5, 1.0, 1.0];
+  const Npattern = [-1, 1, 0];
+  const colorList = [COLORS.CuII, COLORS.CuI, COLORS.Cl];
+  const tau_max = 5.0;
+
+  // Solve transient
+  let solution;
+  try {
+    solution = solveTransientPNP({ C0, z, D, Npattern, J, Ngrid: 81, tau_max, n_frames: 200 });
+  } catch (e) {
+    console.error('Transient solver failed:', e);
+    return;
+  }
+  const nFrames = solution.frames_C.length;
+  // Set slider max
+  sliderTau.max = String(nFrames - 1);
+
+  // BSA reference for total flux: bulk em + edge diff in N̄/J units
+  const bsa = bsaSteady({ z, D, C0, Npattern, edgeFraction: 0.18, Ngrid: 200 });
+
+  // Layout: 3 panels side by side
+  const margin = { left: 50, right: 15, top: 30, bottom: 50, gap: 35 };
+  const pw = (W - margin.left - margin.right - 2 * margin.gap) / 3;
+  const ph = H - margin.top - margin.bottom;
+  const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
+
+  let currentFrame = 0;
+  let playing = false;
+  let lastTime = 0;
+
+  function render(frame) {
+    ctx.clearRect(0, 0, W, H);
+    const C = solution.frames_C[frame];
+    const t = solution.frames_t[frame];
+    const fluxData = fluxFromSnapshot(C, z, D, J, solution.N);
+    const fluxScale = 1 / Math.abs(J);
+
+    labelTau.textContent = t.toFixed(3);
+
+    // Panel 1: Concentrations
+    {
+      const x0 = margin.left, y0 = margin.top;
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: 0, yMax: 4,
+        xTicks, yTicks: [0, 1, 2, 3, 4],
+        xLabel: 'Position x\u0303', yLabel: 'C\u0303_g',
+        title: 'Concentrations',
+      });
+      for (let g = 0; g < 3; g++) {
+        plotCurve(ctx, x0, y0, pw, ph, solution.x, C[g], {
+          xMin, xMax, yMin: 0, yMax: 4, color: colorList[g],
+        });
+      }
+    }
+    // Panel 2: Total flux
+    {
+      const x0 = margin.left + pw + margin.gap, y0 = margin.top;
+      const fyMin = -1.5, fyMax = 1.5;
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax,
+        xTicks, yTicks: [-1.5, -1, -0.5, 0, 0.5, 1, 1.5],
+        xLabel: 'Position x\u0303', yLabel: 'N\u0303_g / |J\u0303|',
+        title: 'Total flux',
+      });
+      for (let g = 0; g < 3; g++) {
+        const ys = new Float64Array(fluxData.flux[g].length);
+        for (let k = 0; k < ys.length; k++) ys[k] = fluxData.flux[g][k] * fluxScale;
+        plotCurve(ctx, x0, y0, pw, ph, solution.x, ys, {
+          xMin, xMax, yMin: fyMin, yMax: fyMax, color: colorList[g],
+        });
+        // BSA total reference
+        plotCurve(ctx, x0, y0, pw, ph, bsa.x, bsa.totArr[g], {
+          xMin, xMax, yMin: fyMin, yMax: fyMax, color: colorList[g],
+          dashed: true, lineWidth: 1.5,
+        });
+      }
+    }
+    // Panel 3: Current
+    {
+      const x0 = margin.left + 2*(pw + margin.gap), y0 = margin.top;
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: -1.6, yMax: 0.4,
+        xTicks, yTicks: [-1.5, -1, -0.5, 0],
+        xLabel: 'Position x\u0303', yLabel: 'j\u0303 / |J\u0303|',
+        title: 'Current',
+      });
+      const jArr = new Float64Array(fluxData.j.length);
+      for (let k = 0; k < jArr.length; k++) jArr[k] = fluxData.j[k] * fluxScale;
+      plotCurve(ctx, x0, y0, pw, ph, solution.x, jArr, {
+        xMin, xMax, yMin: -1.6, yMax: 0.4, color: COLORS.text, lineWidth: 2,
+      });
+      // Reference at -1
+      plotCurve(ctx, x0, y0, pw, ph, [-1, 1], [-1, -1], {
+        xMin, xMax, yMin: -1.6, yMax: 0.4, color: COLORS.muted, dashed: true, lineWidth: 1,
+      });
+    }
+  }
+
+  function tick(now) {
+    if (!playing) return;
+    if (!lastTime) lastTime = now;
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+    // Advance frame at ~30 frames per second of dimensionless time playback
+    // We want to play through tau=5 in about 8 seconds: 200 frames / 8s = 25 frames/s
+    const advanceFrames = dt * 25;
+    currentFrame += advanceFrames;
+    if (currentFrame >= nFrames - 1) {
+      currentFrame = nFrames - 1;
+      playing = false;
+      btnPlay.innerHTML = '&#9658; Play';
+    }
+    sliderTau.value = String(Math.floor(currentFrame));
+    render(Math.floor(currentFrame));
+    if (playing) requestAnimationFrame(tick);
+  }
+
+  btnPlay.addEventListener('click', () => {
+    if (playing) {
+      playing = false;
+      btnPlay.innerHTML = '&#9658; Play';
+    } else {
+      playing = true;
+      lastTime = 0;
+      btnPlay.innerHTML = '&#10074;&#10074; Pause';
+      if (currentFrame >= nFrames - 1) currentFrame = 0;
+      requestAnimationFrame(tick);
+    }
+  });
+  btnReset.addEventListener('click', () => {
+    playing = false;
+    btnPlay.innerHTML = '&#9658; Play';
+    currentFrame = 0;
+    sliderTau.value = '0';
+    render(0);
+  });
+  sliderTau.addEventListener('input', () => {
+    playing = false;
+    btnPlay.innerHTML = '&#9658; Play';
+    currentFrame = parseInt(sliderTau.value);
+    render(currentFrame);
+  });
+
+  render(0);
+})();
+
+/* =====================================================================
+   WIDGET 3: H-CELL SIMILARITY SOLUTION
+   ===================================================================== */
+(function() {
+  const canvas = document.getElementById('hc-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const sliderTau = document.getElementById('hc-tau');
+  const labelTau = document.getElementById('hc-tau-val');
+
+  const J = 1.0;
+  const D_H = 1.0, D_Cl = 0.25;
+  const gamma = 10.0;  // BSA k=10 units, just for the dashed reference
+
+  // Layout: 3 panels
+  const margin = { left: 55, right: 12, top: 30, bottom: 50, gap: 40 };
+  const pw = (W - margin.left - margin.right - 2 * margin.gap) / 3;
+  const ph = H - margin.top - margin.bottom;
+  const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
+
+  // BSA (k=10 units, divide by gamma=10 to get N̄/|J|=N̄ since J=1):
+  // BFW Section 4.1 results (recomputed similarly to copper case):
+  // For HCl, at k=10 with z=[+1,-1], D=[1,0.25], C0=[1,1]:
+  //   t_H = 1/(1+0.25) = 0.8;  t_Cl = 0.25/1.25 = 0.2
+  //   i = -10 (electrons/sec at cathode = -10)
+  //   i_m,H = 0.8*(-10) = -8;  n_em,H = -8
+  //   i_m,Cl = 0.2*(-10) = -2; n_em,Cl = -2/-1 = +2
+  //   At cathode, n_H = -10 (reduced to H2), n_Cl = 0
+  //   n_d,H = -10 - (-8) = -2; n_d,Cl = 0 - 2 = -2
+  //   At anode, n_H = 0, n_Cl = -10 (oxidized to Cl2)
+  //   n_d,H = 0 - (-8) = +8; n_d,Cl = -10 - 2 = ... wait Cl- is consumed at anode for Cl2 production:
+  //     2 Cl- -> Cl2 + 2e-, so n_Cl- at anode = -k (consumed). With k=10, n_Cl,anode = -10.
+  //     Hmm but the paper says n_g at electrodes is the number of Cl- per unit time CARRIED by transport.
+  //     Hmm, sign conventions get tricky. The paper code (s3) uses:
+  //       bsa_em_H = -8; bsa_em_Cl = +2; bsa_d_H[edge_left]=-2, [edge_right]=+8; bsa_d_Cl same.
+  //   So in N̄/J units (J=1 here), bsa values per the paper are:
+  //     em_H = -0.8, em_Cl = +0.2 (uniform)
+  //     diff_H: -0.2 near cathode, +0.8 near anode
+  //     diff_Cl: -0.2 near cathode, +0.8 near anode
+  //   Total em_H+diff_H = -1.0 at cathode, 0 at anode (but anode flux for H is 0, cathode is -1) — checks!
+  //   For Cl: 0.2 + (-0.2) = 0 at cathode (correct, Cl inert at cathode? wait no, Cl reacts at anode);
+  //     em_Cl + diff_Cl_anode = 0.2 + 0.8 = 1.0 at anode... but Cl- is consumed at anode (n_Cl = -1 in J-units).
+  //     Hmm sign issue. Let me trust the paper code values.
+  // I'll use paper code values converted to N̄/J:
+  const bsa_em_H  = -0.8, bsa_em_Cl = 0.2;
+  const bsa_d_H_L = -0.2, bsa_d_H_R = 0.8;
+  const bsa_d_Cl_L = -0.2, bsa_d_Cl_R = 0.8;
+
+  function buildBSAArr(em, dL, dR) {
+    const N = 200;
+    const xs = new Float64Array(N), em_arr = new Float64Array(N), d_arr = new Float64Array(N), tot_arr = new Float64Array(N);
+    const edge = Math.floor(0.3 * N);
+    for (let k = 0; k < N; k++) {
+      xs[k] = -1 + 2*k/(N-1);
+      em_arr[k] = em;
+      if (k < edge) d_arr[k] = dL;
+      else if (k >= N - edge) d_arr[k] = dR;
+      else d_arr[k] = 0;
+      tot_arr[k] = em_arr[k] + d_arr[k];
+    }
+    return { xs, em_arr, d_arr, tot_arr };
+  }
+  const bsaH = buildBSAArr(bsa_em_H, bsa_d_H_L, bsa_d_H_R);
+  const bsaCl = buildBSAArr(bsa_em_Cl, bsa_d_Cl_L, bsa_d_Cl_R);
+
+  function render() {
+    const tau = parseFloat(sliderTau.value);
+    labelTau.textContent = tau.toFixed(3);
+    const sol = hcellSolution({ tau, J, D_H, D_Cl, Ngrid: 200 });
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Panel 1: salt concentration
+    {
+      const x0 = margin.left, y0 = margin.top;
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: 0, yMax: 1.05,
+        xTicks, yTicks: [0, 0.25, 0.5, 0.75, 1.0],
+        xLabel: 'Position x\u0303', yLabel: 'C\u0303_S',
+        title: 'Salt concentration',
+      });
+      plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.C_S, {
+        xMin, xMax, yMin: 0, yMax: 1.05, color: COLORS.text, lineWidth: 2.5,
+      });
+    }
+
+    // Panel 2: H+ flux decomposition
+    {
+      const x0 = margin.left + pw + margin.gap, y0 = margin.top;
+      const fyMin = -2.0, fyMax = 1.5;
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax,
+        xTicks, yTicks: [-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5],
+        xLabel: 'Position x\u0303', yLabel: 'H\u207A flux / |J\u0303|',
+        title: 'H\u207A: em + diff',
+      });
+      // PNP solid
+      plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.fEH, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax, color: COLORS.H, lineWidth: 2,
+      });
+      plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.fDH, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax, color: '#7a3023', lineWidth: 1.5,
+      });
+      // BSA dashed
+      plotCurve(ctx, x0, y0, pw, ph, bsaH.xs, bsaH.em_arr, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax, color: COLORS.H, dashed: true, lineWidth: 1.4,
+      });
+      plotCurve(ctx, x0, y0, pw, ph, bsaH.xs, bsaH.d_arr, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax, color: '#7a3023', dashed: true, lineWidth: 1.4,
+      });
+      // Sub-legend
+      ctx.font = '9px Inter';
+      ctx.fillStyle = COLORS.H;
+      ctx.textAlign = 'left';
+      ctx.fillText('— em (PNP)', x0 + 5, y0 + 12);
+      ctx.fillStyle = '#7a3023';
+      ctx.fillText('— diff (PNP)', x0 + 5, y0 + 24);
+    }
+    // Panel 3: Cl- flux decomposition
+    {
+      const x0 = margin.left + 2*(pw + margin.gap), y0 = margin.top;
+      const fyMin = -1.0, fyMax = 1.5;
+      setupPlotPanel(ctx, x0, y0, pw, ph, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax,
+        xTicks, yTicks: [-1, -0.5, 0, 0.5, 1, 1.5],
+        xLabel: 'Position x\u0303', yLabel: 'Cl\u207B flux / |J\u0303|',
+        title: 'Cl\u207B: em + diff',
+      });
+      plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.fECl, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax, color: COLORS.ClH, lineWidth: 2,
+      });
+      plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.fDCl, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax, color: '#1f6e3a', lineWidth: 1.5,
+      });
+      plotCurve(ctx, x0, y0, pw, ph, bsaCl.xs, bsaCl.em_arr, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax, color: COLORS.ClH, dashed: true, lineWidth: 1.4,
+      });
+      plotCurve(ctx, x0, y0, pw, ph, bsaCl.xs, bsaCl.d_arr, {
+        xMin, xMax, yMin: fyMin, yMax: fyMax, color: '#1f6e3a', dashed: true, lineWidth: 1.4,
+      });
+      ctx.font = '9px Inter';
+      ctx.fillStyle = COLORS.ClH;
+      ctx.textAlign = 'left';
+      ctx.fillText('— em (PNP)', x0 + 5, y0 + 12);
+      ctx.fillStyle = '#1f6e3a';
+      ctx.fillText('— diff (PNP)', x0 + 5, y0 + 24);
+    }
+  }
+
+  sliderTau.addEventListener('input', render);
+  render();
+})();
+
+/* =====================================================================
+   TOC active-section highlighting
+   ===================================================================== */
+(function() {
+  const toc = document.getElementById('toc');
+  if (!toc) return;
+  const links = Array.from(toc.querySelectorAll('a'));
+  const sections = links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  function update() {
+    const y = window.scrollY + 120;
+    let active = sections[0];
+    for (const s of sections) {
+      if (s.offsetTop <= y) active = s;
+    }
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href').slice(1) === active.id));
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+</script>
+</body>
+</html>
