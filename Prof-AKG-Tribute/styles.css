@@ -1,0 +1,976 @@
+/* Prof. A. K. Gupta Tribute — styles */
+
+:root {
+  --bg: #faf6ec;
+  --bg-soft: #f3ecd9;
+  --bg-deep: #ebe2c9;
+  --ink: #2a221b;
+  --ink-soft: #4a3f33;
+  --ink-muted: #7a6e5b;
+  --rule: #d6cab0;
+  --rule-soft: #e5dbc1;
+  --accent: #8a3324;
+  --accent-soft: #b25a3e;
+  --max-text: 660px;
+  --max-figure: 880px;
+  --max-wide: 1080px;
+  --serif-display: "Cormorant Garamond", "EB Garamond", "Iowan Old Style", Georgia, serif;
+  --serif-body: "EB Garamond", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --serif-hindi: "Noto Serif Devanagari", "EB Garamond", Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif-body);
+  font-weight: 400;
+  line-height: 1.7;
+  font-feature-settings: "kern", "liga", "onum";
+}
+
+/* ---------- Hero (split layout) ---------- */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  min-height: 88vh;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.hero-portrait {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem 3rem 3rem;
+  order: 2;
+}
+
+.hero-portrait img {
+  max-width: 100%;
+  max-height: 78vh;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 16px 50px rgba(40, 30, 15, 0.22);
+  filter: saturate(0.97);
+}
+
+.hero-text {
+  order: 1;
+  padding: 3rem 2rem 3rem 5%;
+  text-align: left;
+  color: var(--ink);
+  max-width: 600px;
+  margin-left: auto;
+}
+
+.hero-text .eyebrow {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.8rem;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+}
+
+.hero-text h1 {
+  font-family: var(--serif-display);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 5.4vw, 4.2rem);
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.hero-text .alias {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  margin: 0.6rem 0 1.6rem;
+  color: var(--accent);
+}
+
+.hero-text .affiliation {
+  font-family: var(--serif-body);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.hero-text .hero-ornament {
+  margin: 2rem 0 0;
+  font-family: var(--serif-display);
+  font-size: 1.6rem;
+  color: var(--accent);
+  opacity: 0.55;
+}
+
+/* ---------- Audio toggle ---------- */
+
+.audio-toggle {
+  position: fixed;
+  bottom: 1.4rem;
+  right: 1.4rem;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1rem 0.6rem 0.85rem;
+  border: 1px solid var(--rule);
+  background: var(--bg);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(40, 30, 15, 0.12);
+  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.audio-toggle:hover {
+  background: var(--bg-soft);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.audio-toggle .audio-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.audio-toggle .audio-icon .pause {
+  display: none;
+  letter-spacing: -0.15em;
+}
+
+.audio-toggle.is-playing .audio-icon .play {
+  display: none;
+}
+
+.audio-toggle.is-playing .audio-icon .pause {
+  display: inline;
+}
+
+.audio-toggle.is-playing {
+  background: var(--bg-soft);
+  border-color: var(--accent-soft);
+  color: var(--ink);
+}
+
+/* ---------- LinkedIn post card ---------- */
+
+.linkedin-post {
+  max-width: 720px;
+  margin: 4rem auto 2rem;
+  padding: 0 1.5rem;
+}
+
+.linkedin-post h2 {
+  margin-top: 0;
+}
+
+.linkedin-post .section-lede {
+  margin-bottom: 2rem;
+}
+
+.linkedin-post .post-card {
+  background: var(--bg-soft);
+  border: 1px solid var(--rule-soft);
+  border-left: 3px solid var(--accent);
+  padding: 2rem 2rem 1.5rem;
+  border-radius: 2px;
+}
+
+.linkedin-post .post-card p {
+  font-size: 1.08rem;
+  line-height: 1.7;
+  margin: 0 0 1em;
+  color: var(--ink);
+}
+
+.linkedin-post .post-card p:last-child {
+  margin-bottom: 0;
+}
+
+.linkedin-post .post-card .devanagari-inline {
+  font-family: var(--serif-hindi);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.linkedin-post .post-card .post-meta {
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+.linkedin-post .post-card .post-attribution {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  margin-top: 1rem;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Section: epigraph (Hindi quote) ---------- */
+
+.epigraph {
+  text-align: center;
+  padding: 5rem 1.5rem 3rem;
+  max-width: var(--max-text);
+  margin: 0 auto;
+}
+
+.epigraph .devanagari {
+  font-family: var(--serif-hindi);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0 0 1rem;
+}
+
+.epigraph .translation {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--ink-soft);
+  margin: 0 0 1.4rem;
+}
+
+.epigraph .attribution {
+  font-family: var(--serif-display);
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.epigraph::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: var(--rule);
+  margin: 2.4rem auto 0;
+}
+
+/* ---------- Prose blocks ---------- */
+
+.prose {
+  max-width: var(--max-text);
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem;
+}
+
+.opening {
+  padding-top: 1rem;
+  padding-bottom: 3rem;
+}
+
+.opening p {
+  font-size: 1.18rem;
+  line-height: 1.75;
+  margin: 0 0 1.2em;
+}
+
+.opening p:first-of-type::first-letter {
+  font-family: var(--serif-display);
+  font-size: 4.2rem;
+  font-weight: 500;
+  float: left;
+  line-height: 0.9;
+  margin: 0.2rem 0.6rem 0 0;
+  color: var(--accent);
+}
+
+.prose p {
+  margin: 0 0 1.1em;
+  font-size: 1.1rem;
+}
+
+h2 {
+  font-family: var(--serif-display);
+  font-weight: 500;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  margin: 4rem 0 1rem;
+  text-align: center;
+  color: var(--ink);
+}
+
+h2::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+  margin: 1rem auto 0;
+  opacity: 0.7;
+}
+
+.section-lede {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.18rem;
+  color: var(--ink-soft);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  line-height: 1.55;
+}
+
+/* ---------- In his own words ---------- */
+
+.quotes {
+  background: var(--bg-soft);
+  padding: 4rem 1.5rem 5rem;
+  margin: 4rem 0 0;
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.quotes h2 {
+  margin-top: 0;
+}
+
+.quote-grid {
+  max-width: var(--max-wide);
+  margin: 2rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem 3rem;
+}
+
+.quote-grid blockquote {
+  margin: 0;
+  text-align: center;
+  padding: 0 0.5rem;
+  position: relative;
+}
+
+.quote-grid blockquote p {
+  font-family: var(--serif-display);
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 0 0 0.6rem;
+}
+
+.quote-grid blockquote .devanagari-inline {
+  font-family: var(--serif-hindi);
+  font-weight: 500;
+  color: var(--accent);
+  font-size: 1.5rem;
+}
+
+.quote-grid blockquote cite {
+  display: block;
+  margin-top: 0.8rem;
+  font-family: var(--serif-body);
+  font-style: italic;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+  font-feature-settings: "kern", "liga";
+}
+
+/* ---------- Feature image ---------- */
+
+.feature-img {
+  max-width: var(--max-figure);
+  margin: 4rem auto 3rem;
+  padding: 0 1rem;
+}
+
+.feature-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 8px 30px rgba(40, 30, 15, 0.15);
+}
+
+.feature-img.portrait {
+  max-width: 520px;
+}
+
+.feature-img figcaption {
+  text-align: center;
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-muted);
+  margin-top: 1rem;
+  line-height: 1.5;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---------- Tributes ---------- */
+
+.tribute {
+  max-width: var(--max-text);
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
+}
+
+.tribute header {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.tribute h3 {
+  font-family: var(--serif-display);
+  font-weight: 500;
+  font-size: 1.4rem;
+  margin: 0 0 0.15rem;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+
+.tribute .connection {
+  font-family: var(--serif-body);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.tribute .message {
+  border-left: 2px solid var(--accent);
+  padding-left: 1.4rem;
+  margin-left: 0.2rem;
+}
+
+.tribute .message p {
+  font-size: 1.08rem;
+  line-height: 1.72;
+  margin: 0 0 0.9em;
+  color: var(--ink);
+}
+
+.tribute .message p:last-child {
+  margin-bottom: 0;
+}
+
+.tribute .message p.caption {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  margin-top: 1rem;
+}
+
+.tribute .message p.emphasis {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--accent);
+  text-align: center;
+  margin: 1.5rem 0 0.5rem;
+}
+
+/* Featured / curator tribute */
+
+.tribute.featured {
+  text-align: center;
+  border: none;
+  padding: 2rem 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+}
+
+.tribute.featured .message {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tribute.featured .message p {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 0;
+}
+
+.tribute.featured .attribution {
+  margin-top: 1rem;
+  font-family: var(--serif-body);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--ink-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Hindi tribute */
+
+.tribute.hindi-tribute .message {
+  border-left-color: var(--accent-soft);
+}
+
+.tribute .devanagari-block {
+  font-family: var(--serif-hindi);
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--ink);
+  margin: 0 0 1em;
+}
+
+/* ---------- Pull quote ---------- */
+
+.pullquote {
+  max-width: 720px;
+  margin: 4rem auto;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.pullquote p {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0 0 0.6rem;
+}
+
+.pullquote .devanagari-inline {
+  font-family: var(--serif-hindi);
+  font-weight: 500;
+  font-style: normal;
+  color: var(--accent);
+  font-size: 1.7rem;
+  margin-bottom: 0.8rem;
+}
+
+.pullquote cite {
+  font-family: var(--serif-body);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  margin-top: 1rem;
+  display: block;
+}
+
+/* ---------- Parallels section ---------- */
+
+.feature.parallels {
+  max-width: 740px;
+  margin: 5rem auto;
+  padding: 3rem 1.5rem;
+  background: var(--bg-soft);
+  border-radius: 2px;
+  border: 1px solid var(--rule-soft);
+}
+
+.feature.parallels h2 {
+  margin-top: 0;
+}
+
+.feature.parallels p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin: 0 0 1em;
+}
+
+.feature.parallels blockquote.essay {
+  margin: 1.5rem 0 1.5rem 0;
+  padding: 1.2rem 1.6rem;
+  background: var(--bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+
+.feature.parallels blockquote.essay p {
+  font-family: var(--serif-body);
+  font-size: 1.05rem;
+  margin: 0 0 0.7em;
+  line-height: 1.65;
+}
+
+.feature.parallels blockquote.essay p:last-child {
+  margin-bottom: 0;
+}
+
+.feature.parallels blockquote.essay ol {
+  font-size: 1.05rem;
+  margin: 0.5rem 0 0;
+  padding-left: 1.6rem;
+  line-height: 1.65;
+}
+
+.feature.parallels blockquote.essay ol li {
+  margin: 0.4rem 0;
+}
+
+.feature.parallels blockquote.equation {
+  text-align: center;
+  padding: 1.6rem 1.5rem;
+}
+
+.feature.parallels blockquote.equation p {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.1rem;
+  font-style: normal;
+}
+
+.frac .num {
+  padding: 0 0.4rem 0.1rem;
+  border-bottom: 1px solid var(--ink);
+}
+
+.frac .den {
+  padding: 0.1rem 0.4rem 0;
+}
+
+/* ---------- A life of small disciplines ---------- */
+
+.discipline {
+  max-width: 720px;
+  margin: 5rem auto 4rem;
+  padding: 3rem 2rem 3.5rem;
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  text-align: center;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.discipline h2 {
+  margin-top: 0;
+}
+
+.discipline .lede {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink-muted);
+  max-width: 480px;
+  margin: 0 auto 2rem;
+  line-height: 1.55;
+}
+
+.disciplines {
+  list-style: none;
+  padding: 0;
+  max-width: 480px;
+  margin: 0 auto 2rem;
+  text-align: left;
+}
+
+.disciplines li {
+  font-family: var(--serif-body);
+  font-size: 1.08rem;
+  line-height: 1.6;
+  padding: 0.85rem 0 0.85rem 1.6rem;
+  border-bottom: 1px dotted var(--rule);
+  position: relative;
+  color: var(--ink);
+}
+
+.disciplines li:last-child {
+  border-bottom: none;
+}
+
+.disciplines li::before {
+  content: "•";
+  color: var(--accent);
+  position: absolute;
+  left: 0.4rem;
+  top: 0.85rem;
+  font-size: 1rem;
+}
+
+.discipline .closing-line {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 520px;
+  margin: 1.5rem auto 0;
+}
+
+.discipline .closing-line em {
+  font-style: normal;
+  font-family: var(--serif-hindi);
+  color: var(--accent);
+}
+
+/* ---------- Gallery ---------- */
+
+.gallery {
+  max-width: var(--max-wide);
+  margin: 5rem auto 4rem;
+  padding: 0 1.5rem;
+}
+
+.gallery > h2 {
+  margin-bottom: 2.5rem;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.gallery > h2 {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+.gallery figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 6px 22px rgba(40, 30, 15, 0.12);
+}
+
+.gallery figcaption {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  padding: 0.9rem 0.4rem 0;
+  text-align: center;
+}
+
+/* ---------- Videos ---------- */
+
+.videos {
+  max-width: var(--max-figure);
+  margin: 4rem auto 5rem;
+  padding: 0 1.5rem;
+}
+
+.videos > h2 {
+  margin-top: 0;
+}
+
+.videos .section-lede {
+  margin-bottom: 2.5rem;
+}
+
+.video-figure {
+  margin: 0 0 3rem;
+}
+
+.video-figure video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+  background: var(--ink);
+  box-shadow: 0 8px 28px rgba(40, 30, 15, 0.15);
+}
+
+.video-figure figcaption {
+  text-align: center;
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-muted);
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+.site-footer .email {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent-soft);
+  font-style: normal;
+  font-family: var(--serif-body);
+  white-space: nowrap;
+}
+
+.site-footer .email:hover {
+  border-bottom-style: solid;
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  text-align: center;
+  padding: 5rem 1.5rem 5rem;
+  margin-top: 3rem;
+  border-top: 1px solid var(--rule);
+  background: var(--bg-soft);
+}
+
+.site-footer .devanagari {
+  font-family: var(--serif-hindi);
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin: 0 0 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.site-footer .closing {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 540px;
+  margin: 0 auto 0.8rem;
+}
+
+.site-footer .closing.small {
+  font-style: normal;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-bottom: 1rem;
+  }
+  .hero-portrait {
+    order: 1;
+    padding: 2.5rem 1.5rem 1rem;
+  }
+  .hero-portrait img {
+    max-height: 60vh;
+  }
+  .hero-text {
+    order: 2;
+    text-align: center;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 3rem;
+    max-width: 560px;
+  }
+  .hero-text .hero-ornament {
+    text-align: center;
+  }
+}
+
+@media (max-width: 720px) {
+  html {
+    font-size: 17px;
+  }
+
+  .opening p:first-of-type::first-letter {
+    font-size: 3.4rem;
+  }
+
+  .feature.parallels {
+    margin: 4rem 1rem;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .discipline {
+    padding: 2.5rem 1.2rem 3rem;
+    margin: 4rem 1rem;
+  }
+
+  .gallery {
+    gap: 1.5rem;
+  }
+
+  .tribute.featured .message p {
+    font-size: 1.3rem;
+  }
+
+  .quote-grid {
+    gap: 2rem;
+  }
+
+  .linkedin-post .post-card {
+    padding: 1.6rem 1.4rem 1.2rem;
+  }
+
+  .audio-toggle {
+    bottom: 0.9rem;
+    right: 0.9rem;
+    padding: 0.5rem 0.85rem 0.5rem 0.7rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .feature-img {
+    margin: 5rem auto 4rem;
+  }
+}
+
+/* ---------- Print ---------- */
+
+@media print {
+  .hero {
+    background: none;
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .hero-portrait img {
+    max-height: 6in;
+  }
+  .audio-toggle, audio {
+    display: none !important;
+  }
+  .tribute {
+    page-break-inside: avoid;
+  }
+}
