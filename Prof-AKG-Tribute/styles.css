@@ -105,9 +105,11 @@ body {
   font-family: var(--serif-display);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.45;
   margin: 0.6rem 0 1.6rem;
   color: var(--accent);
+  max-width: 28em;
 }
 
 .hero-text .affiliation {
@@ -500,6 +502,40 @@ h2::after {
   color: var(--accent);
   text-align: center;
   margin: 1.5rem 0 0.5rem;
+}
+
+.tribute-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.4rem;
+  margin: 1.6rem 0 0 1.6rem;
+}
+
+.tribute-photos figure {
+  margin: 0;
+}
+
+.tribute-photos img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 6px 18px rgba(40, 30, 15, 0.13);
+}
+
+.tribute-photos figcaption {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  padding: 0.7rem 0.2rem 0;
+}
+
+@media (max-width: 720px) {
+  .tribute-photos {
+    margin-left: 0;
+  }
 }
 
 /* Featured / curator tribute */
