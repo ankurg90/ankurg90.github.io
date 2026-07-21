@@ -127,14 +127,13 @@ a:hover { text-decoration: underline; }
   padding: 1.5rem;
   margin: 2rem 0;
 }
-/* On wide screens let the widgets extend past the prose column. The canvases
-   are then displayed at (or above) their natural size instead of being scaled
-   down to the text width, which is what made the plot labels look small. */
+/* On wide screens let the widgets extend past the prose column, so the
+   canvases render near their natural size instead of being scaled down to the
+   text width. They grow to the RIGHT only: the fixed table of contents sits
+   just to the left of the column, and a symmetric breakout would sit on it. */
 @media (min-width: 1000px) {
   .interactive-widget {
-    width: min(94vw, 1100px);
-    margin-left: 50%;
-    transform: translateX(-50%);
+    width: min(1060px, calc(50vw + 300px));
   }
 }
 .widget-title {
@@ -338,8 +337,8 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ HEADER ============ -->
 <h1>Rethinking How We Teach Ion Transport: Balance Sheets vs. Poisson&ndash;Nernst&ndash;Planck</h1>
-<p class="authors"><a href="https://ankurg90.github.io/">Ankur Gupta</a></p>
-<p class="subtitle">An interactive companion to a paper led by <strong>Grace Origer</strong> with <strong>Ritu R. Raj</strong>, Nathan Jarvey, P. N. Romero Zavala and Wilson A. Smith.</p>
+<p class="authors">Grace Origer, Ritu R. Raj and <a href="https://ankurg90.github.io/">Ankur Gupta</a></p>
+<p class="subtitle">An interactive companion to our paper: G. Origer, R. R. Raj, N. Jarvey, P. N. Romero Zavala, W. A. Smith and A. Gupta, &ldquo;Rethinking balance sheets: A Poisson-Nernst-Planck based approach for modeling concentration and flux profiles inside an electrochemical cell,&rdquo; <em><a href="https://www.sciencedirect.com/science/article/pii/S0009250926013151?dgcid=author">Chemical Engineering Science</a></em>, 2026, 124600, <a href="https://doi.org/10.1016/j.ces.2026.124600">doi:10.1016/j.ces.2026.124600</a>.</p>
 
 <!-- Sidebar Table of Contents -->
 <nav class="toc" id="toc">
@@ -359,12 +358,14 @@ li { margin-bottom: 0.4rem; }
 </nav>
 
 <div class="tldr">
-  <strong>TL;DR:</strong> The "balance sheet" approach in Ch.&nbsp;4 of Bard, Faulkner &amp; White (BFW) is the first thing every electrochemistry student is taught about ion transport. It gives you a tidy way to build a model, but the reasoning does not hold up: it assumes flat concentration profiles in the bulk, then introduces diffusion only at the electrodes, an inconsistency that breaks species conservation. The Poisson&ndash;Nernst&ndash;Planck (PNP) equations resolve this by predicting the full concentration and flux profiles from first principles. The widgets below let you solve the PNP equations in your browser and overlay the balance sheet predictions, so you can see exactly where the textbook story works, where it doesn't, and why. The full paper is published in <a href="#paper-link"><em>Chemical Engineering Science</em></a>, and the source codes (Python and MATLAB) reproducing each figure are <a href="#paper-link">linked below</a>.
+  <strong>TL;DR:</strong> The "balance sheet" approach in Ch.&nbsp;4 of Bard, Faulkner &amp; White (BFW) is the first thing many electrochemistry students are taught about ion transport. It gives you a convenient approach to build a model, but the reasoning does not always hold up: it assumes flat concentration profiles in the bulk, then introduces diffusion only at the electrodes, an inconsistency that breaks species conservation. The Poisson&ndash;Nernst&ndash;Planck (PNP) equations resolve this by predicting the full concentration and flux profiles from first principles. The widgets below let you solve the PNP equations in your browser and overlay the balance sheet predictions, so you can see exactly where the textbook story works, where it doesn't, and why. The full paper is published in <a href="https://www.sciencedirect.com/science/article/pii/S0009250926013151?dgcid=author"><em>Chemical Engineering Science</em></a>, and the source codes (Python and MATLAB) reproducing each figure are <a href="#paper-link">linked below</a>.
 </div>
 
 <!-- ============ WHY ============ -->
 <h2 id="why">Why this matters</h2>
-<p>If you have taken a chemical engineering course on electrochemical systems, chances are you have seen something that looks like the figure below: a one-dimensional cell with a cathode on one side, an anode on the other, and, alongside it, a tidy bookkeeping table that splits the current into a "diffusive" part near the electrodes and an "electromigrative" part everywhere else. That table (below) is the <strong>balance sheet</strong>. It is the entry point that BFW gives in Ch.&nbsp;4 to a beginner trying to make sense of mass transfer in an electrochemical cell.</p>
+<p>If you have taken a chemical engineering course on electrochemical systems, chances are you have seen something that looks like the figure below: a one-dimensional cell with a cathode on one side, an anode on the other, and, alongside it, a tidy bookkeeping table that splits the current into a "diffusive" part near the electrodes and an "electromigrative" part everywhere else. That table (below) is the <strong>balance sheet</strong>, and the recipe behind it is the <strong>balance sheet analysis</strong> (BSA). It is the entry point that BFW gives in Ch.&nbsp;4 to a beginner trying to make sense of mass transfer in an electrochemical cell.</p>
+
+<p>This post has a personal origin. Some of us took a course in which the balance sheet was taught exactly this way, and came away genuinely confused about where the diffusive contribution goes in the bulk and why the numbers stop balancing there. That confusion turned out not to be a student failing: when we later put the same questions to an expert in the field, they were puzzled by the construction too. That is what prompted us to work the examples out properly.</p>
 
 <div class="bsa-table-wrap">
 <table class="bsa-table">
@@ -380,9 +381,7 @@ li { margin-bottom: 0.4rem; }
 </table>
 </div>
 
-<p>The balance sheet is appealing because it requires only arithmetic. But the price of that simplicity is a set of assumptions that are never really justified, and some of them turn out to be wrong even for the very examples BFW uses to illustrate the method. The goal of this post, and of the paper it is based on, is not to decide in advance whether the balance sheet is good enough. It is to ask whether it holds up when you solve the transport equations from first principles, and to give you a hands-on tool to see for yourself where the two pictures agree and where they part ways.</p>
-
-<p>You don't need to take our word for any of it. Drag the sliders, watch the curves move, and compare.</p>
+<p>The balance sheet is appealing because it requires only arithmetic. But the cost of that simplicity is a set of assumptions that are never really justified, and some of them turn out to be wrong even for the very examples BFW uses to illustrate the method. The goal of this post, and of the paper it is based on, is to ask whether the balance sheet analysis (BSA) holds up when you solve the transport equations from first principles, and to give you a hands-on tool to see for yourself where the two pictures agree and where they part ways.</p>
 
 <!-- ============ SETUP ============ -->
 <h2 id="setup">The cell</h2>
@@ -521,7 +520,7 @@ li { margin-bottom: 0.4rem; }
       <input type="range" id="ss-J" min="0.02" max="0.65" step="0.005" value="0.17">
       <div style="display:flex; justify-content:space-between; font-family:Inter,sans-serif; font-size:0.72rem; color:var(--muted); margin-top:0.15rem;">
         <span>low current</span>
-        <span>&larr; capped at $0.95 \times \mathcal{J}_\mathrm{lim}$</span>
+        <span>&larr; capped at $0.95\times\mathcal{J}_\mathrm{lim}$ = <span id="ss-cap-val">0.66</span></span>
       </div>
     </div>
     <div class="slider-group">
@@ -556,7 +555,7 @@ li { margin-bottom: 0.4rem; }
 
 <ul>
   <li>The slider here is capped at $0.95 \times \mathcal{J}_\mathrm{lim}$. We picked the cap so the in-browser Newton solver is stable; in the paper we go right up to the limit and beyond, which is where the BSA picture really falls apart.</li>
-  <li>The BSA dashed lines for the electromigrative flux <em>do not change</em> as you change $\mathcal{J}$ &mdash; in normalised flux units, BSA is a current-independent prediction. The PNP solid lines, in contrast, develop large gradients near the electrodes as you approach the limit. The discrepancy near the cathode is the BSA's blind spot.</li>
+  <li>The BSA dashed lines for the electromigrative flux <em>do not change</em> as you change $\mathcal{J}$ &mdash; in normalised flux units, BSA is a current-independent prediction. The PNP solid lines, in contrast, develop large gradients near the electrodes as you approach the limit. That discrepancy near the cathode is completely missing in the BSA.</li>
 </ul>
 
 <!-- ============ SUPPORTING ELECTROLYTE ============ -->
@@ -602,7 +601,7 @@ li { margin-bottom: 0.4rem; }
 
 <p>At $\tau \approx 0.05$, the bulk concentration profiles, and therefore the total flux profiles, are nearly flat. The BSA would then say "in the bulk, only electromigration matters," and at this single time slice it's a defensible statement. By $\tau \approx 0.25$ the gradients have invaded the bulk, and by $\tau \approx 5$ the system has settled into the steady-state profile from the previous widget.</p>
 
-<p>The conclusion is worth stating plainly: the BSA is an early-time approximation, even though it is presented (in BFW and elsewhere) as a general analysis. The transient solution makes that explicit.</p>
+<p>The conclusion is worth stating plainly: the BSA is an early-time approximation (and even there it gets some of the details wrong), even though it is presented (in BFW and elsewhere) as a general analysis. The transient solution makes that explicit.</p>
 
 <!-- ============ HCELL ============ -->
 <h2 id="widget-hcell">Interactive #3 &middot; The hydrogen evolution cell</h2>
@@ -635,55 +634,49 @@ li { margin-bottom: 0.4rem; }
     <span style="color:#1a1a1a"><span class="swatch dashed" style="color:#1a1a1a"></span>BSA</span>
   </div>
   <div class="animation-caption" style="margin-top:1rem;">
-    Left: salt concentration $\tilde{C}_\mathrm{S}(\tilde{x})$ &mdash; the depletion fronts grow inward from each electrode. Middle: H$^+$ flux (electromigrative + diffusive). Right: Cl$^-$ flux (electromigrative + diffusive). The BSA dashed lines are the textbook bulk + boundary-spike pattern in $k=10$ units. The faster H$^+$ carries most of the current via electromigration; Cl$^-$ does it via diffusion. The similarity solution is valid only while the depletion fronts have not yet met &mdash; so $\tau \lesssim 0.15$ here.
+    Left: salt concentration $\tilde{C}_\mathrm{S}(\tilde{x})$, showing the depletion fronts growing inward from each electrode. Middle: H$^+$ flux (electromigrative + diffusive). Right: Cl$^-$ flux (electromigrative + diffusive). The BSA dashed lines are the textbook bulk plus boundary-spike pattern in $k=10$ units. The faster H$^+$ carries most of the current by electromigration, while Cl$^-$ does it by diffusion. The similarity solution is valid only while the depletion fronts have not yet met, so $\tau \lesssim 0.15$ here.
   </div>
 </div>
+
+<p>Two features are worth pausing on, because they mirror what the first two widgets showed. First, look at the flat middle of the salt profile at small $\tau$: the interior has not heard from the electrodes yet, so the bulk really is gradient-free and the BSA numbers there are close to right. Slide $\tau$ up and watch that flat region shrink from both sides. Once the two fronts approach each other, the bulk the BSA relies on has effectively disappeared.</p>
+
+<p>Second, compare the solid and dashed curves near the walls. The BSA puts a sharp step in the diffusive flux at the edge of its notional boundary layer and holds the electromigrative flux constant right through it. The similarity solution instead turns over smoothly, and the split between the two mechanisms changes continuously across the depletion zone. The asymmetry between the two panels is physical rather than numerical: $\mathscr{D}_\mathrm{H} = 4\mathscr{D}_\mathrm{Cl}$, so the slower Cl$^-$ needs a steeper gradient to carry the same reaction rate, which is why its front is sharper and its diffusive flux does relatively more of the work.</p>
 
 <!-- ============ TAKEAWAYS ============ -->
 <h2 id="takeaways">Take-aways for students and instructors</h2>
 
 <div class="finding-box">
-  <strong>1. The BSA is right about the destination, often wrong about the journey.</strong><br>
-  At the electrodes, the BSA enforces the imposed reaction rate &mdash; that's a boundary condition you can't get wrong. But its claim of zero-gradient bulk and constant electromigration is generically violated, and the diffusive contribution does not vanish in the interior of a steady-state cell.
+  <strong>1. The BSA gets the boundary values right and the interior wrong.</strong><br>
+  At the electrodes the BSA enforces the imposed reaction rate, which is a boundary condition it cannot get wrong. Everything between the walls is where it slips. In the total-flux panel of Interactive&nbsp;#1 (bottom right) the PNP curves are flat, as conservation demands, while the BSA dashed lines jump at the edge of its notional boundary layer. In the diffusive-flux panel (bottom left) the PNP curves are non-zero all the way across the cell, whereas the BSA sets them to zero in the bulk.
 </div>
 
 <div class="finding-box">
   <strong>2. There is a regime where the BSA comes close: trace reactive species in a sea of supporting electrolyte.</strong><br>
-  Drag the $R$ slider to $100$ in the steady-state widget and look at the Cu(II)/Cu(I) electromigrative fluxes. They flatten, and the BSA assumption of an essentially uniform concentration becomes a good approximation, because the inert ions buffer the field and the reactive species' contribution to it is negligible. This is also why supporting electrolytes are added in practice: they make the diffusive picture self-consistent. Even here, though, the agreement is not exact: the PNP solution still returns different electromigrative fluxes, because electroneutrality has to be satisfied at every point.
+  Drag the $R$ slider to $100$ in Interactive&nbsp;#1 and look at the Cu(II)/Cu(I) traces in the electromigrative-flux panel (top right). They flatten, and the BSA assumption of an essentially uniform concentration becomes a good approximation, because the inert ions buffer the field and the reactive species' contribution to it is negligible. This is also why supporting electrolytes are added in practice: they make the diffusive picture self-consistent. Even here, though, the agreement is not exact: the PNP solution still returns different electromigrative fluxes, because electroneutrality has to be satisfied at every point.
 </div>
 
 <div class="finding-box">
-  <strong>3. Early times are another regime where BSA is approximately right.</strong><br>
-  Hit play on the transient widget and pause around $\tau \approx 0.05$. The bulk is nearly flat. The BSA "bulk + boundary spike" decomposition is a one-time-slice picture that captures this moment.
+  <strong>3. Early times are another regime where the BSA is approximately right, with some details missing.</strong><br>
+  Hit play on Interactive&nbsp;#2 and pause around $\tau \approx 0.05$: the concentration panel is nearly flat in the middle, and there the BSA numbers are close. Two things it still misses. Near the walls the PNP total flux turns over smoothly, while the BSA imposes an abrupt step at the edge of its boundary layer (visible in the middle panel, where the dashed lines jump and the solid ones do not). And the BSA has no time in it at all: it returns the same numbers at $\tau = 0.05$, $0.25$ and $5$, whereas the PNP profiles keep evolving until the gradients fill the cell. It is a snapshot presented as if it were the whole film.
 </div>
 
 <div class="finding-box">
   <strong>4. PNP gives you something BSA cannot: the limiting current.</strong><br>
-  Crank the current slider toward $\mathcal{J}\approx 0.65$. The Cu(II) profile dives toward zero at the cathode. Past that point the imposed current is unphysical; the cell cannot supply Cu(II) fast enough. The BSA never tells you this, because it has no concentration field to look at.
+  Crank the current slider in Interactive&nbsp;#1 toward its cap and watch the Cu(II) trace in the concentration panel (top left) dive toward zero at the cathode. Past that point the imposed current is unphysical: the cell cannot supply Cu(II) fast enough. Note too that the cap moves as you add supporting electrolyte, from $\mathcal{J}_\mathrm{lim}\approx 0.69$ at $R=0$ down to $\approx 0.5$ at large $R$, because the reactive ion loses its electromigrative assist and has to arrive by diffusion alone. The BSA never tells you any of this, because it has no concentration field to look at.
 </div>
 
-<p>If you teach this material, the punchline we hope to leave you with is: the BSA is a fine entry-level mnemonic, but it should be presented alongside its assumptions and the conditions under which they are or aren't satisfied. If you are learning this material, hopefully the widgets above let you see for yourself where the textbook story is loyal to the physics and where it isn't.</p>
+<p>If you teach this material, we hope you can see that the BSA is a fine zero-level approximation, but that it should be presented alongside its assumptions and the conditions under which they are or are not satisfied. If you are learning this material, hopefully the widgets above help you understand the material better.</p>
 
 <!-- ============ UNDER THE HOOD ============ -->
 <h2 id="under-the-hood">Under the hood</h2>
 
-<p>All three solvers run entirely in your browser &mdash; no server, no Python kernel.</p>
-
-<ul>
-  <li><strong>Steady state.</strong> We discretise the integral-deviation form of the steady PNP equations on a uniform grid (Eq.&nbsp;28 in the paper), then use Newton's method with continuation in $\mathcal{J}$ to march from the trivial solution at $\mathcal{J}=0$ to the requested current. The Jacobian is computed by forward differences and the linear system is solved with dense LU + partial pivoting. For $\sim 30$ grid points and $3$&ndash;$5$ ions, a slider drag completes in under $\sim 200$&nbsp;ms.</li>
-  <li><strong>Transient.</strong> Explicit finite-difference time stepping (FTCS) of the species balance, with $\partial\tilde\phi/\partial\tilde{x}$ recomputed at every step from the instantaneous concentration field. To keep the slider responsive, we precompute a frame buffer at startup so the playback is just animation. Stable for $\Delta\tau \lesssim h^2/(2\max\mathscr{D}_g)$.</li>
-  <li><strong>H-cell similarity solution.</strong> Closed form. We approximate $\mathrm{erfc}$ with a degree-7 Chebyshev expansion accurate to $\sim 10^{-6}$. The widget evaluates the analytical formula at every $\tilde x$.</li>
-</ul>
-
-<p>The original Python (steady state and h-cell) and MATLAB (transient) solvers used to produce all the figures in the paper are released alongside it. Those are the recommended tools if you want to extend the analysis &mdash; the in-browser solvers here are designed for pedagogy, not production.</p>
-
-<div class="warning-box">
-  <strong>A note on the slider caps.</strong> The current slider in widget&nbsp;#1 is capped at $0.95 \times \mathcal{J}_\mathrm{lim} \approx 0.65$ because the Newton solver becomes finicky near the limit (the Jacobian becomes ill-conditioned as $\tilde{C}_\mathrm{Cu(II)}\to 0$ at the cathode). The h-cell time slider in widget&nbsp;#3 is capped at $\tau = 0.15$ because the underlying similarity solution is only valid while the depletion fronts from the two electrodes haven't yet met. Past these caps the in-browser solvers misbehave; the full paper handles both cases properly.
-</div>
+<p>All three solvers run entirely in your browser. The steady state is a Newton solve on a discretised form of the steady PNP equations, the transient is explicit finite-difference time stepping, and the H-cell uses the closed-form similarity solution. Both sliders are capped where the in-browser solvers stop being reliable: the current at $0.95\times\mathcal{J}_\mathrm{lim}$ (which itself falls as you add supporting electrolyte), and the H-cell time at $\tau = 0.15$, where the depletion fronts meet and the similarity solution stops being valid. To go past either cap, use the Python and MATLAB solvers released with the paper, which is what produced every figure in it.</p>
 
 <p id="paper-link"><strong>The paper.</strong> G. Origer, R. R. Raj, N. Jarvey, P. N. Romero Zavala, W. A. Smith and A. Gupta, "Rethinking balance sheets: A Poisson-Nernst-Planck based approach for modeling concentration and flux profiles inside an electrochemical cell," <em>Chemical Engineering Science</em>, 2026, 124600. <a href="https://doi.org/10.1016/j.ces.2026.124600">doi:10.1016/j.ces.2026.124600</a>. The Python and MATLAB source codes reproducing every figure are bundled with the supplementary material.</p>
 
-<p><strong>Acknowledgements.</strong> Major credit to <strong>Grace Origer</strong> who led the work and to <strong>Ritu R. Raj</strong> for substantial contributions to the analysis and figures. Thanks also to Nathan Jarvey, P.&nbsp;N. Romero Zavala, and Wilson&nbsp;A. Smith for collaboration on the manuscript. The interactive widgets here were built by AG with Claude as a coding assistant.</p>
+<p><strong>Acknowledgements.</strong> RR thanks the National Science Foundation (DGE-2040434) Graduate Research Fellowship for financial support. AG thanks the NSF CAREER award #2238412 for financial support. The authors thank Adam Holewinski for his useful input on the manuscript.</p>
+
+<p><strong>A note on AI.</strong> This blog post, including its text and the interactive widgets, was created with the help of AI. AI was not used to write the manuscript text; there, it was used only to help organise our code.</p>
 
 <div class="footer">
   <p>Posted April 2026 &middot; Ankur Gupta &middot; <a href="../../">Back to home</a></p>
@@ -1435,6 +1428,26 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   let currentSolution = null;
   let pending = null;
 
+  /* The limiting current is not a constant: adding supporting electrolyte
+     switches off the electromigrative assist to Cu(II), so it has to arrive by
+     diffusion alone and the cell starves sooner. Pure diffusion gives
+     C(-1) = 1 - 2J, i.e. J_lim -> 1/2, versus J_lim ~ 0.69 with no supporting
+     electrolyte. This fit reproduces the numerically computed J_lim(R) to
+     better than 0.01 over 0 <= R <= 100. Without it, the slider would let you
+     ask for a current the cell cannot sustain, and the Cu(II) profile would be
+     clipped flat against zero over a finite stretch near the cathode. */
+  function limitingCurrent(R) {
+    return 0.5 + 0.193 / (1 + R / 2.4);
+  }
+  function applyCurrentCap() {
+    const R = parseInt(sliderR.value);
+    const cap = +(0.95 * limitingCurrent(R)).toFixed(3);
+    sliderJ.max = String(cap);
+    if (parseFloat(sliderJ.value) > cap) sliderJ.value = String(cap);
+    const capEl = document.getElementById('ss-cap-val');
+    if (capEl) capEl.textContent = cap.toFixed(2);
+  }
+
   function recomputeAndRender() {
     const J = parseFloat(sliderJ.value);
     const R = parseInt(sliderR.value);
@@ -1500,14 +1513,19 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       }
       // Annotate that SE ions are off scale
       if (hasSE) {
-        // Placed just below the panel frame (not inside it) so it can never
-        // sit on top of a concentration curve.
-        ctx.fillStyle = COLORS.muted;
+        // Inside the panel, top-centre: that band is empty (the plotted ions
+        // all sit low) and an opaque backing keeps the note off the curves and
+        // clear of the next row's panel title.
+        const msg = 'Na\u207A and ClO\u2084\u207B off scale at C\u0303 = ' +
+                    parseInt(document.getElementById('ss-R').value);
         ctx.font = FONT.note;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        ctx.fillText('Na\u207A and ClO\u2084\u207B are off scale at C\u0303 = ' + parseInt(document.getElementById('ss-R').value),
-                     x0 + pw/2, y0 + ph + 52);
+        const tw = ctx.measureText(msg).width;
+        ctx.fillStyle = 'rgba(255,255,255,0.92)';
+        ctx.fillRect(x0 + pw/2 - tw/2 - 6, y0 + 6, tw + 12, 22);
+        ctx.fillStyle = COLORS.muted;
+        ctx.fillText(msg, x0 + pw/2, y0 + 10);
       }
     }
 
@@ -1593,7 +1611,8 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
     timer = setTimeout(() => { timer = null; recomputeAndRender(); }, 60);
   }
   sliderJ.addEventListener('input', scheduleRecompute);
-  sliderR.addEventListener('input', scheduleRecompute);
+  sliderR.addEventListener('input', () => { applyCurrentCap(); scheduleRecompute(); });
+  applyCurrentCap();
   recomputeAndRender();
 })();
 
