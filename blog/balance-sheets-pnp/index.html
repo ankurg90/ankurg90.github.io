@@ -63,6 +63,41 @@ a:hover { text-decoration: underline; }
 }
 .tldr strong { font-family: 'Inter', sans-serif; font-weight: 600; }
 
+/* Balance-sheet bookkeeping table */
+.bsa-table-wrap { overflow-x: auto; margin: 1.5rem 0 1.75rem; }
+.bsa-table {
+  border-collapse: collapse;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  margin: 0 auto;
+  min-width: 380px;
+}
+.bsa-table caption {
+  caption-side: bottom;
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding-top: 0.6rem;
+  text-align: left;
+}
+.bsa-table th, .bsa-table td {
+  padding: 0.45rem 0.9rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.bsa-table thead th {
+  font-weight: 600;
+  border-bottom: 2px solid var(--text);
+  line-height: 1.25;
+}
+.bsa-table .th-sub { font-weight: 400; font-size: 0.76rem; color: var(--muted); }
+.bsa-table tbody td:first-child { text-align: left; font-weight: 600; }
+.bsa-table tbody tr:last-child td { border-bottom: 1px solid var(--text); }
+.bsa-table .ion.cuii { color: #c0392b; }
+.bsa-table .ion.cui  { color: #8e44ad; }
+.bsa-table .ion.cl   { color: #e67e22; }
+
 /* Animation canvases */
 .animation-container {
   background: var(--card-bg);
@@ -296,10 +331,6 @@ li { margin-bottom: 0.4rem; }
 <p class="authors"><a href="https://ankurg90.github.io/">Ankur Gupta</a></p>
 <p class="subtitle">An interactive companion to a paper led by <strong>Grace Origer</strong> with <strong>Ritu R. Raj</strong>, Nathan Jarvey, P. N. Romero Zavala and Wilson A. Smith.</p>
 
-<div class="warning-box" style="margin-top:0.5rem;">
-  <strong>Heads up:</strong> this post is a work in progress. Text, widgets, and figures are still being polished &mdash; expect rough edges, occasional typos, and the odd misbehaving slider. If you find an issue, please <a href="mailto:ankur.gupta@colorado.edu">let me know</a>.
-</div>
-
 <!-- Sidebar Table of Contents -->
 <nav class="toc" id="toc">
   <ul>
@@ -318,20 +349,34 @@ li { margin-bottom: 0.4rem; }
 </nav>
 
 <div class="tldr">
-  <strong>TL;DR:</strong> The "balance sheet" approach in Ch.&nbsp;4 of Bard, Faulkner &amp; White (BFW) is the first thing every electrochemistry student is taught about ion transport. It gets you a number, but it gets it for the wrong reason: it assumes flat concentration profiles in the bulk, then introduces diffusion only at the electrodes &mdash; an inconsistency that breaks species conservation. The Poisson&ndash;Nernst&ndash;Planck (PNP) equations resolve this by predicting the full concentration and flux profiles from first principles. The widgets below let you solve the PNP equations in your browser and overlay the balance sheet predictions, so you can see exactly where the textbook story works, where it doesn't, and why. The full paper is available <a href="#paper-link">at the journal</a> and the source codes (Python and MATLAB) reproducing each figure are <a href="#paper-link">linked below</a>.
+  <strong>TL;DR:</strong> The "balance sheet" approach in Ch.&nbsp;4 of Bard, Faulkner &amp; White (BFW) is the first thing every electrochemistry student is taught about ion transport. It gives you a tidy way to build a model, but the reasoning does not hold up: it assumes flat concentration profiles in the bulk, then introduces diffusion only at the electrodes, an inconsistency that breaks species conservation. The Poisson&ndash;Nernst&ndash;Planck (PNP) equations resolve this by predicting the full concentration and flux profiles from first principles. The widgets below let you solve the PNP equations in your browser and overlay the balance sheet predictions, so you can see exactly where the textbook story works, where it doesn't, and why. The full paper is published in <a href="#paper-link"><em>Chemical Engineering Science</em></a>, and the source codes (Python and MATLAB) reproducing each figure are <a href="#paper-link">linked below</a>.
 </div>
 
 <!-- ============ WHY ============ -->
 <h2 id="why">Why this matters</h2>
-<p>If you have taken a chemical engineering course on electrochemical systems, chances are you have seen something that looks like the figure below: a one-dimensional cell with a cathode on one side, an anode on the other, and a tidy bookkeeping table that splits the current into a "diffusive" part near the electrodes and an "electromigrative" part everywhere else. That table is the <strong>balance sheet</strong>. It is the entry point that BFW gives in Ch.&nbsp;4 to a beginner trying to make sense of mass transfer in an electrochemical cell.</p>
+<p>If you have taken a chemical engineering course on electrochemical systems, chances are you have seen something that looks like the figure below: a one-dimensional cell with a cathode on one side, an anode on the other, and, alongside it, a tidy bookkeeping table that splits the current into a "diffusive" part near the electrodes and an "electromigrative" part everywhere else. That table (below) is the <strong>balance sheet</strong>. It is the entry point that BFW gives in Ch.&nbsp;4 to a beginner trying to make sense of mass transfer in an electrochemical cell.</p>
 
-<p>The balance sheet is appealing because it requires only arithmetic. But the price of the simplicity is a set of assumptions that are never really justified. Some of them turn out to be wrong even for the very examples BFW uses to illustrate the method. The goal of this post &mdash; and the paper it is based on &mdash; is not to dunk on the balance sheet (which is a perfectly fine first pass), but to show where it breaks, and to give you a hands-on tool to see for yourself how a first-principles calculation differs.</p>
+<div class="bsa-table-wrap">
+<table class="bsa-table">
+  <caption>The balance sheet for the copper cell at $k=6$ electrons per unit time, in atomic transport rates.</caption>
+  <thead>
+    <tr><th>Species</th><th>Electromigration<br><span class="th-sub">(bulk)</span></th><th>Diffusion<br><span class="th-sub">(near electrode)</span></th><th>Total<br><span class="th-sub">(at electrode)</span></th></tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="ion cuii">Cu(II)</span></td><td>&minus;1</td><td>&minus;5</td><td>&minus;6</td></tr>
+    <tr><td><span class="ion cui">Cu(I)</span></td><td>&minus;1</td><td>+7</td><td>+6</td></tr>
+    <tr><td><span class="ion cl">Cl&#8315;</span></td><td>+3</td><td>&minus;3</td><td>0</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>The balance sheet is appealing because it requires only arithmetic. But the price of that simplicity is a set of assumptions that are never really justified, and some of them turn out to be wrong even for the very examples BFW uses to illustrate the method. The goal of this post, and of the paper it is based on, is not to decide in advance whether the balance sheet is good enough. It is to ask whether it holds up when you solve the transport equations from first principles, and to give you a hands-on tool to see for yourself where the two pictures agree and where they part ways.</p>
 
 <p>You don't need to take our word for any of it. Drag the sliders, watch the curves move, and compare.</p>
 
 <!-- ============ SETUP ============ -->
 <h2 id="setup">The cell</h2>
-<p>We focus on the same cell that BFW does: a one-dimensional copper redox cell. The electrolyte contains three ions &mdash; copper(II), copper(I), and chloride &mdash; in a background of ammonia. At the left electrode (the cathode, $\tilde{x}=-1$) Cu(II) is reduced to Cu(I); at the right electrode (the anode, $\tilde{x}=+1$) the reverse happens. Chloride is inert (it does not react at either electrode), but it is required to keep the solution electroneutral.</p>
+<p>We focus on the same cell that BFW does: a one-dimensional copper redox cell. The electrolyte contains three ions &mdash; copper(II), copper(I), and chloride, in a background electrolyte of ammonia. At the left electrode (the cathode, $\tilde{x}=-1$) Cu(II) is reduced to Cu(I); at the right electrode (the anode, $\tilde{x}=+1$) the reverse happens. Chloride is inert (it does not react at either electrode), but it is required to keep the solution electroneutral.</p>
 
 <div class="schematic">
   <svg id="cell-schematic" width="100%" viewBox="0 0 660 240" preserveAspectRatio="xMidYMid meet" style="max-width:660px;">
@@ -356,12 +401,15 @@ li { margin-bottom: 0.4rem; }
     <circle cx="460" cy="145" r="9" fill="#c0392b"/><text x="460" y="149" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">2+</text>
     <circle cx="240" cy="155" r="8" fill="#8e44ad"/><text x="240" y="159" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">+</text>
     <circle cx="430" cy="105" r="8" fill="#e67e22"/><text x="430" y="109" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">&minus;</text>
+    <circle cx="300" cy="162" r="8" fill="#e67e22"/><text x="300" y="166" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">&minus;</text>
+    <circle cx="368" cy="158" r="8" fill="#e67e22"/><text x="368" y="162" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">&minus;</text>
+    <circle cx="505" cy="128" r="8" fill="#e67e22"/><text x="505" y="132" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#fff" font-weight="600">&minus;</text>
     <!-- Coordinate axis -->
-    <line x1="80" y1="200" x2="580" y2="200" stroke="#6b7280" stroke-width="1"/>
-    <polygon points="580,200 572,196 572,204" fill="#6b7280"/>
+    <line x1="80" y1="200" x2="548" y2="200" stroke="#6b7280" stroke-width="1"/>
+    <polygon points="556,200 548,196 548,204" fill="#6b7280"/>
     <text x="330" y="225" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" fill="#1a1a1a" font-style="italic">x&#771;</text>
     <!-- Legend -->
-    <g transform="translate(80, 0)">
+    <g transform="translate(218, 0)">
       <circle cx="20" cy="10" r="6" fill="#c0392b"/>
       <text x="32" y="14" font-family="Inter,sans-serif" font-size="11" fill="#1a1a1a">Cu(II)</text>
       <circle cx="100" cy="10" r="6" fill="#8e44ad"/>
@@ -404,7 +452,7 @@ li { margin-bottom: 0.4rem; }
 <div class="assumption-list">
   <ol>
     <li><strong>Where does "no bulk gradient" come from?</strong> No mixing, no specific time scale, and no analysis of the actual transport equations is invoked to justify it.</li>
-    <li><strong>The diffusive flux is discontinuous</strong> between the bulk (zero) and the electrode (non-zero). Each species is not conserved across the cell.</li>
+    <li><strong>The diffusive flux is discontinuous</strong> between the bulk (zero) and the electrode (non-zero). That discontinuity is precisely what breaks species conservation: a flux that jumps has a non-zero divergence, so at steady state the species cannot be conserved across the cell.</li>
     <li><strong>The electromigrative flux is taken to be constant</strong> right up to the electrode &mdash; despite the very same approach assigning a concentration gradient there.</li>
     <li><strong>There is no notion of a limiting current.</strong> The recipe gives a number for any imposed $k$, even values that would require a negative concentration somewhere.</li>
     <li><strong>There are no concentration profiles at all.</strong> So there is no way to check, from the recipe, whether the assumptions it relies on are even approximately satisfied.</li>
@@ -414,18 +462,36 @@ li { margin-bottom: 0.4rem; }
 <p>The PNP equations resolve all five.</p>
 
 <!-- ============ PNP ============ -->
-<h2 id="pnp">The PNP equations, in one screen</h2>
-<p>The Poisson&ndash;Nernst&ndash;Planck (PNP) framework is just three building blocks: a species balance for each ion, a flux law (Nernst&ndash;Planck) that includes both diffusion and electromigration, and a constraint on the electric field (Poisson). For a thin-double-layer system &mdash; the regime relevant here &mdash; Poisson reduces to electroneutrality. Putting these together for a 1D cell:</p>
+<h2 id="pnp">The PNP equations</h2>
+<p>The Poisson&ndash;Nernst&ndash;Planck (PNP) framework is just three building blocks: a species balance for each ion, a flux law (Nernst&ndash;Planck) that includes both diffusion and electromigration, and a constraint on the electric field (Poisson). For a thin-double-layer system, the regime relevant here, Poisson reduces to electroneutrality.</p>
+
+<p>Start from the statement that each species is conserved:</p>
 
 <div class="equation-block">
-  $$\frac{\partial \tilde{C}_g}{\partial \tau} = \mathscr{D}_g \frac{\partial^2 \tilde{C}_g}{\partial \tilde{x}^2} + z_g \mathscr{D}_g \frac{\partial}{\partial \tilde{x}}\!\left(\tilde{C}_g\, \frac{\partial \tilde\phi}{\partial \tilde{x}}\right),$$
+  $$\frac{\partial \tilde{C}_g}{\partial \tau} = -\frac{\partial \tilde{N}_g}{\partial \tilde{x}},$$
+  <div class="equation-caption">Conservation of species $g$: concentration changes only because flux enters or leaves.</div>
+</div>
+
+<p>and note that the flux $\tilde{N}_g$ has exactly two contributions:</p>
+
+<div class="equation-block">
+  $$\tilde{N}_g = \underbrace{-\mathscr{D}_g \frac{\partial \tilde{C}_g}{\partial \tilde{x}}}_{\textstyle \text{diffusion}} \;\underbrace{-\, z_g \mathscr{D}_g \tilde{C}_g \frac{\partial \tilde\phi}{\partial \tilde{x}}}_{\textstyle \text{electromigration}}.$$
+  <div class="equation-caption">The Nernst&ndash;Planck flux. Every panel in the widgets below is one of these two terms, or their sum. This is the split the balance sheet is trying to estimate by arithmetic.</div>
+</div>
+
+<p>Putting the two together gives the equation we actually solve:</p>
+
+<div class="equation-block">
+  $$\frac{\partial \tilde{C}_g}{\partial \tau} = \mathscr{D}_g \frac{\partial^2 \tilde{C}_g}{\partial \tilde{x}^2} + z_g \mathscr{D}_g \frac{\partial}{\partial \tilde{x}}\!\left(\tilde{C}_g\, \frac{\partial \tilde\phi}{\partial \tilde{x}}\right).$$
   <div class="equation-caption">Species balance with diffusive and electromigrative fluxes.</div>
 </div>
 
 <div class="equation-block">
   $$\sum_g z_g \tilde{C}_g = 0, \qquad \frac{\partial \tilde\phi}{\partial \tilde{x}} \;=\; -\frac{-\mathcal{J} + \sum_g z_g \mathscr{D}_g\, \partial \tilde{C}_g/\partial \tilde{x}}{\sum_g z_g^2 \mathscr{D}_g \tilde{C}_g}.$$
-  <div class="equation-caption">Electroneutrality plus an explicit expression for the potential gradient, obtained by combining the species balances with $j = \mathrm{const} = -\nu$.</div>
+  <div class="equation-caption">Electroneutrality plus an explicit expression for the potential gradient.</div>
 </div>
+
+<p>That second expression is worth a sentence, because it is doing a lot of work. We never solve a separate equation for $\tilde\phi$. Instead, multiply each species balance by $z_g$ and sum over species: electroneutrality makes the left-hand side vanish, which forces the current $\tilde{j} = \sum_g z_g \tilde{N}_g$ to be independent of position. Evaluating it at either electrode fixes its value at the imposed current, and solving that statement for $\partial\tilde\phi/\partial\tilde{x}$ gives the expression above. In other words, the potential gradient is whatever it has to be, at each point, to keep the current uniform.</p>
 
 <p>An aside on a common misconception: <em>electroneutrality does not mean a constant electric field</em>. It is a simplification of Poisson's equation in the thin-double-layer limit, but $\partial\tilde\phi/\partial\tilde{x}$ is generally a function of position because the concentrations $\tilde{C}_g(x)$ vary.</p>
 
@@ -445,7 +511,7 @@ li { margin-bottom: 0.4rem; }
       <input type="range" id="ss-J" min="0.02" max="0.65" step="0.005" value="0.17">
       <div style="display:flex; justify-content:space-between; font-family:Inter,sans-serif; font-size:0.72rem; color:var(--muted); margin-top:0.15rem;">
         <span>low current</span>
-        <span>&larr; capped at $\sim 0.95\,\mathcal{J}_\mathrm{lim}$</span>
+        <span>&larr; capped at $0.95 \times \mathcal{J}_\mathrm{lim}$</span>
       </div>
     </div>
     <div class="slider-group">
@@ -457,7 +523,7 @@ li { margin-bottom: 0.4rem; }
       </div>
     </div>
   </div>
-  <canvas id="ss-canvas" width="700" height="520" style="width:100%; height:auto; max-width:700px;"></canvas>
+  <canvas id="ss-canvas" width="820" height="640" style="width:100%; height:auto; max-width:820px;"></canvas>
   <div class="legend-row">
     <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>Cu(II)</span>
     <span style="color:#8e44ad"><span class="swatch" style="background:#8e44ad"></span>Cu(I)</span>
@@ -474,29 +540,29 @@ li { margin-bottom: 0.4rem; }
 
 <!-- ============ LIMITING CURRENT ============ -->
 <h2 id="limiting">Pushing toward the limiting current</h2>
-<p>One thing the BSA cannot do is tell you when its own answer becomes nonsense. Push the current slider above to about $\mathcal{J}\approx 0.6$. The Cu(II) concentration profile gets steeper and steeper at the cathode, until it crosses through zero. At that point the surface reaction is starving for reactant: ions cannot be supplied to the wall fast enough to sustain the imposed current. This is the <strong>limiting current</strong>, and for this cell (with no supporting electrolyte) it sits at $\mathcal{J}_\mathrm{lim}\approx 0.7$.</p>
+<p>Without concentration profiles, one thing the BSA cannot do is tell you when its own answer stops being physically attainable. Push the current slider above to about $\mathcal{J}\approx 0.6$. Above this current the Cu(II) concentration profile gets steeper and steeper at the cathode, until it is driven to zero. At that point the surface reaction is starving for reactant: ions cannot be supplied to the wall fast enough to sustain the imposed current. This is the <strong>limiting current</strong>, and for this cell (with no supporting electrolyte) it sits at $\mathcal{J}_\mathrm{lim}\approx 0.7$.</p>
 
 <p>Two things to notice:</p>
 
 <ul>
-  <li>The slider here is capped at about $0.95\,\mathcal{J}_\mathrm{lim}$. We picked the cap so the in-browser Newton solver is stable; in the paper we go right up to the limit and beyond, which is where the BSA picture really falls apart.</li>
+  <li>The slider here is capped at $0.95 \times \mathcal{J}_\mathrm{lim}$. We picked the cap so the in-browser Newton solver is stable; in the paper we go right up to the limit and beyond, which is where the BSA picture really falls apart.</li>
   <li>The BSA dashed lines for the electromigrative flux <em>do not change</em> as you change $\mathcal{J}$ &mdash; in normalised flux units, BSA is a current-independent prediction. The PNP solid lines, in contrast, develop large gradients near the electrodes as you approach the limit. The discrepancy near the cathode is the BSA's blind spot.</li>
 </ul>
 
 <!-- ============ SUPPORTING ELECTROLYTE ============ -->
-<h2 id="supporting">What a supporting electrolyte does (and why people use one)</h2>
+<h2 id="supporting">Benefits of a supporting electrolyte</h2>
 <p>In real electrochemistry, you often add a large excess of an inert salt (a "supporting electrolyte" &mdash; here, NaClO$_4$). Drag the $R$ slider to $100$. Two things happen:</p>
 
 <ul>
   <li><strong>The reactive species' electromigrative fluxes collapse to zero.</strong> Look at the Cu(II), Cu(I), and Cl$^-$ traces in the electromigration panel: they almost flatline. The inert Na$^+$ and ClO$_4^-$ now carry essentially all of the electromigration. Their large concentrations dominate the denominator of $\partial\tilde\phi/\partial\tilde{x}$, screening the field and shutting down electromigration of the trace reactive species.</li>
-  <li><strong>The diffusive flux of Cu(II) and Cu(I) does the work.</strong> What was previously a mix of diffusion and electromigration becomes essentially pure diffusion for the reactive species. <em>This is the regime where the textbook "diffusion-only" picture finally becomes a good approximation</em> &mdash; and notice how, in this limit, the BSA's predictions for the reactive ions get much closer to the PNP curves.</li>
+  <li><strong>The diffusive fluxes of Cu(II) and Cu(I) do the work.</strong> What was previously a mix of diffusive and electromigrative contributions becomes essentially a pure diffusive flux for the reactive species. <em>This is the regime where the textbook "diffusion-only" picture finally becomes a good approximation</em> &mdash; and notice how, in this limit, the BSA's predictions for the reactive ions get much closer to the PNP curves.</li>
 </ul>
 
-<p>So the BSA is not wrong everywhere. It is essentially right when you have a strong supporting electrolyte and you are looking at the trace species. The issue is that BFW presents the analysis without that caveat, in cells where the assumption is not satisfied.</p>
+<p>So the BSA is not wrong everywhere. It comes closest to being right when you have a strong supporting electrolyte and you are looking at the trace reactive species. The difficulty is that BFW presents the balance sheet as a general recipe, and applies it to cells (including the copper cell above, which has no supporting electrolyte) where that condition is not met.</p>
 
 <!-- ============ INTERACTIVE TRANSIENT ============ -->
 <h2 id="widget-transient">Interactive #2 &middot; The transient story</h2>
-<p>What about early times? Before the surface reactions have had a chance to perturb the bulk, the concentration profiles really are nearly flat &mdash; just like BSA assumes. Maybe the BSA is a snapshot of an early-time state?</p>
+<p>Another important regime is early times. What happens before the surface reactions have had a chance to perturb the bulk? There the concentration profiles really are nearly flat, just as the BSA assumes. So perhaps the BSA is a snapshot of an early-time state?</p>
 
 <p>It is, sort of. The widget below solves the time-dependent PNP equations starting from the uniform initial condition. Hit play and watch the profiles evolve. We track three things: the concentration field, the total flux $\tilde{N}_g(\tilde{x})$, and the current density $\tilde j(\tilde{x}) = \sum_g z_g \tilde{N}_g$. At every time, current is a constant in $\tilde{x}$ (electroneutrality enforces it), but the individual fluxes are only constant once steady state is reached.</p>
 
@@ -512,7 +578,7 @@ li { margin-bottom: 0.4rem; }
       <button class="btn" id="tr-reset">Reset</button>
     </div>
   </div>
-  <canvas id="tr-canvas" width="700" height="320" style="width:100%; height:auto; max-width:700px;"></canvas>
+  <canvas id="tr-canvas" width="880" height="380" style="width:100%; height:auto; max-width:880px;"></canvas>
   <div class="legend-row">
     <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>Cu(II)</span>
     <span style="color:#8e44ad"><span class="swatch" style="background:#8e44ad"></span>Cu(I)</span>
@@ -524,9 +590,9 @@ li { margin-bottom: 0.4rem; }
   </div>
 </div>
 
-<p>At $\tau \approx 0.05$, the bulk really is nearly flat &mdash; you can see it in the concentration plot. The BSA would then say "in the bulk, only electromigration matters," and at this single time slice it's a defensible statement. By $\tau \approx 0.25$ the gradients have invaded the bulk, and by $\tau \approx 5$ the system has settled into the steady-state profile from the previous widget.</p>
+<p>At $\tau \approx 0.05$, the bulk concentration profiles, and therefore the total flux profiles, are nearly flat. The BSA would then say "in the bulk, only electromigration matters," and at this single time slice it's a defensible statement. By $\tau \approx 0.25$ the gradients have invaded the bulk, and by $\tau \approx 5$ the system has settled into the steady-state profile from the previous widget.</p>
 
-<p>Read this carefully: the BSA is an early-time approximation, even though it is presented (in BFW and elsewhere) as a general analysis. The transient solution makes that explicit.</p>
+<p>The conclusion is worth stating plainly: the BSA is an early-time approximation, even though it is presented (in BFW and elsewhere) as a general analysis. The transient solution makes that explicit.</p>
 
 <!-- ============ HCELL ============ -->
 <h2 id="widget-hcell">Interactive #3 &middot; The hydrogen evolution cell</h2>
@@ -551,7 +617,7 @@ li { margin-bottom: 0.4rem; }
       </div>
     </div>
   </div>
-  <canvas id="hc-canvas" width="700" height="280" style="width:100%; height:auto; max-width:700px;"></canvas>
+  <canvas id="hc-canvas" width="880" height="360" style="width:100%; height:auto; max-width:880px;"></canvas>
   <div class="legend-row">
     <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>H&#8314;</span>
     <span style="color:#27ae60"><span class="swatch" style="background:#27ae60"></span>Cl&#8315;</span>
@@ -559,7 +625,7 @@ li { margin-bottom: 0.4rem; }
     <span style="color:#1a1a1a"><span class="swatch dashed" style="color:#1a1a1a"></span>BSA</span>
   </div>
   <div class="animation-caption" style="margin-top:1rem;">
-    Left: salt concentration $\tilde{C}_\mathrm{S}(\tilde{x})$ &mdash; the depletion fronts grow inward from each electrode. Middle: H$^+$ flux (electromigrative + diffusive + total). Right: Cl$^-$ flux. The BSA dashed lines are the textbook bulk + boundary-spike pattern in $k=10$ units. The faster H$^+$ carries most of the current via electromigration; Cl$^-$ does it via diffusion. The similarity solution is valid only while the depletion fronts have not yet met &mdash; so $\tau \lesssim 0.15$ here.
+    Left: salt concentration $\tilde{C}_\mathrm{S}(\tilde{x})$ &mdash; the depletion fronts grow inward from each electrode. Middle: H$^+$ flux (electromigrative + diffusive). Right: Cl$^-$ flux (electromigrative + diffusive). The BSA dashed lines are the textbook bulk + boundary-spike pattern in $k=10$ units. The faster H$^+$ carries most of the current via electromigration; Cl$^-$ does it via diffusion. The similarity solution is valid only while the depletion fronts have not yet met &mdash; so $\tau \lesssim 0.15$ here.
   </div>
 </div>
 
@@ -572,8 +638,8 @@ li { margin-bottom: 0.4rem; }
 </div>
 
 <div class="finding-box">
-  <strong>2. There is a regime where BSA works: trace reactive species in a sea of supporting electrolyte.</strong><br>
-  Drag the $R$ slider to $100$ in the steady-state widget and look at the Cu(II)/Cu(I) electromigrative fluxes. They flatten. The BSA assumption that the concentration is essentially uniform becomes a good approximation, because the inert ions buffer the field and the reactive species' contribution to it is negligible. This is also why supporting electrolytes are added in practice: they make the diffusive picture self-consistent.
+  <strong>2. There is a regime where the BSA comes close: trace reactive species in a sea of supporting electrolyte.</strong><br>
+  Drag the $R$ slider to $100$ in the steady-state widget and look at the Cu(II)/Cu(I) electromigrative fluxes. They flatten, and the BSA assumption of an essentially uniform concentration becomes a good approximation, because the inert ions buffer the field and the reactive species' contribution to it is negligible. This is also why supporting electrolytes are added in practice: they make the diffusive picture self-consistent. Even here, though, the agreement is not exact: the PNP solution still returns different electromigrative fluxes, because electroneutrality has to be satisfied at every point.
 </div>
 
 <div class="finding-box">
@@ -602,10 +668,10 @@ li { margin-bottom: 0.4rem; }
 <p>The original Python (steady state and h-cell) and MATLAB (transient) solvers used to produce all the figures in the paper are released alongside it. Those are the recommended tools if you want to extend the analysis &mdash; the in-browser solvers here are designed for pedagogy, not production.</p>
 
 <div class="warning-box">
-  <strong>A note on the slider caps.</strong> The current slider in widget&nbsp;#1 is capped at about $0.95\,\mathcal{J}_\mathrm{lim} \approx 0.65$ because the Newton solver becomes finicky near the limit (the Jacobian becomes ill-conditioned as $\tilde{C}_\mathrm{Cu(II)}\to 0$ at the cathode). The h-cell time slider in widget&nbsp;#3 is capped at $\tau = 0.15$ because the underlying similarity solution is only valid while the depletion fronts from the two electrodes haven't yet met. Past these caps the in-browser solvers misbehave; the full paper handles both cases properly.
+  <strong>A note on the slider caps.</strong> The current slider in widget&nbsp;#1 is capped at $0.95 \times \mathcal{J}_\mathrm{lim} \approx 0.65$ because the Newton solver becomes finicky near the limit (the Jacobian becomes ill-conditioned as $\tilde{C}_\mathrm{Cu(II)}\to 0$ at the cathode). The h-cell time slider in widget&nbsp;#3 is capped at $\tau = 0.15$ because the underlying similarity solution is only valid while the depletion fronts from the two electrodes haven't yet met. Past these caps the in-browser solvers misbehave; the full paper handles both cases properly.
 </div>
 
-<p id="paper-link"><strong>The paper.</strong> Origer, Raj, Jarvey, Romero Zavala, Smith, Gupta, "Rethinking Balance Sheets: A Poisson-Nernst-Planck Based Approach for Modeling Concentration and Flux Profiles Inside an Electrochemical Cell," <em>Chemical Engineering Journal</em>, 2026 (under revision). Source codes for all figures are bundled with the supplementary material.</p>
+<p id="paper-link"><strong>The paper.</strong> G. Origer, R. R. Raj, N. Jarvey, P. N. Romero Zavala, W. A. Smith and A. Gupta, "Rethinking balance sheets: A Poisson-Nernst-Planck based approach for modeling concentration and flux profiles inside an electrochemical cell," <em>Chemical Engineering Science</em>, 2026, 124600. <a href="https://doi.org/10.1016/j.ces.2026.124600">doi:10.1016/j.ces.2026.124600</a>. The Python and MATLAB source codes reproducing every figure are bundled with the supplementary material.</p>
 
 <p><strong>Acknowledgements.</strong> Major credit to <strong>Grace Origer</strong> who led the work and to <strong>Ritu R. Raj</strong> for substantial contributions to the analysis and figures. Thanks also to Nathan Jarvey, P.&nbsp;N. Romero Zavala, and Wilson&nbsp;A. Smith for collaboration on the manuscript. The interactive widgets here were built by AG with Claude as a coding assistant.</p>
 
@@ -638,6 +704,67 @@ const COLORS = {
   grid: '#e5e7eb',
   bg: '#fafaf8',
 };
+
+/* Plot typography. Sized so the labels stay legible once the canvas is
+   scaled down to the column width on narrow screens. */
+const FONT = {
+  tick:  '13px Inter, sans-serif',
+  axis:  '14px Inter, sans-serif',
+  title: '600 15px Inter, sans-serif',
+  note:  '12px Inter, sans-serif',
+};
+
+/* Render the canvas at the device pixel ratio so text and lines are crisp
+   on retina displays. The drawing code keeps using the original logical
+   (W, H) coordinate system. */
+function setupHiDPI(canvas, ctx) {
+  const W = canvas.width, H = canvas.height;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  if (dpr !== 1) {
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width = '100%';
+    canvas.style.maxWidth = W + 'px';
+    canvas.style.height = 'auto';
+    ctx.scale(dpr, dpr);
+  }
+  return { W, H };
+}
+
+/* Draw a label containing "_" subscripts, e.g. "C̃_g" or "Ñ_{m,g} / |J|".
+   Canvas has no rich text, so we lay out the runs by hand and measure them
+   to honour the requested alignment (prevents labels colliding with ticks). */
+function drawSubLabel(ctx, text, cx, cy, font, align) {
+  const parts = [];
+  let i = 0;
+  while (i < text.length) {
+    const u = text.indexOf('_', i);
+    if (u === -1) { if (i < text.length) parts.push([text.slice(i), false]); break; }
+    if (u > i) parts.push([text.slice(i, u), false]);
+    if (text[u + 1] === '{') {
+      const close = text.indexOf('}', u + 2);
+      parts.push([text.slice(u + 2, close), true]);
+      i = close + 1;
+    } else {
+      parts.push([text[u + 1], true]);
+      i = u + 2;
+    }
+  }
+  const size = parseFloat((font.match(/(\d+(?:\.\d+)?)px/) || [0, 12])[1]);
+  const subFont = font.replace(/(\d+(?:\.\d+)?)px/, (size * 0.72).toFixed(1) + 'px');
+  let total = 0;
+  for (const [t, sub] of parts) { ctx.font = sub ? subFont : font; total += ctx.measureText(t).width; }
+  let x = align === 'center' ? cx - total / 2 : (align === 'right' ? cx - total : cx);
+  const prevAlign = ctx.textAlign;
+  ctx.textAlign = 'left';
+  for (const [t, sub] of parts) {
+    ctx.font = sub ? subFont : font;
+    ctx.fillText(t, x, sub ? cy + size * 0.24 : cy);
+    x += ctx.measureText(t).width;
+  }
+  ctx.textAlign = prevAlign;
+  return total;
+}
 
 /* =====================================================================
    SMALL LINEAR ALGEBRA -- dense LU with partial pivoting
@@ -846,10 +973,14 @@ function solveSteadyPNP({ C0, z, D, Npattern, J_target, Ngrid = 31 }) {
       const bp = (b_right - b_left) * inv2h;
       C[g][k] = bp + C0[g];
     }
-    // Boundary nodes via one-sided differences
-    // At k=0: bp = (b[g,localI=0] - 0)/h  (forward diff using b(x_0)=0 and b(x_1)=b[g,0])
-    C[g][0]   = (b[g*intN + 0]      - 0) / h + C0[g];
-    C[g][N-1] = (0 - b[g*intN + intN - 1]) / h + C0[g];
+    // Boundary nodes. The interior uses a *centred* (second-order) difference
+    // for b', so the walls must use a second-order one-sided formula too --
+    // a plain first-order forward difference here puts a spurious kink in
+    // C (and hence in the fluxes) at the node next to each electrode.
+    // b(x_0) = 0, so:  b'(x_0) = (-3*0 + 4*b_1 - b_2) / (2h)
+    C[g][0]   = (4*b[g*intN + 0] - b[g*intN + 1]) * inv2h + C0[g];
+    // b(x_{N-1}) = 0, so: b'(x_{N-1}) = (3*0 - 4*b_{N-2} + b_{N-3}) / (2h)
+    C[g][N-1] = (-4*b[g*intN + intN - 1] + b[g*intN + intN - 2]) * inv2h + C0[g];
   }
 
   // Compute fluxes
@@ -864,8 +995,11 @@ function solveSteadyPNP({ C0, z, D, Npattern, J_target, Ngrid = 31 }) {
     for (let k = 1; k < N - 1; k++) {
       dC[g][k] = (C[g][k+1] - C[g][k-1]) / (2*h);
     }
-    dC[g][0]   = (C[g][1] - C[g][0]) / h;
-    dC[g][N-1] = (C[g][N-1] - C[g][N-2]) / h;
+    // Second-order one-sided derivatives at the walls, to match the interior
+    // stencil (a first-order difference here shows up as an abrupt jump in
+    // the diffusive/electromigrative split right at the electrode).
+    dC[g][0]   = (-3*C[g][0] + 4*C[g][1] - C[g][2]) * inv2h;
+    dC[g][N-1] = ( 3*C[g][N-1] - 4*C[g][N-2] + C[g][N-3]) * inv2h;
   }
 
   const fluxD = new Array(ns);
@@ -1127,43 +1261,76 @@ function setupPlotPanel(ctx, x0, y0, w, h, opts) {
   ctx.lineWidth = 1;
   ctx.strokeRect(x0, y0, w, h);
 
-  // Tick labels
+  // Tick labels. Track the widest y tick so the rotated axis label can be
+  // placed clear of it instead of overlapping.
   ctx.fillStyle = COLORS.muted;
-  ctx.font = '10px Inter';
+  ctx.font = FONT.tick;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   for (const tx of xTicks) {
     const px = x0 + (tx - xMin) / (xMax - xMin) * w;
-    ctx.fillText(tx.toString(), px, y0 + h + 3);
+    ctx.fillText(tx.toString(), px, y0 + h + 5);
   }
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
+  let maxTickW = 0;
   for (const ty of yTicks) {
     const py = y0 + h - (ty - yMin) / (yMax - yMin) * h;
-    ctx.fillText(ty.toString(), x0 - 4, py);
+    const s = ty.toString();
+    maxTickW = Math.max(maxTickW, ctx.measureText(s).width);
+    ctx.fillText(s, x0 - 6, py);
   }
   // Axis labels
   ctx.fillStyle = COLORS.text;
-  ctx.font = '11px Inter';
-  ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  if (xLabel) ctx.fillText(xLabel, x0 + w/2, y0 + h + 18);
+  if (xLabel) drawSubLabel(ctx, xLabel, x0 + w/2, y0 + h + 24, FONT.axis, 'center');
   if (yLabel) {
     ctx.save();
-    ctx.translate(x0 - 28, y0 + h/2);
+    ctx.translate(x0 - 12 - maxTickW - 10, y0 + h/2);
     ctx.rotate(-Math.PI/2);
     ctx.textBaseline = 'middle';
-    ctx.fillText(yLabel, 0, 0);
+    drawSubLabel(ctx, yLabel, 0, 0, FONT.axis, 'center');
     ctx.restore();
   }
   // Title
   if (title) {
     ctx.fillStyle = COLORS.text;
-    ctx.font = '600 11px Inter';
-    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    drawSubLabel(ctx, title, x0 + w/2, y0 - 8, FONT.title, 'center');
     ctx.textBaseline = 'top';
-    ctx.fillText(title, x0 + w/2, y0 - 14);
   }
+}
+
+/* Small in-panel key: coloured rule + label, drawn on an opaque rounded chip
+   so it stays readable even when a curve passes underneath it. */
+function drawPanelKey(ctx, x, y, entries) {
+  const lh = 17, rule = 16, pad = 7, gap = 6;
+  ctx.save();
+  ctx.font = FONT.note;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  let tw = 0;
+  for (const [, label] of entries) tw = Math.max(tw, ctx.measureText(label).width);
+  const boxW = pad*2 + rule + gap + tw;
+  const boxH = pad*2 + lh*(entries.length - 1) + 12;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(x, y, boxW, boxH, 4);
+  else ctx.rect(x, y, boxW, boxH);
+  ctx.fill(); ctx.stroke();
+  entries.forEach(([color, label], i) => {
+    const cy = y + pad + 6 + i*lh;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(x + pad, cy); ctx.lineTo(x + pad + rule, cy);
+    ctx.stroke();
+    ctx.fillStyle = COLORS.text;
+    ctx.fillText(label, x + pad + rule + gap, cy);
+  });
+  ctx.restore();
 }
 
 function plotCurve(ctx, x0, y0, w, h, xs, ys, opts) {
@@ -1234,7 +1401,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   const canvas = document.getElementById('ss-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+  const { W, H } = setupHiDPI(canvas, ctx);
 
   const sliderJ = document.getElementById('ss-J');
   const sliderR = document.getElementById('ss-R');
@@ -1243,8 +1410,9 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   const legendNa = document.getElementById('ss-legend-na');
   const legendClO4 = document.getElementById('ss-legend-clo4');
 
-  // Layout: 2x2 grid of panels
-  const margin = { left: 60, right: 20, top: 30, bottom: 50, hgap: 50, vgap: 50 };
+  // Layout: 2x2 grid of panels. Gaps are sized to clear the rotated y-axis
+  // label plus its tick labels on the right-hand column.
+  const margin = { left: 84, right: 26, top: 40, bottom: 60, hgap: 92, vgap: 74 };
   const pw = (W - margin.left - margin.right - margin.hgap) / 2;
   const ph = (H - margin.top - margin.bottom - margin.vgap) / 2;
   const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
@@ -1310,7 +1478,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: 0, yMax: cyMax,
         xTicks, yTicks: [0, 1, 2, 3, 4].filter(t => t <= cyMax),
-        xLabel: 'Position x\u0303', yLabel: 'C\u0303_g',
+        xLabel: 'Position x\u0303', yLabel: 'Concentration C\u0303_g',
         title: 'Concentrations',
       });
       for (let g = 0; g < ns; g++) {
@@ -1322,11 +1490,14 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       }
       // Annotate that SE ions are off scale
       if (hasSE) {
+        // Placed just below the panel frame (not inside it) so it can never
+        // sit on top of a concentration curve.
         ctx.fillStyle = COLORS.muted;
-        ctx.font = '9px Inter';
+        ctx.font = FONT.note;
         ctx.textAlign = 'center';
-        ctx.fillText('(Na\u207A, ClO\u2084\u207B at C\u0303 = ' + parseInt(document.getElementById('ss-R').value) + ', off scale)',
-                     x0 + pw/2, y0 + 12);
+        ctx.textBaseline = 'top';
+        ctx.fillText('Na\u207A and ClO\u2084\u207B are off scale at C\u0303 = ' + parseInt(document.getElementById('ss-R').value),
+                     x0 + pw/2, y0 + ph + 44);
       }
     }
 
@@ -1341,7 +1512,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: fluxYMin, yMax: fluxYMax,
         xTicks, yTicks: fluxYTicks,
-        xLabel: 'Position x\u0303', yLabel: 'N\u0303_m,g / |J\u0303|',
+        xLabel: 'Position x\u0303', yLabel: 'N\u0303_{m,g} / |J|',
         title: 'Electromigrative flux',
       });
       for (let g = 0; g < ns; g++) {
@@ -1366,7 +1537,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: fluxYMin, yMax: fluxYMax,
         xTicks, yTicks: fluxYTicks,
-        xLabel: 'Position x\u0303', yLabel: 'N\u0303_d,g / |J\u0303|',
+        xLabel: 'Position x\u0303', yLabel: 'N\u0303_{d,g} / |J|',
         title: 'Diffusive flux',
       });
       for (let g = 0; g < ns; g++) {
@@ -1388,7 +1559,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: fluxYMin, yMax: fluxYMax,
         xTicks, yTicks: fluxYTicks,
-        xLabel: 'Position x\u0303', yLabel: 'N\u0303_g / |J\u0303|',
+        xLabel: 'Position x\u0303', yLabel: 'N\u0303_g / |J|',
         title: 'Total flux',
       });
       for (let g = 0; g < ns; g++) {
@@ -1423,7 +1594,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   const canvas = document.getElementById('tr-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+  const { W, H } = setupHiDPI(canvas, ctx);
 
   const sliderTau = document.getElementById('tr-tau');
   const labelTau = document.getElementById('tr-tau-val');
@@ -1455,7 +1626,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   const bsa = bsaSteady({ z, D, C0, Npattern, edgeFraction: 0.18, Ngrid: 200 });
 
   // Layout: 3 panels side by side
-  const margin = { left: 50, right: 15, top: 30, bottom: 50, gap: 35 };
+  const margin = { left: 78, right: 24, top: 40, bottom: 62, gap: 86 };
   const pw = (W - margin.left - margin.right - 2 * margin.gap) / 3;
   const ph = H - margin.top - margin.bottom;
   const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
@@ -1479,7 +1650,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: 0, yMax: 4,
         xTicks, yTicks: [0, 1, 2, 3, 4],
-        xLabel: 'Position x\u0303', yLabel: 'C\u0303_g',
+        xLabel: 'Position x\u0303', yLabel: 'Concentration C\u0303_g',
         title: 'Concentrations',
       });
       for (let g = 0; g < 3; g++) {
@@ -1495,7 +1666,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: fyMin, yMax: fyMax,
         xTicks, yTicks: [-1.5, -1, -0.5, 0, 0.5, 1, 1.5],
-        xLabel: 'Position x\u0303', yLabel: 'N\u0303_g / |J\u0303|',
+        xLabel: 'Position x\u0303', yLabel: 'N\u0303_g / |J|',
         title: 'Total flux',
       });
       for (let g = 0; g < 3; g++) {
@@ -1517,7 +1688,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: -1.6, yMax: 0.4,
         xTicks, yTicks: [-1.5, -1, -0.5, 0],
-        xLabel: 'Position x\u0303', yLabel: 'j\u0303 / |J\u0303|',
+        xLabel: 'Position x\u0303', yLabel: 'Current j\u0303 / |J|',
         title: 'Current',
       });
       const jArr = new Float64Array(fluxData.j.length);
@@ -1587,7 +1758,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   const canvas = document.getElementById('hc-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+  const { W, H } = setupHiDPI(canvas, ctx);
 
   const sliderTau = document.getElementById('hc-tau');
   const labelTau = document.getElementById('hc-tau-val');
@@ -1597,7 +1768,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   const gamma = 10.0;  // BSA k=10 units, just for the dashed reference
 
   // Layout: 3 panels
-  const margin = { left: 55, right: 12, top: 30, bottom: 50, gap: 40 };
+  const margin = { left: 78, right: 24, top: 40, bottom: 62, gap: 86 };
   const pw = (W - margin.left - margin.right - 2 * margin.gap) / 3;
   const ph = H - margin.top - margin.bottom;
   const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
@@ -1660,7 +1831,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: 0, yMax: 1.05,
         xTicks, yTicks: [0, 0.25, 0.5, 0.75, 1.0],
-        xLabel: 'Position x\u0303', yLabel: 'C\u0303_S',
+        xLabel: 'Position x\u0303', yLabel: 'Salt C\u0303_S',
         title: 'Salt concentration',
       });
       plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.C_S, {
@@ -1675,8 +1846,8 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: fyMin, yMax: fyMax,
         xTicks, yTicks: [-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5],
-        xLabel: 'Position x\u0303', yLabel: 'H\u207A flux / |J\u0303|',
-        title: 'H\u207A: em + diff',
+        xLabel: 'Position x\u0303', yLabel: 'H\u207A flux / |J|',
+        title: 'H\u207A flux',
       });
       // PNP solid
       plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.fEH, {
@@ -1692,13 +1863,11 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       plotCurve(ctx, x0, y0, pw, ph, bsaH.xs, bsaH.d_arr, {
         xMin, xMax, yMin: fyMin, yMax: fyMax, color: '#7a3023', dashed: true, lineWidth: 1.4,
       });
-      // Sub-legend
-      ctx.font = '9px Inter';
-      ctx.fillStyle = COLORS.H;
-      ctx.textAlign = 'left';
-      ctx.fillText('— em (PNP)', x0 + 5, y0 + 12);
-      ctx.fillStyle = '#7a3023';
-      ctx.fillText('— diff (PNP)', x0 + 5, y0 + 24);
+      // Sub-legend, drawn on a small opaque chip so it never sits on a curve
+      drawPanelKey(ctx, x0 + 8, y0 + 8, [
+        [COLORS.H, 'electromigrative'],
+        ['#7a3023', 'diffusive'],
+      ]);
     }
     // Panel 3: Cl- flux decomposition
     {
@@ -1707,8 +1876,8 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       setupPlotPanel(ctx, x0, y0, pw, ph, {
         xMin, xMax, yMin: fyMin, yMax: fyMax,
         xTicks, yTicks: [-1, -0.5, 0, 0.5, 1, 1.5],
-        xLabel: 'Position x\u0303', yLabel: 'Cl\u207B flux / |J\u0303|',
-        title: 'Cl\u207B: em + diff',
+        xLabel: 'Position x\u0303', yLabel: 'Cl\u207B flux / |J|',
+        title: 'Cl\u207B flux',
       });
       plotCurve(ctx, x0, y0, pw, ph, sol.x, sol.fECl, {
         xMin, xMax, yMin: fyMin, yMax: fyMax, color: COLORS.ClH, lineWidth: 2,
@@ -1722,12 +1891,10 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
       plotCurve(ctx, x0, y0, pw, ph, bsaCl.xs, bsaCl.d_arr, {
         xMin, xMax, yMin: fyMin, yMax: fyMax, color: '#1f6e3a', dashed: true, lineWidth: 1.4,
       });
-      ctx.font = '9px Inter';
-      ctx.fillStyle = COLORS.ClH;
-      ctx.textAlign = 'left';
-      ctx.fillText('— em (PNP)', x0 + 5, y0 + 12);
-      ctx.fillStyle = '#1f6e3a';
-      ctx.fillText('— diff (PNP)', x0 + 5, y0 + 24);
+      drawPanelKey(ctx, x0 + 8, y0 + 8, [
+        [COLORS.ClH, 'electromigrative'],
+        ['#1f6e3a', 'diffusive'],
+      ]);
     }
   }
 
