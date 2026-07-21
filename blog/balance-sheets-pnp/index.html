@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Balance Sheets vs. Poisson&ndash;Nernst&ndash;Planck: An Interactive Walk-through</title>
+<title>Rethinking How We Teach Ion Transport: Balance Sheets vs. Poisson&ndash;Nernst&ndash;Planck</title>
 
 <!-- Social sharing thumbnail -->
-<meta property="og:title" content="Balance Sheets vs. Poisson-Nernst-Planck: An Interactive Walk-through">
+<meta property="og:title" content="Rethinking How We Teach Ion Transport: Balance Sheets vs. Poisson-Nernst-Planck">
 <meta property="og:description" content="An interactive companion to our paper on ion transport in electrochemical cells. Explore steady-state, transient, and similarity-variable solutions of the PNP equations and compare them, in your browser, to the textbook balance sheet approach.">
 <meta property="og:image" content="https://ankurg90.github.io/assets/og-balance-sheets.png">
 <meta property="og:url" content="https://ankurg90.github.io/blog/balance-sheets-pnp/">
 <meta property="og:type" content="article">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Balance Sheets vs. Poisson-Nernst-Planck: An Interactive Walk-through">
+<meta name="twitter:title" content="Rethinking How We Teach Ion Transport: Balance Sheets vs. Poisson-Nernst-Planck">
 <meta name="twitter:description" content="An interactive companion to our paper on ion transport in electrochemical cells.">
 <meta name="twitter:image" content="https://ankurg90.github.io/assets/og-balance-sheets.png">
 
@@ -126,6 +126,16 @@ a:hover { text-decoration: underline; }
   border-radius: 12px;
   padding: 1.5rem;
   margin: 2rem 0;
+}
+/* On wide screens let the widgets extend past the prose column. The canvases
+   are then displayed at (or above) their natural size instead of being scaled
+   down to the text width, which is what made the plot labels look small. */
+@media (min-width: 1000px) {
+  .interactive-widget {
+    width: min(94vw, 1100px);
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
 }
 .widget-title {
   font-family: 'Inter', sans-serif;
@@ -327,7 +337,7 @@ li { margin-bottom: 0.4rem; }
 <div class="container">
 
 <!-- ============ HEADER ============ -->
-<h1>Balance Sheets vs. Poisson&ndash;Nernst&ndash;Planck: An Interactive Walk-through</h1>
+<h1>Rethinking How We Teach Ion Transport: Balance Sheets vs. Poisson&ndash;Nernst&ndash;Planck</h1>
 <p class="authors"><a href="https://ankurg90.github.io/">Ankur Gupta</a></p>
 <p class="subtitle">An interactive companion to a paper led by <strong>Grace Origer</strong> with <strong>Ritu R. Raj</strong>, Nathan Jarvey, P. N. Romero Zavala and Wilson A. Smith.</p>
 
@@ -523,7 +533,7 @@ li { margin-bottom: 0.4rem; }
       </div>
     </div>
   </div>
-  <canvas id="ss-canvas" width="820" height="640" style="width:100%; height:auto; max-width:820px;"></canvas>
+  <canvas id="ss-canvas" width="1000" height="760" style="width:100%; height:auto; max-width:1000px;"></canvas>
   <div class="legend-row">
     <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>Cu(II)</span>
     <span style="color:#8e44ad"><span class="swatch" style="background:#8e44ad"></span>Cu(I)</span>
@@ -578,7 +588,7 @@ li { margin-bottom: 0.4rem; }
       <button class="btn" id="tr-reset">Reset</button>
     </div>
   </div>
-  <canvas id="tr-canvas" width="880" height="380" style="width:100%; height:auto; max-width:880px;"></canvas>
+  <canvas id="tr-canvas" width="1020" height="430" style="width:100%; height:auto; max-width:1020px;"></canvas>
   <div class="legend-row">
     <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>Cu(II)</span>
     <span style="color:#8e44ad"><span class="swatch" style="background:#8e44ad"></span>Cu(I)</span>
@@ -617,7 +627,7 @@ li { margin-bottom: 0.4rem; }
       </div>
     </div>
   </div>
-  <canvas id="hc-canvas" width="880" height="360" style="width:100%; height:auto; max-width:880px;"></canvas>
+  <canvas id="hc-canvas" width="1020" height="430" style="width:100%; height:auto; max-width:1020px;"></canvas>
   <div class="legend-row">
     <span style="color:#c0392b"><span class="swatch" style="background:#c0392b"></span>H&#8314;</span>
     <span style="color:#27ae60"><span class="swatch" style="background:#27ae60"></span>Cl&#8315;</span>
@@ -708,10 +718,10 @@ const COLORS = {
 /* Plot typography. Sized so the labels stay legible once the canvas is
    scaled down to the column width on narrow screens. */
 const FONT = {
-  tick:  '13px Inter, sans-serif',
-  axis:  '14px Inter, sans-serif',
-  title: '600 15px Inter, sans-serif',
-  note:  '12px Inter, sans-serif',
+  tick:  '16px Inter, sans-serif',
+  axis:  '18px Inter, sans-serif',
+  title: '600 19px Inter, sans-serif',
+  note:  '15px Inter, sans-serif',
 };
 
 /* Render the canvas at the device pixel ratio so text and lines are crisp
@@ -1412,7 +1422,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
 
   // Layout: 2x2 grid of panels. Gaps are sized to clear the rotated y-axis
   // label plus its tick labels on the right-hand column.
-  const margin = { left: 84, right: 26, top: 40, bottom: 60, hgap: 92, vgap: 74 };
+  const margin = { left: 104, right: 30, top: 48, bottom: 76, hgap: 116, vgap: 92 };
   const pw = (W - margin.left - margin.right - margin.hgap) / 2;
   const ph = (H - margin.top - margin.bottom - margin.vgap) / 2;
   const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
@@ -1497,7 +1507,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
         ctx.fillText('Na\u207A and ClO\u2084\u207B are off scale at C\u0303 = ' + parseInt(document.getElementById('ss-R').value),
-                     x0 + pw/2, y0 + ph + 44);
+                     x0 + pw/2, y0 + ph + 52);
       }
     }
 
@@ -1626,7 +1636,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   const bsa = bsaSteady({ z, D, C0, Npattern, edgeFraction: 0.18, Ngrid: 200 });
 
   // Layout: 3 panels side by side
-  const margin = { left: 78, right: 24, top: 40, bottom: 62, gap: 86 };
+  const margin = { left: 100, right: 28, top: 48, bottom: 78, gap: 112 };
   const pw = (W - margin.left - margin.right - 2 * margin.gap) / 3;
   const ph = H - margin.top - margin.bottom;
   const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
@@ -1768,7 +1778,7 @@ function bsaSteady({ z, D, C0, Npattern, edgeFraction = 0.18, Ngrid }) {
   const gamma = 10.0;  // BSA k=10 units, just for the dashed reference
 
   // Layout: 3 panels
-  const margin = { left: 78, right: 24, top: 40, bottom: 62, gap: 86 };
+  const margin = { left: 100, right: 28, top: 48, bottom: 78, gap: 112 };
   const pw = (W - margin.left - margin.right - 2 * margin.gap) / 3;
   const ph = H - margin.top - margin.bottom;
   const xMin = -1, xMax = 1, xTicks = [-1, 0, 1];
