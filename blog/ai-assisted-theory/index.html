@@ -618,11 +618,11 @@ h2, h3 { clear: both; }
 
 <div class="interactive-widget fig-90" id="bpm-schem">
   <div class="widget-title">A bipolar membrane in reverse bias</div>
-  <div class="widget-sub">Drag the voltage and watch the junction run out of salt, and the water ions take over.</div>
+  <div class="widget-sub">Drag the voltage and watch the junction run out of salt, and the water ions take over. One state throughout: $c = 0.5$&nbsp;M, $\chi = 2$&nbsp;M.</div>
 
   <div class="controls-row">
     <div class="slider-group">
-      <label><span>Membrane voltage &nbsp; $V_{\rm bpm}$</span> <span id="bs-v-val">0.09 V</span></label>
+      <label><span>Membrane voltage &nbsp; $V_{\rm bpm}$</span> <span id="bs-v-val">0.16 V</span></label>
       <input type="range" id="bs-v" min="0" max="100" step="1" value="20">
     </div>
     <div class="readout" style="flex:0 0 auto; min-width:9rem; align-self:flex-end;">
@@ -631,7 +631,7 @@ h2, h3 { clear: both; }
   </div>
 
   <div class="scroller"><div class="sketchbox" id="bpmfig" style="min-width:420px;">
-    <svg class="sketch" viewBox="0 0 700 390" role="img" aria-label="A bipolar membrane under reverse bias. A cation-exchange layer of fixed charge minus sigma and an anion-exchange layer of fixed charge plus sigma meet at a thin junction in the middle. Each layer is in Donnan equilibrium at its outer face with a neutral salt bath of concentration c. Reverse bias pulls sodium and chloride away from the junction, so the salt concentration is depleted at the junction, and protons and hydroxide split from water carry the current instead. The arrows for each ion grow and shrink with the applied voltage.">
+    <svg class="sketch" viewBox="0 0 700 390" role="img" aria-label="A bipolar membrane under reverse bias. A cation-exchange layer of fixed charge minus chi and an anion-exchange layer of fixed charge plus chi meet at a thin junction in the middle. Each layer is in Donnan equilibrium at its outer face with a neutral salt bath of concentration c. Reverse bias pulls sodium and chloride away from the junction, so the salt concentration is depleted at the junction, and protons and hydroxide split from water carry the current instead. The arrows for each ion grow and shrink with the applied voltage.">
       <defs>
         <linearGradient id="bpmCEL" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stop-color="#2980b9" stop-opacity="0.26"/>
@@ -694,7 +694,7 @@ h2, h3 { clear: both; }
 
   <div class="bs-below">
     <div class="sketchbox" id="bs-ivfig" style="min-width:0; max-width:320px; margin:0 auto;">
-      <svg class="sketch" viewBox="0 0 300 250" role="img" aria-label="A small current-voltage curve for the membrane, current against voltage on linear axes, with a marker showing the state set by the slider.">
+      <svg class="sketch" viewBox="0 0 300 250" role="img" aria-label="A small current-voltage curve for the membrane: current, in units of the limiting current, against voltage on linear axes. The ohmic rise, the plateau at the limiting current and the take-off are all in frame, the sweep ending at the take-off voltage V nought, with a marker showing the state set by the slider.">
         <g id="bs-iv-grid"></g>
         <g id="bs-iv-curve"></g>
         <g id="bs-iv-mark"></g>
@@ -721,10 +721,10 @@ h2, h3 { clear: both; }
 <p>It is, and the whole current&ndash;voltage curve turns out to be a plain sum of two pieces:</p>
 
 <div class="equation-block">
-  $$I \simeq \underbrace{\frac{2FDc^2}{\sigma\ell}\left(1-e^{-V_{\rm bpm}/V_{\rm T}}\right)}_{\text{salt, the plateau}}
-  \;+\; \underbrace{\frac{FD_{\rm H}\sigma}{\ell}\ln\!\left[\frac{c+c_we^{V_{\rm bpm}/2V_{\rm T}}}{c+c_w}\right]}_{\text{protons, the take-off}}$$
+  $$I \simeq \underbrace{\frac{2FDc^2}{\chi\ell}\left(1-e^{-V_{\rm bpm}/V_{\rm T}}\right)}_{\text{salt, the plateau}}
+  \;+\; \underbrace{\frac{FD_{\rm H}\chi}{\ell}\ln\!\left[\frac{c+c_we^{V_{\rm bpm}/2V_{\rm T}}}{c+c_w}\right]}_{\text{protons, the take-off}}$$
   <div class="equation-caption">
-    $c$ is the salt concentration in the reservoir, $c_w=10^{-7}$&nbsp;M the water-ion concentration at pH 7, $\ell$ the thickness of one layer, $D$ the salt diffusivity and $V_{\rm bpm}$ the voltage across the membrane.
+    $c$ is the salt concentration in the reservoir, $c_w=10^{-7}$&nbsp;M the water-ion concentration at pH 7, $\chi$ the fixed charge density of one layer, $\ell$ its thickness, $D$ the salt diffusivity and $V_{\rm bpm}$ the voltage across the membrane.
   </div>
 </div>
 
@@ -740,7 +740,7 @@ h2, h3 { clear: both; }
       <input type="range" id="bpm-c" min="0" max="4" step="1" value="1">
     </div>
     <div class="slider-group">
-      <label><span>Membrane fixed charge &nbsp; $\sigma$</span> <span id="bpm-s-val">2.0 M</span></label>
+      <label><span>Membrane fixed charge &nbsp; $\chi$</span> <span id="bpm-s-val">2.0 M</span></label>
       <input type="range" id="bpm-s" min="0" max="4" step="1" value="1">
     </div>
     <div class="toggle-row">
@@ -763,7 +763,7 @@ h2, h3 { clear: both; }
   <div class="readouts">
     <div class="readout"><div class="rk">limiting current $I_{\rm lim}$</div><div class="rv" id="bpm-ro-ilim">&mdash;</div></div>
     <div class="readout"><div class="rk">take-off voltage $V_0$</div><div class="rv" id="bpm-ro-v0">&mdash;</div></div>
-    <div class="readout"><div class="rk">charge ratio $\sigma/c$</div><div class="rv" id="bpm-ro-ratio">&mdash;</div></div>
+    <div class="readout"><div class="rk">charge ratio $\chi/c$</div><div class="rv" id="bpm-ro-ratio">&mdash;</div></div>
     <div class="readout" id="bpm-ro-err-box"><div class="rk">worst mismatch</div><div class="rv" id="bpm-ro-err">&mdash;</div></div>
   </div>
 
@@ -905,8 +905,8 @@ function initSchematics() {
     L('small m', 618, 72, '\\text{base bath}');
     L('small lft m', 34, 276, 'c,\\ c_w');
     L('small rgt m', 666, 276, 'c,\\ c_w');
-    L('small a', 240, 72, '\\text{CEL},\\ -\\sigma');
-    L('small b', 460, 72, '\\text{AEL},\\ +\\sigma');
+    L('small a', 240, 72, '\\text{CEL},\\ -\\chi');
+    L('small b', 460, 72, '\\text{AEL},\\ +\\chi');
     L('small gold', 350, 66, '\\text{junction},\\ c_{\\rm j}');
     L('small b', 298, 146, '\\text{H}^+');
     L('small a', 402, 146, '\\text{OH}^-');
@@ -1317,27 +1317,47 @@ const DPANIM = (function () {
    ===================================================================== */
 const BPMSCHEM = (function () {
   const F = 96485, VT = 0.025693;
-  const c = 100, sig = 2000;        /* mol m^-3, i.e. 0.1 M and 2 M      */
+  const c = 500, chi = 2000;        /* mol m^-3, i.e. 0.5 M and 2 M      */
   const cw = 1e-4;                  /* mol m^-3, i.e. 1e-7 M             */
   const ell = 100e-6, D = 4e-11, DH = 5 * D;
-  const VMAX = 0.46;
 
-  function Isalt(V) { return 2 * F * D * c * c / (sig * ell) * (1 - Math.exp(-V / VT)); }
-  function Ihyd(V)  { return F * DH * sig / ell * Math.log((c + cw * Math.exp(V / (2 * VT))) / (c + cw)); }
+  function Isalt(V) { return 2 * F * D * c * c / (chi * ell) * (1 - Math.exp(-V / VT)); }
+  function Ihyd(V)  { return F * DH * chi / ell * Math.log((c + cw * Math.exp(V / (2 * VT))) / (c + cw)); }
 
   /* the plateau value the salt branch saturates at */
-  const ILIM = 2 * F * D * c * c / (sig * ell);
+  const ILIM = 2 * F * D * c * c / (chi * ell);
 
-  /* The inset plots I/I_lim on a linear axis. The proton branch grows
-     exponentially, so the sweep has to stop before it runs off the top: at
-     VMAX = 0.46 V the total is 8.7 times the plateau, which sets YMAX = 9.
-     The shorter sweep also puts the plateau itself over about 40 per cent
-     of the slider's travel, rather than the 16 per cent it had when the
-     sweep ran to 1.2 V. The take-off voltage V_0 = 0.71 V is past the right
-     edge; what the inset shows is the ohmic rise, the plateau, and the
-     water ions taking the current over. */
+  /* The take-off voltage, from the same closed form: the water-ion term is
+     flat until the exponential inside its logarithm catches the reservoir
+     salt, at c_w e^{V/2V_T} = c. At this state that is 0.793 V. The sweep
+     ends there, so V_0 is the right-hand edge of the frame.
+
+     The state is what makes a linear current axis possible. At V_0 the water
+     term is (F D_H chi / l) ln[2c/(c + c_w)], and the salt term has long
+     since saturated at I_lim, so
+         I(V_0)/I_lim = 1 + (ln2/2)(D_H/D)(chi/c)^2 = 1 + 1.733 (chi/c)^2,
+     dropping only c_w/c = 2e-7 inside the logarithm and e^{-V_0/V_T} = e^-31
+     in the salt term. It depends on chi/c and on nothing else. This figure
+     used to sit at chi/c = 20, where that is 694: a linear axis could not
+     hold the plateau and the take-off at once, so the sweep was cut to
+     0.46 V, which left the take-off out of frame altogether and made the
+     onset of water splitting look about twice as early as the model puts it.
+     At chi/c = 4 the ratio is 28.7, which is why YMAX is 30. The plateau is
+     then a thin band near the axis, a thirtieth of the frame, but it is
+     there, and the whole curve fits without cutting the sweep short.
+
+     The price is worth stating plainly: chi/c = 4 is a state where the
+     closed form is a poorer approximation. Against the full three-ion
+     numerics it is out by up to 11 per cent here, where at chi/c = 20 it was
+     out by 0.46 per cent. This inset draws the closed form only, so nothing
+     in it is inconsistent, but it is pinned to a less flattering state than
+     before. The larger figure below reports that 11 per cent if the reader
+     dials it to the same c and chi. */
+  const V0 = 2 * VT * Math.log(c / cw);
+  const VMAX = V0;
+
   const X0 = 52, X1 = 284, Y0 = 34, Y1 = 196;
-  const YMAX = 9;                               /* in units of I/I_lim */
+  const YMAX = 30;                              /* in units of I/I_lim */
   const X = v => X0 + (X1 - X0) * v / VMAX;
   const Y = r => Y1 - (Y1 - Y0) * clamp(r) / YMAX;
   function clamp(u) { return Math.min(YMAX, Math.max(0, u)); }
@@ -1354,15 +1374,20 @@ const BPMSCHEM = (function () {
     axisFrame({
       axes: axes, grid: grid, L: L, x0: X0, x1: X1, y0: Y0, y1: Y1, X: X,
       Y: Y,
-      xt: [0, 0.15, 0.3, 0.45], yt: [0, 3, 6, 9],
-      xfmt: t => t.toFixed(2),
+      xt: [0, 0.2, 0.4, 0.6], yt: [0, 10, 20, 30],
+      xfmt: t => t.toFixed(1),
       yfmt: t => String(t)
     });
     L('axis', (X0 + X1) / 2, Y1 + 42, 'V_{\\rm bpm}\\ \\text{(V)}');
     L('axis lft', X0 - 28, 14, 'I/I_{\\rm lim}');
 
     /* the plateau, for reference */
-    grid.appendChild(svgEl('line', { class: 'markline', x1: X0, y1: Y(1), x2: X1, y2: Y(1) }));
+    grid.appendChild(svgEl('line', { class: 'dashline', x1: X0, y1: Y(1), x2: X1, y2: Y(1) }));
+    L('small lft m', X0 + 8, Y(1) - 13, 'I_{\\rm lim}');
+
+    /* the take-off voltage, marked the way the larger figure marks it */
+    grid.appendChild(svgEl('line', { class: 'markline', x1: X(V0), y1: Y0, x2: X(V0), y2: Y1 }));
+    L('small gold rgt', X(V0) - 8, Y0 + 12, 'V_0');
 
     const N = 320;
     g.appendChild(svgEl('path', {
@@ -1408,8 +1433,14 @@ const BPMSCHEM = (function () {
     document.getElementById('bs-ro-i').textContent =
       r < 10 ? r.toFixed(2) : (+r.toPrecision(2)).toLocaleString('en-US');
 
-    const name = fh < 0.05 ? (Is < 0.9 * ILIM ? 'ohmic' : 'limiting')
-               : fh < 0.5  ? 'take-off' : 'overlimiting';
+    /* Named by what the current is doing, not by which ion carries it. The
+       old test called 0.21 V a take-off because water ions carried 5 per
+       cent there, while the total was still 1.05 I_lim; the take-off is the
+       exponential at V_0, and only that band is named for it. */
+    const name = I < 0.9 * ILIM  ? 'ohmic'
+               : I < 1.1 * ILIM  ? 'limiting'
+               : V < V0 - 1e-9   ? 'overlimiting'
+                                 : 'water take-off';
     document.getElementById('bs-regime').textContent = name;
   }
 
