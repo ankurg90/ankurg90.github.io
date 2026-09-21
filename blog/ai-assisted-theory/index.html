@@ -7,7 +7,7 @@
 
 <!-- Social sharing thumbnail -->
 <meta property="og:title" content="Effective and cautious use of AI for research: How I solved two PhD-level problems in 15 days using a human-AI collaborative framework">
-<meta property="og:description" content="I used Claude Code to solve two PhD-level problems in 15 days: the human keeps every decision and the process, the AI accelerates the execution. How the framework works, why a quick result is not the same as understanding what happened, what the new results are, and why rigor in training matters more.">
+<meta property="og:description" content="I used Claude Code to solve two PhD-level problems in 15 days: the human keeps every decision and the process, the AI accelerates the execution. How the framework works, why preparation and being organized matter more when the tool is this easy to use, why a quick result is not the same as understanding what happened, and what the new results are.">
 <meta property="og:image" content="https://ankurg90.github.io/assets/og-ai-framework.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -374,7 +374,7 @@ h2, h3 { clear: both; }
 <!-- ============ HEADER ============ -->
 <h1>Effective and cautious use of AI for research: How I solved two PhD-level problems in 15 days using a human&ndash;AI collaborative framework</h1>
 <p class="authors"><a href="https://ankurg90.github.io/">Ankur Gupta</a></p>
-<p class="subtitle">I used Claude Code to solve two PhD-level problems in 15 days using a human&ndash;AI collaborative framework, in which the human keeps every decision and the process while the AI accelerates the execution. This post covers how the framework works, why getting a result quickly is not the same as understanding what happened, what the new results are, why rigor in training matters more and not less, and what the future of research might look like.</p>
+<p class="subtitle">I used Claude Code to solve two PhD-level problems in 15 days, using a human&ndash;AI collaborative framework. The human keeps every decision and the process; the AI accelerates the execution. This post covers how the framework works, and why preparation and being organized matter more when the tool is this easy to use. It also covers why getting a result quickly is not the same as understanding what happened, what the new results are, why rigor in training matters more and not less, and what the future of research might look like.</p>
 
 <!-- Sidebar Table of Contents -->
 <nav class="toc" id="toc">
@@ -389,7 +389,7 @@ h2, h3 { clear: both; }
 </nav>
 
 <!-- ============ INTRO ============ -->
-<p>In April this year, my student Arkava Ganguly and I used Claude to help solve a scientific problem we had been working on for about a year and a half. With AI assistance, we reached a result in five weeks. I wrote up that experience in <a href="../electrophoresis-shape/">an earlier post</a>, and the paper is now out in the <a href="https://doi.org/10.1017/jfm.2026.11948"><em>Journal of Fluid Mechanics</em></a>. When we first started using AI, we did not use it systematically. Crucially, AI made mistakes along the way. Therefore, I wanted to see if I could come up with a process to reduce error propagation while keeping the results accessible to humans. To do so, I solved two PhD-level problems in 15 days using AI and documented everything transparently. The results are detailed in the pre-print, including prompts and figures. <a href="#">[pre-print link &mdash; to be added]</a></p>
+<p>In April this year, my student Arkava Ganguly and I used Claude to help solve a scientific problem we had been working on for about a year and a half. With AI assistance, we reached a result in five weeks. I wrote up that experience in <a href="../electrophoresis-shape/">an earlier post</a>, and the paper is now out in the <a href="https://doi.org/10.1017/jfm.2026.11948"><em>Journal of Fluid Mechanics</em></a>. However, we started the problem without much of a plan, and the calculations went in many directions. Furthermore, AI made mistakes that became difficult to catch. I wanted to check if we could come up with a systematic method to reduce errors, without offloading the cognitive work to AI, and while keeping the results accessible to humans. To do so, I solved two PhD-level problems in 15 days using AI and documented everything transparently. The results are detailed in the pre-print, including prompts and figures. <a href="#">[pre-print link &mdash; to be added]</a></p>
 
 <p>For transparency, the whole project consumed about 68 million tokens, which would cost roughly $2,100 at Claude Opus 5 API rates, counting the cached context that is re-read on every request; I was on a subscription plan and was not billed per token. I spent about 80 hours of personal time on this project, finding time over the whole two weeks whenever possible.</p>
 
@@ -408,12 +408,13 @@ h2, h3 { clear: both; }
 <p>Some challenges of doing research using AI tools:</p>
 
 <ol>
+  <li>Given how easy it is to use AI tools, it is common to just start asking questions and then veer off into directions and ideas that can be difficult to come back from. The ease of these tools reduces the tendency to do the prep work: to be organized and to make a plan in advance.</li>
   <li>If you give it too much autonomy, it can come up with a plausible-sounding result where the steps and reasoning are not explicitly laid out. This can make it difficult to check its work.</li>
   <li>If you keep going in a single session, it starts to drift because of context overloading.</li>
   <li>It does not do maths and reasoning like humans. Therefore, if you just look at a final result, it might not make a lot of sense.</li>
 </ol>
 
-<p>To circumvent these challenges, I suggest a framework explained in the image below. This framework is not totally new. It was partly inspired by <a href="https://www.anthropic.com/research/vibe-physics">an earlier blog from a different field</a>.</p>
+<p>To circumvent these challenges, I suggest a framework explained in the image below. The framework proposes being more organized and emphasizes that preparation and understanding are prerequisites. This framework is not totally new. It was partly inspired by <a href="https://www.anthropic.com/research/vibe-physics">an earlier blog from a different field</a>.</p>
 
 <div class="animation-container fig-wide" style="padding:1rem 0.75rem;">
 <svg viewBox="0 0 800 770" width="100%" style="display:block; margin:0 auto;" font-family="Inter, system-ui, sans-serif" role="img" aria-label="The framework: honesty rules fixed up front, then a loop in which the human frames the problem, sets tasks and checks, and judges results, while the AI derives, checks and drafts.">
