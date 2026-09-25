@@ -418,7 +418,7 @@ h2, h3 { clear: both; }
 <p>To circumvent these challenges, I suggest a framework explained in the image below. The framework proposes being more organized and emphasizes that preparation and understanding are prerequisites. This framework is not totally new. It was partly inspired by <a href="https://www.anthropic.com/research/vibe-physics">an earlier blog from a different field</a>.</p>
 
 <div class="animation-container fig-wide" style="padding:1rem 0.75rem;">
-<svg viewBox="0 0 800 770" width="100%" style="display:block; margin:0 auto;" font-family="Inter, system-ui, sans-serif" role="img" aria-label="The framework: honesty rules fixed up front, then a loop in which the human frames the problem, sets tasks and checks, and judges results, while the AI derives, checks and drafts.">
+<svg viewBox="0 0 800 960" width="100%" style="display:block; margin:0 auto;" font-family="Inter, system-ui, sans-serif" role="img" aria-label="The framework: honesty rules fixed up front, then the human frames the problem once and sets the tasks and their checks; each task goes to the AI, which derives, runs the checks and drafts; the drafts come back to the human, who asks for the limits and judges; the loop returns to setting the next task, and cleared tasks go to the write-up.">
   <!-- honesty rules banner -->
   <rect x="10" y="10" width="780" height="222" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
   <text x="28" y="44" font-size="19" font-weight="700" fill="#92400e">Honesty rules</text>
@@ -434,11 +434,11 @@ h2, h3 { clear: both; }
 
   <!-- dividing line, broken where the two cross-arrows are labelled -->
   <g stroke="#9ca3af" stroke-width="2" stroke-dasharray="7 6">
-    <line x1="410" y1="275" x2="410" y2="310"/>
-    <line x1="410" y1="372" x2="410" y2="596"/>
-    <line x1="410" y1="658" x2="410" y2="725"/>
+    <line x1="410" y1="275" x2="410" y2="448"/>
+    <line x1="410" y1="500" x2="410" y2="760"/>
+    <line x1="410" y1="812" x2="410" y2="906"/>
   </g>
-  <text x="410" y="748" font-size="14" fill="#6b7280" text-anchor="middle" font-style="italic">decisions do not cross this line</text>
+  <text x="410" y="930" font-size="14" fill="#6b7280" text-anchor="middle" font-style="italic">decisions do not cross this line</text>
 
   <!-- column headers -->
   <text x="30" y="262" font-size="22" font-weight="700" fill="#2563eb">YOU</text>
@@ -454,42 +454,42 @@ h2, h3 { clear: both; }
     <text x="48" y="370" font-size="14.5" fill="#374151">equations and the boundary conditions</text>
     <text x="48" y="391" font-size="14.5" fill="#374151">yourself.</text>
 
-    <rect x="30" y="421" width="330" height="132" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
-    <text x="48" y="449" font-size="16" font-weight="600" fill="#1a1a1a">2. Set the tasks, and their checks</text>
-    <text x="48" y="475" font-size="14.5" fill="#374151">Every check is fixed <tspan font-style="italic">before</tspan> the derivation</text>
-    <text x="48" y="496" font-size="14.5" fill="#374151">it will judge exists. A check written</text>
-    <text x="48" y="517" font-size="14.5" fill="#374151">after you have seen the answer is not</text>
-    <text x="48" y="538" font-size="14.5" fill="#374151">evidence.</text>
+    <rect x="30" y="435" width="330" height="132" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text x="48" y="463" font-size="16" font-weight="600" fill="#1a1a1a">2. Set the tasks, and their checks</text>
+    <text x="48" y="489" font-size="14.5" fill="#374151">Every check is fixed <tspan font-style="italic">before</tspan> the derivation</text>
+    <text x="48" y="510" font-size="14.5" fill="#374151">it will judge exists. A check written</text>
+    <text x="48" y="531" font-size="14.5" fill="#374151">after you have seen the answer is not</text>
+    <text x="48" y="552" font-size="14.5" fill="#374151">evidence.</text>
 
-    <rect x="30" y="573" width="330" height="132" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
-    <text x="48" y="601" font-size="16" font-weight="600" fill="#1a1a1a">3. Ask for the limits, then judge</text>
-    <text x="48" y="627" font-size="14.5" fill="#374151">Ask what was dropped and in what order</text>
-    <text x="48" y="648" font-size="14.5" fill="#374151">the limits were taken. Then approve,</text>
-    <text x="48" y="669" font-size="14.5" fill="#374151">send back, or kill it. Nothing enters</text>
-    <text x="48" y="690" font-size="14.5" fill="#374151">the record unsigned.</text>
+    <rect x="30" y="741" width="330" height="132" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text x="48" y="769" font-size="16" font-weight="600" fill="#1a1a1a">3. Ask for the limits, then judge</text>
+    <text x="48" y="795" font-size="14.5" fill="#374151">Ask what was dropped and in what order</text>
+    <text x="48" y="816" font-size="14.5" fill="#374151">the limits were taken. Then approve,</text>
+    <text x="48" y="837" font-size="14.5" fill="#374151">send back, or kill it. Nothing enters</text>
+    <text x="48" y="858" font-size="14.5" fill="#374151">the record unsigned.</text>
   </g>
 
   <!-- right boxes -->
   <g>
-    <rect x="460" y="295" width="330" height="106" rx="9" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
-    <text x="478" y="323" font-size="16" font-weight="600" fill="#1a1a1a">1. Derive, solve, compute</text>
-    <text x="478" y="349" font-size="14.5" fill="#374151">One task per session, reading only the</text>
-    <text x="478" y="370" font-size="14.5" fill="#374151">approved summary of the sessions</text>
-    <text x="478" y="391" font-size="14.5" fill="#374151">before it.</text>
+    <rect x="460" y="435" width="330" height="106" rx="9" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
+    <text x="478" y="463" font-size="16" font-weight="600" fill="#1a1a1a">1. Derive, solve, compute</text>
+    <text x="478" y="489" font-size="14.5" fill="#374151">One task per session, reading only the</text>
+    <text x="478" y="510" font-size="14.5" fill="#374151">approved summary of the sessions</text>
+    <text x="478" y="531" font-size="14.5" fill="#374151">before it.</text>
 
-    <rect x="460" y="421" width="330" height="132" rx="9" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
-    <text x="478" y="449" font-size="16" font-weight="600" fill="#1a1a1a">2. Run the checks</text>
-    <text x="478" y="475" font-size="14.5" fill="#374151">The check it was given, and any of its</text>
-    <text x="478" y="496" font-size="14.5" fill="#374151">own. Report every term it dropped, and</text>
-    <text x="478" y="517" font-size="14.5" fill="#374151">say plainly when the check did not</text>
-    <text x="478" y="538" font-size="14.5" fill="#374151">pass.</text>
+    <rect x="460" y="575" width="330" height="132" rx="9" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
+    <text x="478" y="603" font-size="16" font-weight="600" fill="#1a1a1a">2. Run the checks</text>
+    <text x="478" y="629" font-size="14.5" fill="#374151">The check it was given, and any of its</text>
+    <text x="478" y="650" font-size="14.5" fill="#374151">own. Report every term it dropped, and</text>
+    <text x="478" y="671" font-size="14.5" fill="#374151">say plainly when the check did not</text>
+    <text x="478" y="692" font-size="14.5" fill="#374151">pass.</text>
 
-    <rect x="460" y="573" width="330" height="132" rx="9" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
-    <text x="478" y="601" font-size="16" font-weight="600" fill="#1a1a1a">3. Draft the result and the record</text>
-    <text x="478" y="627" font-size="14.5" fill="#374151">Update the task list, the summary and</text>
-    <text x="478" y="648" font-size="14.5" fill="#374151">the log of corrections. All are drafted</text>
-    <text x="478" y="669" font-size="14.5" fill="#374151">as <tspan font-style="italic">proposals</tspan>, never written in as</text>
-    <text x="478" y="690" font-size="14.5" fill="#374151">entries.</text>
+    <rect x="460" y="741" width="330" height="132" rx="9" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
+    <text x="478" y="769" font-size="16" font-weight="600" fill="#1a1a1a">3. Draft the result and the record</text>
+    <text x="478" y="795" font-size="14.5" fill="#374151">Update the task list, the summary and</text>
+    <text x="478" y="816" font-size="14.5" fill="#374151">the log of corrections. All are drafted</text>
+    <text x="478" y="837" font-size="14.5" fill="#374151">as <tspan font-style="italic">proposals</tspan>, never written in as</text>
+    <text x="478" y="858" font-size="14.5" fill="#374151">entries.</text>
   </g>
 
   <defs>
@@ -502,19 +502,29 @@ h2, h3 { clear: both; }
   </defs>
 
   <!-- across: the task goes to the AI -->
-  <line x1="362" y1="348" x2="452" y2="348" stroke="#2563eb" stroke-width="2" marker-end="url(#arrB)"/>
-  <text x="410" y="322" font-size="12.5" fill="#2563eb" text-anchor="middle">one task =</text>
-  <text x="410" y="337" font-size="12.5" fill="#2563eb" text-anchor="middle">one session</text>
+  <line x1="362" y1="488" x2="452" y2="488" stroke="#2563eb" stroke-width="2" marker-end="url(#arrB)"/>
+  <text x="410" y="462" font-size="12.5" fill="#2563eb" text-anchor="middle">one task =</text>
+  <text x="410" y="477" font-size="12.5" fill="#2563eb" text-anchor="middle">one session</text>
 
   <!-- back: drafts return for sign-off -->
-  <line x1="452" y1="632" x2="362" y2="632" stroke="#c0392b" stroke-width="2" marker-end="url(#arrR)"/>
-  <text x="410" y="606" font-size="12.5" fill="#c0392b" text-anchor="middle">drafts,</text>
-  <text x="410" y="621" font-size="12.5" fill="#c0392b" text-anchor="middle">for sign-off</text>
+  <line x1="452" y1="800" x2="362" y2="800" stroke="#c0392b" stroke-width="2" marker-end="url(#arrR)"/>
+  <text x="410" y="774" font-size="12.5" fill="#c0392b" text-anchor="middle">drafts,</text>
+  <text x="410" y="789" font-size="12.5" fill="#c0392b" text-anchor="middle">for sign-off</text>
 
-  <!-- loop back to the top on the far left, broken where it is labelled -->
-  <path d="M30,632 L14,632 L14,532" fill="none" stroke="#2563eb" stroke-width="2"/>
-  <path d="M14,432 L14,348 L26,348" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#arrB)"/>
-  <text x="14" y="486" font-size="12.5" fill="#2563eb" text-anchor="middle" transform="rotate(-90 14 486)">next task</text>
+  <!-- down the columns: frame once, then the AI's three steps in order -->
+  <line x1="195" y1="402" x2="195" y2="432" stroke="#2563eb" stroke-width="2" marker-end="url(#arrB)"/>
+  <line x1="625" y1="542" x2="625" y2="572" stroke="#c0392b" stroke-width="2" marker-end="url(#arrR)"/>
+  <line x1="625" y1="708" x2="625" y2="738" stroke="#c0392b" stroke-width="2" marker-end="url(#arrR)"/>
+
+  <!-- out: cleared tasks leave the loop -->
+  <line x1="180" y1="874" x2="180" y2="904" stroke="#2563eb" stroke-width="2" marker-end="url(#arrB)"/>
+  <rect x="56" y="907" width="248" height="36" rx="18" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="180" y="930" font-size="14.5" fill="#374151" text-anchor="middle">cleared tasks, then the write-up</text>
+
+  <!-- loop back to setting the next task on the far left, broken where it is labelled -->
+  <path d="M30,800 L14,800 L14,690" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <path d="M14,610 L14,501 L26,501" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#arrB)"/>
+  <text x="14" y="650" font-size="12.5" fill="#2563eb" text-anchor="middle" transform="rotate(-90 14 650)">next task</text>
 </svg>
 </div>
 
